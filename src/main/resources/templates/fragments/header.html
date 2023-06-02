@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<header class="header">
+    <div class="h-100 container">
+        <div class="h-100 d-flex justify-content-start align-items-center">
+            <div class="logo">
+                <a th:href="@{/}">
+                    <img src="https://motchill.tv/motchill.png?v1.0.2" alt="logo">
+                </a>
+            </div>
+            <div class="menu h-100 d-flex">
+                <ul class="d-flex align-items-center mb-0">
+                    <li class="h-100">
+                        <a class="h-100 d-flex align-items-center text-white text-uppercase ms-3"
+                           th:href="@{/}">Trang
+                            chủ</a>
+                    </li>
+                    <li class="h-100">
+                        <a class="h-100 d-flex align-items-center text-white text-uppercase ms-3"
+                           th:href="@{/phim-bo}">Phim
+                            bộ</a>
+                    </li>
+                    <li class="h-100">
+                        <a class="h-100 d-flex align-items-center text-white text-uppercase ms-3"
+                           th:href="@{/phim-le}">Phim lẻ</a>
+                    </li>
+                    <li class="h-100">
+
+                        <a class="h-100 d-flex align-items-center text-white text-uppercase ms-3"
+                           th:href="@{/phim-chieu-rap}">Phim chiếu rạp</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+</body>
+</html>
