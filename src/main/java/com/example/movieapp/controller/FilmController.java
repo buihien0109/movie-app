@@ -2,7 +2,6 @@ package com.example.movieapp.controller;
 
 import com.example.movieapp.model.Film;
 import com.example.movieapp.service.FilmService;
-import com.example.movieapp.utils.JsonFileReader;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +19,7 @@ public class FilmController {
     public String getHome(Model model) {
         List<Film> hotFilmList = filmService.getHotFilms(8);
         List<Film> newFilmList = filmService.getNewFilms(6);
-        List<Film> featureFilmList = filmService.getGenreFilmLastest("phim-le", 6);
+        List<Film> featureFilmList = filmService.getGenreFilmLatest("phim-le", 6);
 
         model.addAttribute("hotFilmList", hotFilmList);
         model.addAttribute("newFilmList", newFilmList);

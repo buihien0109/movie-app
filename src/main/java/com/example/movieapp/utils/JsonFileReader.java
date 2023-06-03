@@ -13,16 +13,17 @@ import java.nio.file.Files;
 import java.util.List;
 
 @Component
-public class JsonFileReader {
+public class JsonFileReader implements FileReader{
     private final ResourceLoader resourceLoader;
 
     public JsonFileReader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
-    public List<Film> readJsonFile() {
+    @Override
+    public List<Film> readFile(String filePath) {
         try {
-            Resource resource = resourceLoader.getResource("classpath:static/data.json");
+            Resource resource = resourceLoader.getResource(filePath);
             String jsonContent = new String(Files.readAllBytes(resource.getFile().toPath()), StandardCharsets.UTF_8);
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(jsonContent, new TypeReference<List<Film>>() {});
