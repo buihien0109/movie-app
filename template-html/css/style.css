@@ -1,0 +1,181 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap");
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+    background-color: #02080f;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+    margin: auto;
+}
+
+a {
+    text-decoration: none;
+}
+
+ul {
+    list-style-type: none;
+}
+
+/* Header style */
+.header {
+    height: 60px;
+    background-color: #2d2d2d;
+    border-bottom: 1px solid #181818;
+}
+
+.logo img {
+    width: 120px;
+}
+
+.menu .active {
+    color: #da966e !important;
+}
+
+.menu .has-sub-menu {
+    position: relative;
+}
+
+.menu .has-sub-menu .sub-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 600px;
+    background: #2d2d2d;
+    overflow: hidden;
+    padding: 10px;
+}
+
+main .heading-title {
+    font-size: 24px;
+    color: #da966e;
+}
+
+/*Movie item*/
+.movie-item {
+    margin-bottom: 32px;
+    position: relative;
+}
+
+.movie-item .movie-media {
+    position: relative;
+    display: block;
+    height: 250px;
+}
+
+.movie-item .media-cover {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-color: #101010;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+.movie-item .play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    opacity: 0;
+    background-image: url(https://khoaiphim.com/image/play66.png);
+    background-repeat: no-repeat, repeat;
+
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.movie-item .movie-media:hover .play-btn {
+    opacity: 1;
+}
+
+.movie-item .movie-caption {
+    margin-top: 10px;
+}
+
+.movie-item .movie-caption .movie-titlesub {
+    font-size: 12px;
+    max-height: 19.2px;
+    overflow: hidden;
+    color: #b5b5be;
+}
+
+.movie-item .movie-caption .movie-titlesub:hover {
+    color: #f5c518;
+}
+
+.movie-item .movie-caption a {
+    display: block;
+}
+
+.movie-item .movie-caption .movie-title {
+    font-size: 14px;
+    max-height: 42.4px;
+    overflow: hidden;
+    font-weight: 600;
+    color: #fff;
+}
+
+.movie-item .movie-caption .movie-title:hover {
+    color: #f5c518;
+}
+
+#film-poster img {
+    width: 350px;
+    height: 450px;
+    object-fit: cover;
+}
+
+.star-icon {
+    color: #f5c518;
+}
+
+/*Search phim*/
+.form-filter .filter-item {
+    float: left;
+    color: #959595;
+    font-size: 12px;
+    margin: 0 5px 0 0;
+}
+
+.form-filter .filter-item .form-control {
+    width: 140px;
+    margin: 0 5px 0 0;
+    padding: 3px;
+    font-size: 12px;
+    height: 28px;
+    background: #383838;
+    box-shadow: none;
+    border: none;
+    color: #fafafa;
+    outline: none;
+    border-radius: 0;
+}
+
+.form-filter .btn {
+    padding: 5.5px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    background: #666;
+    color: #fff;
+    border: none;
+    outline: none;
+    border-radius: 0;
+}
