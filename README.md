@@ -6,6 +6,10 @@ Xem chi tiết tại đây
 - [Template thiết kế giao diện](./template-html)
 - [Movie Application SpringBoot](./movie-app)
 
+### Giao diện demo
+
+Xem giao diện demo [tại đây](https://movie-hvm9rsfg3-buihien0109.vercel.app/)
+
 ### Danh sách API sử dụng trong project
 
 1. Trang chủ : http://localhost:8080
