@@ -19,24 +19,24 @@ Xem chi tiết tại đây
 
 #### 1. Trang chủ
 
-![trang chủ film](https://media.techmaster.vn/api/static/9479/kFuTWRik)
+![trang chủ film](./images/trang-chu.png)
 
 #### 2. Phim lẻ
 
-![phim lẻ](https://media.techmaster.vn/api/static/9479/F3um3Ra0)
+![phim lẻ](./images/phim-le.png)
 
 #### 3. Phim bộ
 
-![phim bộ](https://media.techmaster.vn/api/static/9479/hYe9nNIl)
+![phim bộ](./images/phim-bo.png)
 
 #### 4. Phim chiếu rạp
 
-![chiếu rạp](https://media.techmaster.vn/api/static/9479/RB_BnXEU)
+![chiếu rạp](./images/phim-chieu-rap.png)
 
 #### 5. Phim chi tiết phim
 
-![chi tiết phim](https://media.techmaster.vn/api/static/9479/Fp7YclS0)
+![chi tiết phim](./images/chi-tiet.png)
 
 #### 6. Tìm kiếm phim
 
-![tìm kiếm](https://media.techmaster.vn/api/static/9479/RiEavJxC)
+![tìm kiếm](./images/tim-kiem.png)
