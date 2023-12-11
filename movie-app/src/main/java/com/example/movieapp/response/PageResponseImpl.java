@@ -6,56 +6,71 @@ import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class PageResponseImpl<T> {
+public class PageResponseImpl<T> implements PageResponse<T> {
     @JsonIgnore
-    List<T> data;
-
+    private List<T> data;
     @JsonIgnore
-    Integer currentPage;
-
+    private Integer currentPage;
     @JsonIgnore
-    Integer limit;
+    private Integer limit;
 
+    @Override
     public Integer getCurrentPage() {
+        return currentPage;
+    }
+
+    @Override
+    public Integer getLimit() {
+        return limit;
+    }
+
+    @Override
+    public Integer getTotalElements() {
         return data.size();
     }
 
-    public Integer getTotalPage() {
+    @Override
+    public Integer getTotalPages() {
         return (int) Math.ceil((double) data.size() / limit);
     }
 
+    @Override
     public List<T> getContent() {
         int fromIndex = (currentPage - 1) * limit;
         int toIndex = Math.min(fromIndex + limit, data.size());
         return data.subList(fromIndex, toIndex);
     }
 
+    @Override
     public Integer getPreviousPage() {
         return currentPage - 1;
     }
 
+    @Override
     public Integer getNextPage() {
         return currentPage + 1;
     }
 
-    public boolean hasPreviousPage() {
+    @Override
+    public Boolean hasPreviousPage() {
         return currentPage > 1;
     }
 
-    public boolean hasNextPage() {
-        return currentPage < getTotalPage();
+    @Override
+    public Boolean hasNextPage() {
+        return currentPage < getTotalPages();
     }
 
-    public boolean isFirstPage() {
+    @Override
+    public Boolean isFirstPage() {
         return currentPage == 1;
     }
 
-    public boolean isLastPage() {
-        return currentPage.equals(getTotalPage());
+    @Override
+    public Boolean isLastPage() {
+        return currentPage.equals(getTotalPages());
     }
 }

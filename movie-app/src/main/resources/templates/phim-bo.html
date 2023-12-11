@@ -19,7 +19,20 @@
     <div class="container">
         <h2 class="heading-title mb-4 fw-normal">Danh sách phim bộ</h2>
         <div class="row">
-            <div class="col-lg-2" th:each="film : ${filmList}">
+            <form class="form-filter mb-4" action="/phim-le" method="GET">
+                <div class="filter-item">
+                    <select class="input form-control" name="sortBy">
+                        <option value="" hidden="hidden">-- Sắp xếp --</option>
+                        <option value="releaseYear">Sắp xếp theo ngày phát hành</option>
+                        <option value="view">Sắp xếp theo lượt view</option>
+                        <option value="rating">Sắp xếp theo rating</option>
+                    </select>
+                </div>
+                <input type="submit" class="btn btn-success" value="Áp dụng">
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-lg-2" th:each="film : ${pageData.getContent()}">
                 <div class="movie-item">
                     <a th:href="@{/phim/{id} (id=${film.id})}" class="movie-media">
                         <div class="play-btn">
@@ -35,8 +48,30 @@
                 </div>
             </div>
         </div>
+        <div class="pagination" th:if="${pageData.getTotalPages() != 1}">
+            <ul class="ps-0">
+                <li th:if="${pageData.getCurrentPage() != 1}">
+                    <a th:href="@{/phim-bo (page=${pageData.currentPage - 1})}"
+                       class="navigation previous" rel="prev">Trước</a>
+                </li>
+                <li th:each="page : ${#numbers.sequence(1, pageData.getTotalPages())}">
+                    <a th:href="@{/phim-bo (page=${page})}"
+                       th:text="${page}"
+                       th:classappend="${page == pageData.getCurrentPage() ? 'current' : ''}">1</a>
+                </li>
+                <li th:if="${pageData.getTotalPages() != pageData.getCurrentPage()}">
+                    <a th:href="@{/phim-bo (page=${pageData.currentPage + 1})}"
+                       class="navigation next" rel="next">Sau</a>
+                </li>
+            </ul>
+        </div>
     </div>
 </main>
+
+<script th:inline="javascript">
+    const pageData = [[${pageData}]];
+    console.log(pageData);
+</script>
 </body>
 
 </html>

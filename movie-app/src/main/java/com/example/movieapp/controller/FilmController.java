@@ -2,6 +2,7 @@ package com.example.movieapp.controller;
 
 import com.example.movieapp.constant.FilmConstant;
 import com.example.movieapp.model.Film;
+import com.example.movieapp.response.PageResponse;
 import com.example.movieapp.service.FilmService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -30,23 +31,32 @@ public class FilmController {
     }
 
     @GetMapping("/phim-le")
-    public String getPhimLe(Model model) {
-        List<Film> filmList = filmService.findFilmsByType(FilmConstant.PHIM_LE);
-        model.addAttribute("filmList", filmList);
+    public String getPhimLe(
+            Model model,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false) String sortBy) {
+        PageResponse<Film> pageData = filmService.findFilmsByType(FilmConstant.PHIM_LE, sortBy, page);
+        model.addAttribute("pageData", pageData);
         return "phim-le";
     }
 
     @GetMapping("/phim-bo")
-    public String getPhimMoi(Model model) {
-        List<Film> filmList = filmService.findFilmsByType(FilmConstant.PHIM_BO);
-        model.addAttribute("filmList", filmList);
+    public String getPhimMoi(
+            Model model,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false) String sortBy) {
+        PageResponse<Film> pageData = filmService.findFilmsByType(FilmConstant.PHIM_BO, sortBy, page);
+        model.addAttribute("pageData", pageData);
         return "phim-bo";
     }
 
     @GetMapping("/phim-chieu-rap")
-    public String getPhimChieuRap(Model model) {
-        List<Film> filmList = filmService.findFilmsByType(FilmConstant.PHIM_CHIEU_RAP);
-        model.addAttribute("filmList", filmList);
+    public String getPhimChieuRap(
+            Model model,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false) String sortBy) {
+        PageResponse<Film> pageData = filmService.findFilmsByType(FilmConstant.PHIM_CHIEU_RAP, sortBy, page);
+        model.addAttribute("pageData", pageData);
         return "phim-chieu-rap";
     }
 

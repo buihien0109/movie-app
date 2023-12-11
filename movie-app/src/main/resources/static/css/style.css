@@ -179,3 +179,22 @@ main .heading-title {
     outline: none;
     border-radius: 0;
 }
+
+.pagination ul li {
+    margin: 3px;
+    display: inline-block;
+}
+
+.pagination ul li a {
+    color: #fff;
+    border: 1px solid #4c4c4c;
+    background: #3a3a3a;
+    padding: 7px 11px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.pagination ul li a.current {
+    border-color: #ff6901;
+    color: #ff9601;
+}

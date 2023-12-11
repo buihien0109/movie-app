@@ -7,8 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách phim lẻ</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
@@ -32,7 +35,7 @@
             </form>
         </div>
         <div class="row">
-            <div class="col-lg-2" th:each="film : ${filmList}">
+            <div class="col-lg-2" th:each="film : ${pageData.getContent()}">
                 <div class="movie-item">
                     <a th:href="@{/phim/{id} (id=${film.id})}" class="movie-media">
                         <div class="play-btn">
@@ -48,8 +51,30 @@
                 </div>
             </div>
         </div>
+        <div class="pagination" th:if="${pageData.getTotalPages() != 1}">
+            <ul class="ps-0">
+                <li th:if="${pageData.getCurrentPage() != 1}">
+                    <a th:href="@{/phim-le (page=${pageData.currentPage - 1})}"
+                       class="navigation previous" rel="prev">Trước</a>
+                </li>
+                <li th:each="page : ${#numbers.sequence(1, pageData.getTotalPages())}">
+                    <a th:href="@{/phim-le (page=${page})}"
+                       th:text="${page}"
+                       th:classappend="${page == pageData.getCurrentPage() ? 'current' : ''}">1</a>
+                </li>
+                <li th:if="${pageData.getTotalPages() != pageData.getCurrentPage()}">
+                    <a th:href="@{/phim-le (page=${pageData.currentPage + 1})}"
+                       class="navigation next" rel="next">Sau</a>
+                </li>
+            </ul>
+        </div>
     </div>
 </main>
+
+<script th:inline="javascript">
+    const pageData = [[${pageData}]];
+    console.log(pageData);
+</script>
 </body>
 
 </html>

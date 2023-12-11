@@ -2,6 +2,8 @@ package com.example.movieapp.service;
 
 import com.example.movieapp.constant.FilmConstant;
 import com.example.movieapp.model.Film;
+import com.example.movieapp.response.PageResponse;
+import com.example.movieapp.response.PageResponseImpl;
 import com.example.movieapp.utils.FileReader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,52 @@ public class FilmServiceImpl implements FilmService {
         return filmList.stream()
                 .filter(film -> film.getType().equals(type))
                 .toList();
+    }
+
+    @Override
+    public List<Film> findFilmsByType(String type, String sortBy) {
+        log.info("type : {}", type);
+        log.info("sortBy : {}", sortBy);
+
+        List<Film> films = findFilmsByType(type);
+        log.info("films : {}", films);
+
+        if (sortBy == null) {
+            return films;
+        }
+        return switch (sortBy) {
+            case "releaseYear" -> films.stream()
+                    .sorted(Comparator.comparing(Film::getReleaseYear).reversed())
+                    .toList();
+            case "view" -> films.stream()
+                    .sorted(Comparator.comparing(Film::getView).reversed())
+                    .toList();
+            case "rating" -> films.stream()
+                    .sorted(Comparator.comparing(Film::getRating).reversed())
+                    .toList();
+            default -> films;
+        };
+    }
+
+    @Override
+    public PageResponse<Film> findFilmsByType(String type, Integer page) {
+        List<Film> films = filmList.stream()
+                .filter(film -> film.getType().equals(type))
+                .toList();
+
+        return new PageResponseImpl<>(films, page, FilmConstant.FILM_PER_PAGE);
+    }
+
+    @Override
+    public PageResponse<Film> findFilmsByType(String type, String sortBy, Integer page) {
+        log.info("type : {}", type);
+        log.info("sortBy : {}", sortBy);
+        log.info("page : {}", page);
+
+        List<Film> films = findFilmsByType(type, sortBy);
+        log.info("films : {}", films);
+
+        return new PageResponseImpl<>(films, page, FilmConstant.FILM_PER_PAGE);
     }
 
     @Override
