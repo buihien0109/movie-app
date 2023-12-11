@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách phim chiếu rạp</title>
+    <title>Danh sách phim lẻ</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
           integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
@@ -16,11 +16,11 @@
 </head>
 
 <body>
-<th:block th:replace="~{fragments/header :: .header}"></th:block>
+<th:block th:replace="~{web/fragments/header :: .header}"></th:block>
 
 <main class="py-5">
     <div class="container">
-        <h2 class="heading-title mb-4 fw-normal">Danh sách phim chiếu rạp</h2>
+        <h2 class="heading-title mb-4 fw-normal">Danh sách phim lẻ</h2>
         <div class="row">
             <form class="form-filter mb-4" action="/phim-le" method="GET">
                 <div class="filter-item">
@@ -54,16 +54,16 @@
         <div class="pagination" th:if="${pageData.getTotalPages() != 1}">
             <ul class="ps-0">
                 <li th:if="${pageData.getCurrentPage() != 1}">
-                    <a th:href="@{/phim-chieu-rap (page=${pageData.currentPage - 1})}"
+                    <a th:href="@{/phim-le (page=${pageData.currentPage - 1})}"
                        class="navigation previous" rel="prev">Trước</a>
                 </li>
                 <li th:each="page : ${#numbers.sequence(1, pageData.getTotalPages())}">
-                    <a th:href="@{/phim-chieu-rap (page=${page})}"
+                    <a th:href="@{/phim-le (page=${page})}"
                        th:text="${page}"
                        th:classappend="${page == pageData.getCurrentPage() ? 'current' : ''}">1</a>
                 </li>
                 <li th:if="${pageData.getTotalPages() != pageData.getCurrentPage()}">
-                    <a th:href="@{/phim-chieu-rap (page=${pageData.currentPage + 1})}"
+                    <a th:href="@{/phim-le (page=${pageData.currentPage + 1})}"
                        class="navigation next" rel="next">Sau</a>
                 </li>
             </ul>

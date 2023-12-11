@@ -1,8 +1,9 @@
 package com.example.movieapp.response;
 
-import com.example.movieapp.model.Film;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 

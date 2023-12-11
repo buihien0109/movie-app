@@ -1,18 +1,15 @@
 package com.example.movieapp.utils;
 
-import com.example.movieapp.model.Film;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 @Component
-public class JsonFileReader implements FileReader {
+public class JsonFileReader<T> implements FileReader<T> {
     private final ResourceLoader resourceLoader;
 
     public JsonFileReader(ResourceLoader resourceLoader) {
@@ -20,13 +17,11 @@ public class JsonFileReader implements FileReader {
     }
 
     @Override
-    public List<Film> readFile(String filePath) {
+    public List<T> readFile(String filePath, Class<T> tClass) {
         try {
             Resource resource = resourceLoader.getResource(filePath);
-            String jsonContent = Files.readString(resource.getFile().toPath());
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(jsonContent, new TypeReference<List<Film>>() {
-            });
+            return objectMapper.readValue(resource.getFile(), objectMapper.getTypeFactory().constructCollectionType(List.class, tClass));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

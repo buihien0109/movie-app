@@ -1,10 +1,11 @@
-package com.example.movieapp.service;
+package com.example.movieapp.service.impl;
 
 import com.example.movieapp.constant.FilmConstant;
+import com.example.movieapp.dao.FilmDAO;
 import com.example.movieapp.model.Film;
 import com.example.movieapp.response.PageResponse;
 import com.example.movieapp.response.PageResponseImpl;
-import com.example.movieapp.utils.FileReader;
+import com.example.movieapp.service.FilmService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +17,15 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class FilmServiceImpl implements FilmService {
-    private final List<Film> filmList;
+    private final FilmDAO filmDAO;
 
-    public FilmServiceImpl(FileReader fileReader) {
-        this.filmList = fileReader.readFile(FilmConstant.FILM_FILE_PATH);
+    public FilmServiceImpl(FilmDAO filmDAO) {
+        this.filmDAO = filmDAO;
     }
 
     @Override
     public List<Film> findFilmsByType(String type) {
-        return filmList.stream()
-                .filter(film -> film.getType().equals(type))
-                .toList();
+        return filmDAO.findByType(type);
     }
 
     @Override
@@ -34,7 +33,7 @@ public class FilmServiceImpl implements FilmService {
         log.info("type : {}", type);
         log.info("sortBy : {}", sortBy);
 
-        List<Film> films = findFilmsByType(type);
+        List<Film> films = filmDAO.findByType(type);
         log.info("films : {}", films);
 
         if (sortBy == null) {
@@ -56,10 +55,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public PageResponse<Film> findFilmsByType(String type, Integer page) {
-        List<Film> films = filmList.stream()
-                .filter(film -> film.getType().equals(type))
-                .toList();
-
+        List<Film> films = filmDAO.findByType(type);
         return new PageResponseImpl<>(films, page, FilmConstant.FILM_PER_PAGE);
     }
 
@@ -77,14 +73,13 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film findFilmById(Integer id) {
-        return filmList.stream()
-                .filter(f -> f.getId().equals(id))
-                .findFirst().orElseThrow(() -> new RuntimeException("Not found"));
+        return filmDAO.findById(id)
+                .orElseThrow(() -> new RuntimeException("Not found"));
     }
 
     @Override
     public List<Film> getHotFilms(Integer limit) {
-        return filmList.stream()
+        return filmDAO.findAll().stream()
                 .sorted(Comparator.comparing(Film::getView).reversed())
                 .limit(limit)
                 .toList();
@@ -92,7 +87,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<Film> getNewFilms(Integer limit) {
-        return filmList.stream()
+        return filmDAO.findAll().stream()
                 .sorted(Comparator.comparing(Film::getReleaseYear).reversed())
                 .limit(limit)
                 .toList();
@@ -101,7 +96,7 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public List<Film> getRelateFilms(Integer filmId, Integer limit) {
         Film film = findFilmById(filmId);
-        return filmList.stream()
+        return filmDAO.findAll().stream()
                 .filter(f -> !f.getId().equals(filmId))
                 .filter(f -> f.getType().equals(film.getType()))
                 .limit(limit)
@@ -111,7 +106,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<Film> getTypeFilmLatest(String gener, Integer limit) {
-        return filmList.stream()
+        return filmDAO.findAll().stream()
                 .filter(film -> film.getType().equals(gener))
                 .sorted(Comparator.comparing(Film::getReleaseYear).reversed())
                 .limit(limit)
@@ -127,7 +122,7 @@ public class FilmServiceImpl implements FilmService {
             return new ArrayList<>();
         }
 
-        return filmList.stream()
+        return filmDAO.findAll().stream()
                 .filter(film ->
                         (name == null || film.getTitle().toLowerCase().contains(name.toLowerCase()))
                                 && (releaseYear == null || film.getReleaseYear().equals(releaseYear))
