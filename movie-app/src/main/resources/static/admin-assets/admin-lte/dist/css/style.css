@@ -1,0 +1,227 @@
+img {
+    max-width: 100%;
+    display: block;
+    margin: auto;
+}
+
+.EasyMDEContainer {
+    position: relative;
+    z-index: 1039;
+}
+
+.user-panel {
+    display: flex;
+    align-items: center;
+}
+
+.user-panel img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-avatar-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid #eee;
+}
+
+.user-avatar-container #avatar-preview {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    object-fit: cover;
+
+}
+
+.user-avatar-container:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.user-avatar-container:hover #avatar-preview {
+    filter: brightness(0.5);
+}
+
+.user-avatar-container label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    display: none;
+    font-size: 14px;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-avatar-container:hover label {
+    display: flex;
+}
+
+#table-category .btn-action {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 14px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: none;
+}
+
+#table-category tbody tr td:hover .btn-action {
+    display: inline-block;
+}
+
+#table-category tbody tr td {
+    width: 50%;
+}
+
+#table-category .btn-action.btn-action-edit {
+    border: 1px solid #007bff;
+    color: #007bff;
+}
+
+#table-category .btn-action.btn-action-edit:hover {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+#table-category .btn-action.btn-action-delete {
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+#table-category .btn-action.btn-action-delete:hover {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+/*product detail*/
+#product-image .product-image-item {
+    width: 150px;
+    height: 150px;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+}
+
+#product-image .product-image-item label {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#product-image .product-image-item label img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease-in-out;
+}
+
+#product-image .product-image-item label:hover img {
+    filter: brightness(0.5);
+}
+
+#product-image .product-image-item label span {
+    display: none;
+    position: relative;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+}
+
+#product-image .product-image-item label:hover span {
+    display: inline-block;
+    color: #ffffff;
+}
+
+#product-image .product-image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease-in-out;
+}
+
+#product-image .product-image-item .btn-action-delete {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 14px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+    color: #ffffff;
+    background-color: #dc3545;
+}
+
+#product-image .product-image-item .btn-action-delete:hover {
+    background-color: #ffffff;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+#product-attribute .btn-action {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 14px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+#product-attribute .btn-action.btn-action-edit {
+    border: 1px solid #007bff;
+    color: #007bff;
+}
+
+#product-attribute .btn-action.btn-action-edit:hover {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+#product-attribute .btn-action.btn-action-delete {
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+#product-attribute .btn-action.btn-action-delete:hover {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+#modal-review .review-product-rating-item {
+    font-size: 30px;
+    color: #ebebeb;
+    cursor: pointer;
+}
+
+#modal-review .review-product-rating-item.active {
+    color: #EDBB0E;
+}

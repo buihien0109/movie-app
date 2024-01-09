@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Danh mục genre</title>
+</head>
+
+<body>
+<!-- BODY -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh mục thể loại
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <button class="btn btn-primary" id="btn-open-modal">
+                        <i class="fas fa-plus"></i> Tạo thể loại
+                    </button>
+                    <a href="/admin/genres" type="button" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên thể loại</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-center mt-3" id="pagination">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal genre -->
+            <div class="modal fade" id="modal-genre" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                 aria-labelledby="modal-genre-title" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title fs-5" id="modal-genre-title">Tạo thể loại</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="form-genre">
+                                <div class="form-group mb-0">
+                                    <input type="text" class="form-control" id="input-name" placeholder="Enter name"
+                                           name="name">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-primary" id="btn-handle-genre">Xác nhận</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        let genres = [[${genreList}]];
+        console.log(genres);
+
+        let idGenreUpdate = null;
+
+        // validate form
+        $('#form-genre').validate({
+            rules: {
+                name: {
+                    required: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "Tên genre không được để trống"
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        // Render genre
+        const tableContent = document.querySelector("table tbody")
+        const renderGenres = (genreList, pagination) => {
+            console.log(pagination)
+            tableContent.innerHTML = "";
+            let html = "";
+            genreList.forEach((genre, index) => {
+                html += `
+                    <tr>
+                        <td>${pagination.pageSize * (pagination.pageNumber - 1) + (index + 1)}</td>
+                        <td>${genre.name}</td>
+                        <td>
+                            <button class="btn btn-warning" onclick="openModalUpdate(${genre.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteGenre(${genre.id})">Delete</button>
+                        </td>
+                    </tr>
+                `
+            })
+            tableContent.innerHTML = html;
+        }
+
+        // render pagination using pagination.js
+        const renderPagination = (genreList) => {
+            $('#pagination').pagination({
+                dataSource: genreList,
+                pageSize: 5,
+                className: 'paginationjs-theme-blue paginationjs-big',
+                callback: function (data, pagination) {
+                    renderGenres(data, pagination);
+                },
+                hideOnlyOnePage: true
+            })
+        }
+
+        // Open modal create
+        const inputNameEl = document.getElementById("input-name");
+        const btnOpenModal = document.getElementById("btn-open-modal");
+        btnOpenModal.addEventListener("click", () => {
+            $('#modal-genre').modal('show');
+
+            // set title modal
+            const modalTitle = document.getElementById("modal-genre-title")
+            modalTitle.innerText = "Tạo thể loại"
+        })
+
+        $('#modal-genre').on('hidden.bs.modal', function (event) {
+            inputNameEl.value = "";
+            idGenreUpdate = null;
+        })
+
+        // Create genre using axios and vanilla js
+        const createGenre = () => {
+            if (!$('#form-genre').valid()) {
+                return;
+            }
+
+            const name = inputNameEl.value;
+            if (!name || name.trim() === "") {
+                toastr.error("Tên thể loại không được để trống")
+                return
+            }
+
+            axios.post("/api/admin/genres", {name})
+                .then(res => {
+                    genres.push(res.data)
+                    renderPagination(genres)
+                    inputNameEl.value = "";
+
+                    $('#modal-genre').modal('hide');
+                    toastr.success("Tạo thành công")
+                })
+                .catch(e => {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                })
+        }
+
+        // Update genre using axios and vanilla js
+        const updateGenre = () => {
+            if (!$('#form-genre').valid()) {
+                return;
+            }
+
+            const name = inputNameEl.value;
+            if (!name || name.trim() === "") {
+                toastr.error("Tên thể loại không được để trống")
+                return
+            }
+
+            axios.put(`/api/admin/genres/${idGenreUpdate}`, {name})
+                .then(res => {
+                    const genre = genres.find(genre => genre.id === idGenreUpdate)
+                    genre.name = res.data.name;
+
+                    renderPagination(genres)
+                    inputNameEl.value = "";
+
+                    $('#modal-genre').modal('hide');
+                    toastr.success("Cập nhật thành công");
+                    idGenreUpdate = null;
+                })
+                .catch(e => {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                })
+        }
+
+        // Handle open modal update
+        const openModalUpdate = id => {
+            const genre = genres.find(genre => genre.id === id)
+            inputNameEl.value = genre.name
+            idGenreUpdate = genre.id;
+            $('#modal-genre').modal('show');
+
+            // set title modal
+            const modalTitle = document.getElementById("modal-genre-title")
+            modalTitle.innerText = "Cập nhật thể loại"
+        }
+
+        // Handle genre
+        const btnHandlegenre = document.getElementById("btn-handle-genre")
+        btnHandlegenre.addEventListener("click", () => {
+            if (idGenreUpdate) {
+                updateGenre()
+            } else {
+                createGenre()
+            }
+        })
+
+        // Xóa
+        const deleteGenre = (id) => {
+            const isDelete = confirm("Bạn có chắc chắn muốn xóa genre này không?")
+            if (isDelete) {
+                axios.delete(`/api/admin/genres/${id}`)
+                    .then(() => {
+                        genres = genres.filter(genre => genre.id !== id)
+                        renderPagination(genres)
+                        toastr.success("Xóa thành công")
+                    })
+                    .catch(e => {
+                        toastr.error(e.response.data.message);
+                        console.log(e);
+                    })
+            }
+        }
+
+
+        renderPagination(genres);
+    </script>
+</th:block>
+</body>
+
+</html>

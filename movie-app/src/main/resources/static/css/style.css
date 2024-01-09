@@ -7,17 +7,15 @@
 }
 
 body {
-    font-family: "Roboto", sans-serif;
-    background-color: #02080f;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji
 }
 
 img {
     max-width: 100%;
-    display: block;
-    margin: auto;
 }
 
 a {
+    color: rgb(33, 37, 41);
     text-decoration: none;
 }
 
@@ -25,126 +23,105 @@ ul {
     list-style-type: none;
 }
 
-/* Header style */
-.header {
-    height: 60px;
-    background-color: #2d2d2d;
-    border-bottom: 1px solid #181818;
+#main-menu .navbar-nav a.active {
+    color: #ff6901 !important;
 }
 
-.logo img {
-    width: 120px;
-}
-
-.menu .active {
-    color: #da966e!important;
-}
-
-.menu .has-sub-menu {
-    position: relative;
-}
-
-.menu .has-sub-menu .sub-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 600px;
-    background: #2d2d2d;
-    overflow: hidden;
-    padding: 10px;
-}
-
-main .heading-title {
-    font-size: 24px;
-    color: #da966e;
-}
-
-/*Movie item*/
-.movie-item {
-    margin-bottom: 32px;
-    position: relative;
-}
-
-.movie-item .movie-media {
-    position: relative;
-    display: block;
+.movie-item .movie-poster {
     height: 250px;
 }
 
-.movie-item .media-cover {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    background-color: #101010;
-    overflow: hidden;
-    border-radius: 6px;
+.movie-item .movie-poster img {
+    object-fit: cover;
+    transition: all 0.3s ease-in-out;
 }
 
-.movie-item .play-btn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    opacity: 0;
-    background-image: url(https://khoaiphim.com/image/play66.png);
-    background-repeat: no-repeat, repeat;
-
-    width: 60px;
-    height: 60px;
-    border-radius: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
+.movie-item img:hover {
+    transform: scale(1.1);
 }
 
-.movie-item .movie-media:hover .play-btn {
-    opacity: 1;
+#movie-poster {
+    height: 400px;
+    object-fit: cover;
 }
 
-.movie-item .movie-caption {
-    margin-top: 10px;
+.rating-avatar {
+    flex: 0 0 70px;
 }
 
-.movie-item .movie-caption .movie-titlesub {
-    font-size: 12px;
-    max-height: 19.2px;
-    overflow: hidden;
-    color: #b5b5be;
+.rating-avatar img {
+    height: 70px;
+    width: 70px;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
-.movie-item .movie-caption .movie-titlesub:hover {
-    color: #f5c518;
+.review-product-rating-item.active, .rating-icon {
+    color: #EDBB0E;
 }
 
-.movie-item .movie-caption a {
-    display: block;
+.review-product-rating-item.unactive {
+    color: #939ca3;
 }
 
-.movie-item .movie-caption .movie-title {
+.rating-time {
+    color: #939ca3;
     font-size: 14px;
-    max-height: 42.4px;
-    overflow: hidden;
-    font-weight: 600;
-    color: #fff;
 }
 
-.movie-item .movie-caption .movie-title:hover {
-    color: #f5c518;
+/*Movie item*/
+#screen {
+    background-color: #181616;
+}
+
+#film-poster {
+    flex: 0 0 200px;
+    width: 200px;
+    height: 250px;
+    border-radius: 6px;
+    overflow: hidden;
 }
 
 #film-poster img {
-    width: 350px;
-    height: 450px;
+    width: 200px;
+    height: 250px;
     object-fit: cover;
+}
+
+#film-info {
+    flex: 1 1 auto;
 }
 
 .star-icon {
     color: #f5c518;
+}
+
+.actor-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 100%;
+    overflow: hidden;
+    display: block;
+    margin: auto auto 10px;
+}
+
+.actor-name {
+    text-align: center;
+}
+
+.bg-section {
+    background-color: #181616 !important;
+}
+
+.bg-gray {
+    background-color: #424040 !important;
+}
+
+.review-item .avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 100%;
+    overflow: hidden;
 }
 
 /*Search phim*/
@@ -197,4 +174,120 @@ main .heading-title {
 .pagination ul li a.current {
     border-color: #ff6901;
     color: #ff9601;
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.nav-tabs .nav-link {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* blog detail */
+.blog-detail ul {
+    list-style-type: disc !important;
+}
+
+.blog-detail h2{
+    overflow-wrap: break-word;
+    font-size: 1.75rem;
+    line-height: 2rem;
+    margin-top: 2rem
+}
+
+.blog-detail h3{
+    overflow-wrap: break-word;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    margin-top: 2rem
+}
+
+.blog-detail img{
+    display: block;
+    margin: auto;
+    width: 50%;
+}
+
+/*owl-carousel*/
+
+.owl-carousel .owl-nav {
+    overflow: hidden;
+    height: 0;
+}
+
+.owl-theme .owl-nav {
+    margin-top: 0;
+    text-align: center;
+}
+
+.owl-theme .owl-dots .owl-dot.active span,
+.owl-theme .owl-dots .owl-dot:hover span {
+    background: #5110e9;
+}
+
+
+.owl-carousel .item {
+    text-align: center;
+}
+
+.owl-carousel .nav-button {
+    height: 50px;
+    width: 25px;
+    cursor: pointer;
+    position: absolute;
+    top: 110px !important;
+
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.owl-theme .owl-nav .nav-button span {
+    display: inline-block;
+    font-size: 24px;
+}
+
+.owl-carousel .owl-prev.disabled,
+.owl-carousel .owl-next.disabled {
+    pointer-events: none;
+    opacity: 0.25;
+}
+
+.owl-carousel .owl-prev {
+    left: -35px;
+}
+
+.owl-carousel .owl-next {
+    right: -35px;
+}
+
+.owl-theme .owl-nav [class*=owl-] {
+    color: #ffffff;
+    font-size: 39px;
+    background: #000000;
+    border-radius: 3px;
+}
+
+.owl-carousel .prev-carousel:hover {
+    background-position: 0px -53px;
+}
+
+.owl-carousel .next-carousel:hover {
+    background-position: -24px -53px;
+}
+
+/*utils class*/
+.truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    text-overflow: ellipsis;
+    line-height: 1.5em; /* Điều chỉnh dựa trên kích thước font và yêu cầu layout */
+    max-height: 3em; /* 1.2em (line-height) * 2 (số dòng) */
 }

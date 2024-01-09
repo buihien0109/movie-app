@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Chi tiết đạo diễn</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+    </th:block>
+
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/directors">Đạo diễn</a>
+                        </li>
+                        <li class="breadcrumb-item active" th:text="${director.name}">
+                            Bui Hien
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/directors" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Cập nhật
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form id="form-update-director">
+                                        <div class="form-group mt-4">
+                                            <label>Họ tên</label>
+                                            <input type="text" class="form-control" id="name"
+                                                   th:value="${director.name}" name="name"/>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Mô tả</label>
+                                            <textarea class="form-control" name="description" id="description"
+                                                      rows="7" th:text="${director.description}"></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Birthday</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="far fa-calendar-alt"></i>
+                                                </span>
+                                                </div>
+                                                <input type="text" class="form-control float-right" id="date"
+                                                       name="date" th:value="${#dates.format(director.birthday, 'MM/dd/YYYY')}">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group mt-4">
+                                        <label>Avatar</label>
+                                        <div class="user-avatar-container d-flex align-items-center">
+                                            <img id="avatar-preview" th:src="${director.avatar}" alt="">
+                                            <label for="avatar">Đổi Avatar</label>
+                                            <input type="file" id="avatar" class="d-none">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/moment/moment.min.js}"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.js}"></script>
+    <script th:inline="javascript">
+        const director = [[${director}]];
+        console.log({director});
+
+        $('#date').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true
+        })
+
+        $('#form-update-director').validate({
+            rules: {
+                name: {
+                    required: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "Tên đạo diễn không được để trống"
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        // Truy cập vào các thành phần
+        const directorName = document.getElementById("name");
+        const directorDescription = document.getElementById("description");
+        const directorBirthday = document.getElementById("date");
+        const btnUpdate = document.getElementById("btn-update")
+
+        // Cập nhật user
+        btnUpdate.addEventListener("click", async () => {
+            if (!$('#form-update-director').valid()) return;
+
+            // get date from daterangepicker
+            console.log(directorBirthday.value)
+
+            const data = {
+                name: directorName.value,
+                description: directorDescription.value,
+                birthday: new Date(directorBirthday.value)
+            }
+
+            try {
+                let res = await axios.put(`/api/admin/directors/${director.id}`, data)
+
+                if (res.status === 200) {
+                    toastr.success("Cập nhật thành công");
+                }
+            } catch (e) {
+                toastr.error(e.response.data.message);
+                console.log(e);
+            }
+        })
+
+        // add event listener to avatar input change
+        const avatarInput = document.getElementById('avatar');
+        const avatarPreview = document.getElementById('avatar-preview');
+        avatarInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+
+            // create form data with key file and value is file in input
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Send post request to url /api/v1/users/update-avatar, then check request status and set src for avatar preview
+            axios.post(`/api/admin/directors/${director.id}/update-avatar`, formData)
+                .then(res => {
+                    if (res.status === 200) {
+                        avatarPreview.src = res.data;
+                        toastr.success('Cập nhật avatar thành công');
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    toastr.error('Cập nhật avatar thất bại');
+                });
+        });
+    </script>
+</th:block>
+
+</body>
+
+</html>

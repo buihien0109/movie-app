@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Tất cả phim</title>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh sách phim
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <a href="/admin/films/create" type="button" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Tạo phim
+                    </a>
+                    <a href="/admin/films" type="button" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Tên phim</th>
+                                    <th>Loại phim</th>
+                                    <th>Năm phát hành</th>
+                                    <th>Thể loại</th>
+                                    <th>View</th>
+                                    <th>Rating</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-center mt-3" id="pagination">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const films = [[${filmList}]];
+        console.log({films})
+
+        // render users from users to body of table
+        const tableBody = document.querySelector('table tbody');
+        const renderFilms = (filmList) => {
+            let html = '';
+            filmList.forEach(film => {
+                html += `
+                  <tr>
+                    <td>
+                        <a href="/admin/films/${film.id}/detail">${film.title}</a>
+                    </td>
+                    <td>
+                        ${showFilmType(film.type)}
+                    <td>
+                        ${film.releaseYear}
+                    </td>
+                    <td>
+                        ${film.genres.map(genre => `<span
+                            class="badge bg-info mr-1">${genre.name}</span>`).join('')}
+                    </td>
+                    <td>
+                        ${formatCurrency(film.view)}
+                    </td>
+                    <td>
+                        <span>${film.rating}</span>
+                        <span style="color: #EDBB0E"><i class="fas fa-star"></i></span>
+                    </td>
+                    <td>
+                        ${film.status
+                        ? '<span class="badge bg-success">Công khai</span>'
+                        : '<span class="badge bg-secondary">Nháp</span>'}
+                    </td>
+                  </tr>
+                `;
+            })
+            tableBody.innerHTML = html;
+        }
+
+        // render film type
+        const showFilmType = (filmType) => {
+            switch (filmType) {
+                case 'PHIM_BO':
+                    return 'Phim bộ';
+                case 'PHIM_LE':
+                    return 'Phim lẻ';
+                case 'PHIM_CHIEU_RAP':
+                    return 'Phim chiếu rạp';
+                default:
+                    return 'Unknown';
+            }
+        }
+
+        // render pagination using pagination.js
+        const renderPagination = (filmList) => {
+            $('#pagination').pagination({
+                dataSource: filmList,
+                className: 'paginationjs-theme-blue paginationjs-big',
+                callback: function (data, pagination) {
+                    renderFilms(data);
+                },
+                hideOnlyOnePage: true
+            })
+        }
+        renderPagination(films);
+    </script>
+</th:block>
+</body>
+
+</html>

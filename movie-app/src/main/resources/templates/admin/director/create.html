@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Tạo đạo diễn</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+    </th:block>
+
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/directors">Đạo diễn</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Tạo đạo diễn
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/directors" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-create">
+                        Lưu
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form id="form-create-director">
+                                        <div class="form-group">
+                                            <label>Họ tên</label>
+                                            <input type="text" class="form-control" id="name" name="name"/>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Mô tả</label>
+                                            <textarea class="form-control" name="description" id="description"
+                                                      rows="7"></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Birthday</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="far fa-calendar-alt"></i>
+                                                </span>
+                                                </div>
+                                                <input type="text" class="form-control float-right" id="date"
+                                                       name="date">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/moment/moment.min.js}"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.js}"></script>
+    <script th:inline="javascript">
+        // init daterangepicker
+        $('#date').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true
+        })
+
+        $('#form-create-director').validate({
+            rules: {
+                name: {
+                    required: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "Tên diễn viên không được để trống"
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        // Truy cập vào các thành phần
+        const directorName = document.getElementById("name");
+        const directorDescription = document.getElementById("description");
+        const directorBirthday = document.getElementById("date");
+        const btnCreate = document.getElementById("btn-create")
+
+        // Tạo khóa học
+        btnCreate.addEventListener("click", async () => {
+            if (!$('#form-create-director').valid()) return false;
+
+            // get date from daterangepicker
+            console.log(directorBirthday.value)
+
+            const data = {
+                name: directorName.value,
+                description: directorDescription.value,
+                birthday: new Date(directorBirthday.value)
+            }
+
+            try {
+                let res = await axios.post("/api/admin/directors", data)
+
+                if (res.data) {
+                    toastr.success("Tạo đạo diễn thành công");
+                    setTimeout(() => {
+                        window.location.href = `/admin/directors/${res.data.id}/detail`
+                    }, 1500)
+                }
+            } catch (e) {
+                toastr.error(e.response.data.message);
+                console.log(e);
+            }
+        })
+    </script>
+</th:block>
+
+</body>
+
+</html>

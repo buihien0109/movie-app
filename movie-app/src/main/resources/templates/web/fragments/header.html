@@ -5,42 +5,34 @@
     <title>Title</title>
 </head>
 <body>
-<header class="header">
-    <div class="h-100 container">
-        <div class="h-100 d-flex justify-content-start align-items-center">
-            <div class="logo">
-                <a th:href="@{/static}">
-                    <img src="https://motchill.co/motchill.png?v1.0.2" alt="logo">
-                </a>
-            </div>
-            <div class="menu h-100 d-flex">
-                <ul class="d-flex align-items-center mb-0">
-                    <li class="h-100">
-                        <a class="h-100 d-flex align-items-center text-white text-uppercase ms-3"
-                           th:href="@{/static}">Trang
-                            chủ</a>
-                    </li>
-                    <li class="h-100">
-                        <a class="h-100 d-flex align-items-center text-white text-uppercase ms-3"
-                           th:href="@{/phim-bo}">Phim
-                            bộ</a>
-                    </li>
-                    <li class="h-100">
-                        <a class="h-100 d-flex align-items-center text-white text-uppercase ms-3"
-                           th:href="@{/phim-le}">Phim lẻ</a>
-                    </li>
-                    <li class="h-100">
-                        <a class="h-100 d-flex align-items-center text-white text-uppercase ms-3"
-                           th:href="@{/phim-chieu-rap}">Phim chiếu rạp</a>
-                    </li>
-                    <li class="h-100">
-                        <a class="h-100 d-flex align-items-center text-white text-uppercase ms-3"
-                           th:href="@{/tim-kiem}">Tìm kiếm phim</a>
-                    </li>
-                </ul>
+<header class="bg-dark header">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="https://motchillzzz.net/_ipx/f_webp&s_200x52/logo.png" alt="">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#main-menu" aria-controls="main-menu" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between align-items-center" id="main-menu">
+                <div class="navbar-nav">
+                    <a class="nav-link text-white" href="/">Trang chủ</a>
+                    <a class="nav-link text-white" href="/phim-bo">Phim bộ</a>
+                    <a class="nav-link text-white" href="/phim-chieu-rap">Phim chiếu rạp</a>
+                    <a class="nav-link text-white" href="/phim-le">Phim lẻ</a>
+                </div>
+                <div>
+                    <div class="d-flex align-items-center" th:if="${session.currentUser != null}">
+                        <p class="text-white mb-0" th:text="${session.currentUser.name}"></p>
+                        <a class="text-white fst-italic ms-2" href="javascript:void(0)" onclick="logout()">(Đăng xuất)</a>
+                    </div>
+                    <a class="text-white" href="/dang-nhap" th:if="${session.currentUser == null}">Đăng nhập</a>
+                </div>
             </div>
         </div>
-    </div>
+    </nav>
 </header>
 </body>
 </html>

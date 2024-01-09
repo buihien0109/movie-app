@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" th:fragment="layout(title, css, content, js)">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="shortcut icon" href="/img/favicon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/img/favicon/favicon.ico" type="image/x-icon">
+    <title th:replace="${title}">AdminLTE 3 | Dashboard</title>
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"/>
+    <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/fontawesome-free/css/all.css}"/>
+    <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/adminlte.min.css}"/>
+    <link rel="stylesheet"
+          th:href="@{/admin-assets/admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}"/>
+    <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/toastr/toastr.min.css}"/>
+    <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/pagination/pagination.min.css}"/>
+    <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}"/>
+    <th:block th:replace="${css} ?: ~{}"></th:block>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+
+<div class="wrapper">
+
+    <!--    HEADER-->
+    <th:block th:replace="~{admin/fragments/header :: header}"></th:block>
+
+    <!--    CONTENT-->
+    <th:block th:replace="${content} ?: ~{}"></th:block>
+
+</div>
+
+<script th:src="@{/admin-assets/admin-lte/plugins/jquery/jquery.min.js}"></script>
+<script th:src="@{/admin-assets/admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/admin-assets/admin-lte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<script th:src="@{/admin-assets/admin-lte/plugins/jquery-validation/jquery.validate.min.js}"></script>
+<script th:src="@{/admin-assets/admin-lte/plugins/jquery-validation/additional-methods.min.js}"></script>
+<script th:src="@{/admin-assets/admin-lte/plugins/toastr/toastr.min.js}"></script>
+<script th:src="@{/admin-assets/admin-lte/plugins/axios/axios.min.js}"></script>
+<script th:src="@{/admin-assets/admin-lte/plugins/pagination/pagination.min.js}"></script>
+<script th:src="@{/admin-assets/admin-lte/dist/js/adminlte.js}"></script>
+<script th:src="@{/admin-assets/assets/js/main.js}"></script>
+
+<!--Js-->
+<th:block th:replace="${js} ?: ~{}"></th:block>
+<script th:src="@{/admin-assets/assets/js/utils.js}"></script>
+</body>
+
+</html>

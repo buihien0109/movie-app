@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Tất cả bài viết</title>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh sách bài viết
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <a href="/admin/blogs/create" type="button" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Viết bài
+                    </a>
+                    <a href="/admin/blogs" type="button" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Tiêu đề</th>
+                                    <th>Tác giả</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày tạo</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-center mt-3" id="pagination">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const blogs = [[${blogs}]];
+        console.log({blogs})
+
+        // render blogs from blogs to body of table
+        const tableBody = document.querySelector('table tbody');
+        const renderBlogs = (blogList) => {
+            let html = '';
+            blogList.forEach(blog => {
+                html += `
+                    <tr>
+                        <td>
+                            <a href="/admin/blogs/${blog.id}/detail">${blog.title}</a>
+                        </td>
+                        <td>
+                            <a href="/admin/users/${blog.user.id}">${blog.user.name}</a>
+                        </td>
+                        <td>${blog.status ? 'Công khai' : 'Nháp'}</td>
+                        <td>${formatDate(blog.createdAt)}</td>
+                    </tr>
+                `;
+            })
+            tableBody.innerHTML = html;
+        }
+
+        // render pagination using pagination.js
+        const renderPagination = (blogList) => {
+            $('#pagination').pagination({
+                dataSource: blogList,
+                className: 'paginationjs-theme-blue paginationjs-big',
+                callback: function (data, pagination) {
+                    renderBlogs(data);
+                },
+                hideOnlyOnePage : true
+            })
+        }
+        renderPagination(blogs);
+    </script>
+</th:block>
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Tất cả diễn viên</title>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh sách diễn viên
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <a href="/admin/actors/create" type="button" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Tạo diễn viên
+                    </a>
+                    <a href="/admin/actors" type="button" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Avatar</th>
+                                    <th>Họ tên</th>
+                                    <th>Birthday</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-center mt-3" id="pagination">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const actors = [[${actorList}]];
+        console.log({actors})
+
+        // render users from users to body of table
+        const tableBody = document.querySelector('table tbody');
+        const renderActors = (actorList) => {
+            let html = '';
+            actorList.forEach(actor => {
+                html += `
+                  <tr>
+                     <td>
+                          <img src="${actor.avatar}" alt="${actor.name}" width="50" height="50" class="rounded-circle">
+                      <td>
+                          <a href="/admin/actors/${actor.id}/detail">${actor.name}</a>
+                      </td>
+                      <td>
+                            ${formatDate(actor.birthday)}
+                      </td>
+                  </tr>
+                `;
+            })
+            tableBody.innerHTML = html;
+        }
+
+        // render pagination using pagination.js
+        const renderPagination = (actorList) => {
+            $('#pagination').pagination({
+                dataSource: actorList,
+                className: 'paginationjs-theme-blue paginationjs-big',
+                callback: function (data, pagination) {
+                    renderActors(data);
+                },
+                hideOnlyOnePage: true
+            })
+        }
+        renderPagination(actors);
+    </script>
+</th:block>
+</body>
+
+</html>

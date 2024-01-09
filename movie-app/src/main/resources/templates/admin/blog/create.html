@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Tạo bài viết</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+    </th:block>
+
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/blogs/own-blogs">Blog</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Tạo bài viết
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/blogs/own-blogs" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-create">
+                        Lưu
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <form id="form-create-blog">
+                                        <div class="form-group">
+                                            <label>Tiêu đề</label>
+                                            <input type="text" class="form-control" id="title" name="title"/>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Nội dung</label>
+                                            <textarea id="content" class="form-control" rows="3" name="content"></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Mô tả ngắn</label>
+                                            <textarea id="description" class="form-control" rows="3" name="description"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Trạng thái</label>
+                                        <select id="status" class="form-control">
+                                            <option value="false">
+                                                Nháp
+                                            </option>
+                                            <option value="true">
+                                                Công khai
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.js}"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+    <script th:inline="javascript">
+        $('#content').summernote({
+            height: 500,
+        })
+
+        $('#content').css({
+            'display': 'block',
+            'height': '0',
+            'padding': '0',
+            'border': 'none'
+        })
+
+        $('#content').on('summernote.change', function(we, contents, $editable) {
+            $("#content").html(contents);
+        });
+
+
+        $('#form-create-blog').validate({
+            rules: {
+                title: {
+                    required: true
+                },
+                content: {
+                    required: true
+                },
+                description: {
+                    required: true
+                }
+            },
+            messages: {
+                title: {
+                    required: "Tiêu đề không được để trống"
+                },
+                content: {
+                    required: "Nội dung không được để trống"
+                },
+                description: {
+                    required: "Mô tả không được để trống"
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        // Truy cập
+        const titleEl = document.getElementById("title");
+        const descriptionEl = document.getElementById("description");
+        const statusEl = document.getElementById("status");
+        const btnCreate = document.getElementById("btn-create");
+
+        // create blog using axios and promise
+        btnCreate.addEventListener("click", () => {
+            if (!$('#form-create-blog').valid()) {
+                return;
+            }
+
+            const data = {
+                title: titleEl.value,
+                content: $('#content').summernote('code'),
+                description: descriptionEl.value,
+                status: statusEl.value === "true"
+            };
+            console.log(data)
+
+            axios.post("/api/admin/blogs", data)
+                .then((res) => {
+                    toastr.success("Tạo bài viết thành công");
+                    setTimeout(() => {
+                        window.location.href = `/admin/blogs/${res.data.id}/detail`
+                    }, 1500);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    toastr.error(err.response.data.message);
+                });
+        });
+    </script>
+</th:block>
+
+</body>
+
+</html>
