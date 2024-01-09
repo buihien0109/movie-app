@@ -1,17 +1,17 @@
-# Use an official OpenJDK runtime as a parent image
-FROM --platform=amd64 openjdk:17.0.2-oraclelinux8
+# Stage 1: Build the JAR using Maven 3.8.4 with JDK 17
+FROM maven:3.8.4-openjdk-17 AS build
+WORKDIR /home/app
+COPY src ./src
+COPY pom.xml .
+RUN mvn clean package -DskipTests
 
-# Set the working directory in the container
+# Stage 2: Create the final image using openjdk:17
+FROM openjdk:17
 WORKDIR /app
+COPY --from=build /home/app/target/*.jar ./app.jar
 
-# Copy the JAR file built by your Spring Boot application into the container at the working directory
-COPY target/app.jar app.jar
+# Copying image_uploads and video_uploads directories
+COPY image_uploads ./image_uploads
+COPY video_uploads ./video_uploads
 
-COPY ./image_uploads ./image_uploads
-COPY ./video_uploads ./video_uploads
-
-# Expose the port your application will run on
-EXPOSE 8080
-
-# Specify the command to run your application when the container starts
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","./app.jar"]
