@@ -1,4 +1,6 @@
-## Web xem phim Netflix phiên bản Việt Nam (version 1)
+## Web xem phim Netflix phiên bản Việt Nam (version 2)
+
+Link demo: http://103.237.147.34:8888/
 
 ### Sơ đồ thiết kế cơ sở dữ liệu
 
