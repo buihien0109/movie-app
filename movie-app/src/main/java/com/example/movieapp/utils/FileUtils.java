@@ -22,8 +22,11 @@ public class FileUtils {
         }
     }
 
-    public static void deleteFile(String videoPath) {
-        Path path = Paths.get(videoPath);
+    public static void deleteFile(String filePath) {
+        log.info("Xóa file: " + filePath);
+        // filePath: /image_uploads/123456789
+        filePath = filePath.substring(1);
+        Path path = Paths.get(filePath);
         try {
             Files.deleteIfExists(path);
         } catch (IOException e) {

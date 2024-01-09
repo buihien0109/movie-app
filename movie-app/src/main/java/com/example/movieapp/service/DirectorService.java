@@ -1,11 +1,13 @@
 package com.example.movieapp.service;
 
 import com.example.movieapp.entity.Director;
-import com.example.movieapp.entity.User;
+import com.example.movieapp.exception.BadRequestException;
 import com.example.movieapp.exception.ResouceNotFoundException;
 import com.example.movieapp.model.request.CreateDirectorRequest;
 import com.example.movieapp.model.request.UpdateDirectorRequest;
 import com.example.movieapp.repository.DirectorRepository;
+import com.example.movieapp.repository.FilmRepository;
+import com.example.movieapp.utils.FileUtils;
 import com.example.movieapp.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DirectorService {
+    private final FilmRepository filmRepository;
     private final DirectorRepository directorRepository;
     private final FileService fileService;
 
@@ -59,12 +62,30 @@ public class DirectorService {
     public void deleteDirector(Integer id) {
         Director existingDirector = directorRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đạo diễn có id = " + id));
+
+        // Kiểm tra xem đạo diễn có đang áp dụng cho phim nào không. Nếu count > 0 thì không được xóa -> throw exception
+        long count = filmRepository.countByDirectors_Id(id);
+        if (count > 0) {
+            throw new BadRequestException("Không thể xóa đạo diễn này vì đang áp dụng cho phim");
+        }
+
+        // Kiểm tra xem đạo diễn có avatar không. Nếu có thì xóa file avatar
+        if (existingDirector.getAvatar() != null) {
+            FileUtils.deleteFile(existingDirector.getAvatar());
+        }
+
+        // Xóa đạo diễn
         directorRepository.deleteById(id);
     }
 
     public String updateAvatar(Integer directorId, MultipartFile file) {
         Director director = directorRepository.findById(directorId)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đạo diễn"));
+
+        // Kiểm tra xem đạo diễn có avatar không. Nếu có thì xóa file avatar sau đó lưu file mới
+        if (director.getAvatar() != null) {
+            FileUtils.deleteFile(director.getAvatar());
+        }
 
         String filePath = fileService.saveFile(file);
         director.setAvatar(filePath);

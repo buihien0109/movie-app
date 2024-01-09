@@ -7,6 +7,7 @@ import com.example.movieapp.exception.ResouceNotFoundException;
 import com.example.movieapp.model.request.CreateUserRequest;
 import com.example.movieapp.model.request.UpdateUserRequest;
 import com.example.movieapp.repository.UserRepository;
+import com.example.movieapp.utils.FileUtils;
 import com.example.movieapp.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,12 +68,22 @@ public class UserService {
     public void deleteUser(Integer id) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy user có id = " + id));
+
+        // Kiểm tra xem user có avatar không. Nếu có thì xóa file avatar
+        if (existingUser.getAvatar() != null) {
+            FileUtils.deleteFile(existingUser.getAvatar());
+        }
         userRepository.deleteById(id);
     }
 
     public String updateAvatar(Integer userId, MultipartFile file) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy user"));
+
+        // Kiểm tra xem user có avatar không. Nếu có thì xóa file avatar sau đó lưu file mới
+        if (user.getAvatar() != null) {
+            FileUtils.deleteFile(user.getAvatar());
+        }
 
         String filePath = fileService.saveFile(file);
         user.setAvatar(filePath);

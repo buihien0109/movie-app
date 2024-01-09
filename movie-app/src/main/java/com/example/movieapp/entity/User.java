@@ -1,6 +1,7 @@
 package com.example.movieapp.entity;
 
 import com.example.movieapp.model.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,6 +27,7 @@ public class User {
     @Column(unique = true)
     String email;
 
+    @JsonIgnore
     String password;
 
     String avatar;

@@ -48,9 +48,6 @@
                     <button type="button" class="btn btn-info px-4" id="btn-update">
                         Cập nhật
                     </button>
-                    <!--                    <button type="button" class="btn btn-primary px-4">-->
-                    <!--                        Preview-->
-                    <!--                    </button>-->
                 </div>
 
                 <div class="col-6 d-flex justify-content-end">
@@ -229,7 +226,7 @@
                     })
                     .catch(err => {
                         console.log(err);
-                        toastr.error("Xóa thất bại");
+                        toastr.error(err.response.data.message);
                     });
             }
         });

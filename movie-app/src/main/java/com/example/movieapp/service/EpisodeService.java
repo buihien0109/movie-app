@@ -33,6 +33,7 @@ public class EpisodeService {
         Episode episode = Episode.builder()
                 .title(request.getTitle())
                 .displayOrder(request.getDisplayOrder())
+                .status(request.getStatus())
                 .film(film)
                 .build();
 
@@ -50,6 +51,7 @@ public class EpisodeService {
         existingEpisode.setTitle(request.getTitle());
         existingEpisode.setDisplayOrder(request.getDisplayOrder());
         existingEpisode.setFilm(film);
+        existingEpisode.setStatus(request.getStatus());
         return episodeRepository.save(existingEpisode);
     }
 

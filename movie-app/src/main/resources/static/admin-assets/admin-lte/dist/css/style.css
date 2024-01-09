@@ -2,6 +2,7 @@ img {
     max-width: 100%;
     display: block;
     margin: auto;
+    object-fit: cover;
 }
 
 .EasyMDEContainer {
@@ -224,4 +225,15 @@ img {
 
 #modal-review .review-product-rating-item.active {
     color: #EDBB0E;
+}
+
+.image-preview-container {
+    width: 100%;
+    height: 250px;
+}
+
+.image-preview-container img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }

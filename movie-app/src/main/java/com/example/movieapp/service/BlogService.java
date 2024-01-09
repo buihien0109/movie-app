@@ -5,7 +5,7 @@ import com.example.movieapp.entity.User;
 import com.example.movieapp.exception.ResouceNotFoundException;
 import com.example.movieapp.model.request.UpsertBlogRequest;
 import com.example.movieapp.repository.BlogRepository;
-import com.example.movieapp.repository.UserRepository;
+import com.example.movieapp.utils.FileUtils;
 import com.example.movieapp.utils.StringUtils;
 import com.github.slugify.Slugify;
 import jakarta.servlet.http.HttpSession;
@@ -24,7 +24,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BlogService {
     private final BlogRepository blogRepository;
-    private final UserRepository userRepository;
     private final FileService fileService;
     private final Slugify slugify;
     private final HttpSession session;
@@ -82,12 +81,22 @@ public class BlogService {
         Blog blog = blogRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy bài viết với id = " + id));
 
+        // Kiểm tra xem blog có thumbnail không. Nếu có thì xóa file thumbnail
+        if (blog.getThumbnail() != null) {
+            FileUtils.deleteFile(blog.getThumbnail());
+        }
+
         blogRepository.delete(blog);
     }
 
     public String updateThumbnail(Integer id, MultipartFile file) {
         Blog blog = blogRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy bài viết với id = " + id));
+
+        // Kiểm tra xem blog có thumbnail không. Nếu có thì xóa file thumbnail sau đó lưu file mới
+        if (blog.getThumbnail() != null) {
+            FileUtils.deleteFile(blog.getThumbnail());
+        }
 
         String filePath = fileService.saveFile(file);
         blog.setThumbnail(filePath);

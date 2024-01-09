@@ -37,4 +37,10 @@ public class FileService {
         }
         return null;
     }
+
+    public void deleteFile(String filePath) {
+        // filePath: /image_uploads/123456789
+        filePath = filePath.substring(1);
+        FileUtils.deleteFile(filePath);
+    }
 }

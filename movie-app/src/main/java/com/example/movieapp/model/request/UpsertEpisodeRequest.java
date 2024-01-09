@@ -20,4 +20,7 @@ public class UpsertEpisodeRequest {
 
     @NotNull(message = "ID phim không được để trống")
     Integer filmId;
+
+    @NotNull(message = "Trạng thái tập phim không được để trống")
+    Boolean status;
 }

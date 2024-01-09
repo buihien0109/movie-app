@@ -40,12 +40,19 @@
         <div class="container-fluid">
             <div class="row py-2">
                 <div class="col-6">
-                    <a href="/admin/actors" type="button" class="btn btn-default">
-                        <i class="fas fa-chevron-left"></i> Quay lại
-                    </a>
-                    <button type="button" class="btn btn-info px-4" id="btn-update">
-                        Cập nhật
-                    </button>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <a href="/admin/actors" type="button" class="btn btn-default">
+                                <i class="fas fa-chevron-left"></i> Quay lại
+                            </a>
+                            <button type="button" class="btn btn-info px-4" id="btn-update">
+                                Cập nhật
+                            </button>
+                        </div>
+                        <button type="button" class="btn btn-danger px-4" id="btn-delete">
+                            Xóa
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -190,6 +197,23 @@
                     console.log(err)
                     toastr.error('Cập nhật avatar thất bại');
                 });
+        });
+
+        const btnDelete = document.getElementById("btn-delete");
+        btnDelete.addEventListener("click", () => {
+            if (window.confirm("Bạn có chắc chắn muốn xóa diễn viên này?")) {
+                axios.delete(`/api/admin/actors/${actor.id}`)
+                    .then(res => {
+                        toastr.success("Xóa thành công");
+                        setTimeout(() => {
+                            window.location.href = "/admin/actors";
+                        }, 1500);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        toastr.error(err.response.data.message);
+                    });
+            }
         });
     </script>
 </th:block>

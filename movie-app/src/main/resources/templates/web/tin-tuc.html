@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách tin tức</title>
+    <link rel="shortcut icon" href="/image/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
           integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
           crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -28,7 +30,7 @@
                     <a th:href="@{/tin-tuc/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}">
                         <h5 th:text="${blog.title}">Top 15 Phim Cổ Trang Trung Quốc Hay Không Thể Bỏ Lỡ Năm 2023</h5>
                         <p class="fst-italic" th:text="${#dates.format(blog.publishedAt, 'dd/MM/YYYY')}">August 20, 2023</p>
-                        <p class="mb-0" th:text="${blog.description}">Năm 2023 phim hàn quốc đã có nhiều nội dung được đổi mới và thu hút lượt xem
+                        <p class="mb-0 truncate" th:text="${blog.description}">Năm 2023 phim hàn quốc đã có nhiều nội dung được đổi mới và thu hút lượt xem
                             nhiều hơn,
                             vậy
                             đâu là 10 bộ phim hàn quốc hot nhất năm 2023, Cùng Motchill điểm qua ...</p>

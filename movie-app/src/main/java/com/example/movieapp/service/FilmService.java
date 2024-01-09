@@ -11,6 +11,7 @@ import com.example.movieapp.repository.ActorRepository;
 import com.example.movieapp.repository.DirectorRepository;
 import com.example.movieapp.repository.FilmRepository;
 import com.example.movieapp.repository.GenreRepository;
+import com.example.movieapp.utils.FileUtils;
 import com.example.movieapp.utils.StringUtils;
 import com.github.slugify.Slugify;
 import lombok.RequiredArgsConstructor;
@@ -102,12 +103,23 @@ public class FilmService {
     public void deleteFilm(Integer id) {
         Film existingFilm = filmRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phim có id = " + id));
+
+        // Kiểm tra xem phim có poster không. Nếu có thì xóa file poster
+        if (existingFilm.getPoster() != null) {
+            FileUtils.deleteFile(existingFilm.getPoster());
+        }
+
         filmRepository.deleteById(id);
     }
 
     public String updatePoster(Integer id, MultipartFile file) {
         Film film = filmRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phim"));
+
+        // Kiểm tra xem phim có poster không. Nếu có thì xóa file poster sau đó lưu file mới
+        if (film.getPoster() != null) {
+            FileUtils.deleteFile(film.getPoster());
+        }
 
         String filePath = fileService.saveFile(file);
         film.setPoster(filePath);

@@ -1,6 +1,7 @@
 package com.example.movieapp.repository;
 
 import com.example.movieapp.entity.Film;
+import com.example.movieapp.entity.Genre;
 import com.example.movieapp.model.enums.FilmType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,4 +18,10 @@ public interface FilmRepository extends JpaRepository<Film, Integer> {
 
     @Query(value = "SELECT * FROM films WHERE status = 1 ORDER BY view DESC LIMIT ?1", nativeQuery = true)
     List<Film> findPhimHot(Integer limit);
+
+    long countByGenres_Id(Integer id);
+
+    long countByDirectors_Id(Integer id);
+
+    long countByActors_Id(Integer id);
 }

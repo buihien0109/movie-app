@@ -198,7 +198,7 @@
                                             <div class="d-flex justify-content-center mt-3"
                                                  id="episode-pagination"></div>
 
-                                            <!-- Modal genre -->
+                                            <!-- Modal episode -->
                                             <div class="modal fade" id="modal-episode" data-bs-backdrop="static"
                                                  data-bs-keyboard="false" tabindex="-1"
                                                  aria-labelledby="modal-genre-title" aria-hidden="true">
@@ -230,6 +230,13 @@
                                                                            id="episode-display-order"
                                                                            placeholder="1, 2, 3, ..."
                                                                            name="displayOrder">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                <label>Trạng thái</label>
+                                                                    <select class="form-control" id="episode-status" name="status">
+                                                                        <option value="false" selected>Nháp</option>
+                                                                        <option value="true">Công khai</option>
+                                                                    </select>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -412,8 +419,8 @@
                 });
         });
 
-        // rating
-        // render products from products to body of table
+        // review --------------------------------------------
+        // render reviews from reviews to body of table
         const tableReviewBody = document.querySelector('#table-review tbody');
         const renderReviews = (reviewList) => {
             let html = '';
@@ -475,7 +482,7 @@
 
         renderPaginationEpisodeReview(reviews);
 
-        // episode
+        // episode --------------------------------------------
         let idEpisodeUpdate = null;
 
         // validate form
@@ -486,14 +493,20 @@
                 },
                 displayOrder: {
                     required: true
+                },
+                status: {
+                    required: true
                 }
             },
             messages: {
-                name: {
-                    title: "Tên tập phim không được để trống"
+                title: {
+                    required: "Tên tập phim không được để trống"
                 },
                 displayOrder: {
                     required: "Thứ tự hiển thị không được để trống"
+                },
+                status: {
+                    required: "Trạng thái không được để trống"
                 }
             },
             errorElement: 'span',
@@ -536,6 +549,11 @@
                         <td>${episode?.video?.url ?? ""}</td>
                         <td>${episode?.video?.duration ? secondsToHMS(episode?.video?.duration) : ""}</td>
                         <td>
+                            ${episode.status
+                                ? '<span class="badge bg-success">Công khai</span>'
+                                : '<span class="badge bg-secondary">Nháp</span>'}
+                        </td>
+                        <td>
                             <label for="episode-${episode.id}" class="btn btn-primary btn-sm text-white mb-0">
                                 <i class="fas fa-upload"></i>
                             </label>
@@ -573,8 +591,19 @@
         // Open modal create
         const episodeTitleEl = document.getElementById("episode-title");
         const episodeDisplayOrderEl = document.getElementById("episode-display-order");
+        const episodeStatusEl = document.getElementById("episode-status");
         const btnOpenModal = document.getElementById("btn-open-modal");
         btnOpenModal.addEventListener("click", () => {
+            // Kiểm tra xem phim thuộc thể loại nào.
+            // Nếu là phim chiếu rạp, phim lẻ thì không cho tạo tập phim mới nếu đã có 1 tập phim
+            if (film.type === "PHIM_CHIEU_RAP" || film.type === "PHIM_LE") {
+                if (episodes.length > 0) {
+                    toastr.warning("Phim chiếu rạp, phim lẻ chỉ được tạo 1 tập phim");
+                    return;
+                }
+            }
+
+
             $('#modal-episode').modal('show');
 
             // set title modal
@@ -588,6 +617,7 @@
         $('#modal-episode').on('hidden.bs.modal', function (event) {
             episodeTitleEl.value = "";
             episodeDisplayOrderEl.value = "";
+            episodeStatusEl.value = "false";
             idEpisodeUpdate = null;
         })
 
@@ -600,7 +630,15 @@
             const data = {
                 title: episodeTitleEl.value,
                 displayOrder: Number(episodeDisplayOrderEl.value),
-                filmId: film.id
+                filmId: film.id,
+                status: episodeStatusEl.value === "true"
+            }
+
+            // Kiểm tra xem tập phim có trùng display order không
+            const isDuplicate = episodes.some(episode => episode.displayOrder === data.displayOrder)
+            if (isDuplicate) {
+                toastr.error("Thứ tự hiển thị đã tồn tại. Vui lòng chọn thứ tự khác");
+                return;
             }
 
             axios.post("/api/admin/episodes", data)
@@ -628,7 +666,24 @@
             const data = {
                 title: episodeTitleEl.value,
                 displayOrder: Number(episodeDisplayOrderEl.value),
-                filmId: film.id
+                filmId: film.id,
+                status: episodeStatusEl.value === "true"
+            }
+
+            // Kiểm tra xem tập phim có trùng display order không, và không trùng với tập phim cần update
+            const isDuplicate = episodes.some(episode => episode.displayOrder === data.displayOrder && episode.id !== idEpisodeUpdate)
+            if (isDuplicate) {
+                toastr.error("Thứ tự hiển thị đã tồn tại. Vui lòng chọn thứ tự khác");
+                return;
+            }
+
+            // Nếu trạng thái là true thì cần phải có video
+            if (data.status) {
+                const episode = episodes.find(episode => episode.id === idEpisodeUpdate)
+                if (!episode.video) {
+                    toastr.error("Tập phim này chưa có video. Nên không thể công khai. Vui lòng upload video cho tập phim");
+                    return;
+                }
             }
 
             axios.put(`/api/admin/episodes/${idEpisodeUpdate}`, data)
@@ -656,6 +711,7 @@
             const episode = episodes.find(episode => episode.id === id)
             episodeTitleEl.value = episode.title
             episodeDisplayOrderEl.value = episode.displayOrder
+            episodeStatusEl.value = episode.status.toString()
             idEpisodeUpdate = episode.id;
             $('#modal-episode').modal('show');
 
