@@ -2,6 +2,9 @@
 
 */.DS_Store
 
+video_uploads/
+image_uploads/
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
