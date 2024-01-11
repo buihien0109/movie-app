@@ -98,10 +98,10 @@
                             class="badge bg-info mr-1">${genre.name}</span>`).join('')}
                     </td>
                     <td>
-                        ${formatCurrency(film.view)}
+                        ${film.view == null ? 0 : formatCurrency(film.view)}
                     </td>
                     <td>
-                        <span>${film.rating}</span>
+                        <span>${film.rating == null ? 0 : film.rating}</span>
                         <span style="color: #EDBB0E"><i class="fas fa-star"></i></span>
                     </td>
                     <td>

@@ -6,7 +6,7 @@ COPY pom.xml .
 RUN mvn clean package -DskipTests
 
 # Stage 2: Create the final image using openjdk:17
-FROM openjdk:17
+FROM --platform=amd64 openjdk:17
 WORKDIR /app
 COPY --from=build /home/app/target/*.jar ./app.jar
 

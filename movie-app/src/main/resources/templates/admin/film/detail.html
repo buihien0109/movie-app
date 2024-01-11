@@ -160,8 +160,7 @@
 
                                                 <div class="form-group">
                                                     <div class="image-preview-container mb-3">
-                                                        <img th:src="${film.poster}" alt="" id="image-preview"
-                                                             style="height: 300px; width: 100%; object-fit: cover"/>
+                                                        <img th:src="${film.poster}" alt="" id="image-preview" />
                                                     </div>
                                                     <label for="image-input" class="btn btn-info btn-flat rounded">
                                                         Chọn hình ảnh
@@ -185,8 +184,9 @@
                                                 <tr>
                                                     <th style="width: 5%">#</th>
                                                     <th style="width: 20%">Tên tập phim</th>
-                                                    <th style="width: 20%">Link</th>
-                                                    <th style="width: 20%">Thời lượng</th>
+                                                    <th style="width: 40%">Link</th>
+                                                    <th style="width: 10%">Thời lượng</th>
+                                                    <th style="width: 10%">Trạng thái</th>
                                                     <th style="width: 15%"></th>
                                                 </tr>
                                                 </thead>
@@ -276,10 +276,10 @@
                                             <table class="table table-bordered table-hover" id="table-review">
                                                 <thead>
                                                 <tr>
-                                                    <th style="width: 18%">Tác giả</th>
-                                                    <th style="width: 7%">Đánh giá</th>
-                                                    <th style="width: 50%">Nội dung</th>
-                                                    <th style="width: 20%">Thời gian</th>
+                                                    <th style="width: 20%">Tác giả</th>
+                                                    <th style="width: 10%">Đánh giá</th>
+                                                    <th style="width: 55%">Nội dung</th>
+                                                    <th style="width: 10%">Thời gian</th>
                                                     <th style="width: 5%"></th>
                                                 </tr>
                                                 </thead>
@@ -433,7 +433,7 @@
                             <span style="color: #EDBB0E"><i class="fas fa-star"></i></span>
                         </td>
                         <td>${review.comment}</td>
-                        <td>${formatDateTime(review.createdAt)}</td>
+                        <td>${formatDate(review.createdAt)}</td>
                         <td>
                             <button class="btn btn-danger btn-sm" onclick="deleteReview(${review.id})">
                                 <i class="fas fa-trash-alt"></i>

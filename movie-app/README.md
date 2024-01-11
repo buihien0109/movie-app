@@ -2,6 +2,20 @@
 
 Link demo: http://103.237.147.34:8888/
 
+### Triển khai ứng dụng
+
+Sau khi clone source về máy, truy cập vào thư mục `movie-app` chứa source code
+
+```
+cd movie-app
+```
+
+Sử dụng docker-compose để triển khai ứng dụng
+
+```
+docker-compose up -d
+```
+
 ### Sơ đồ thiết kế cơ sở dữ liệu
 
 - https://dbdiagram.io/d/db-movie-app-659cc597ac844320ae80c2f9
