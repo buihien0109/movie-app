@@ -55,28 +55,43 @@ Các chức năng trong trang quản trị:
 7. Trang danh sách tin tức : http://localhost:8080/tin-tuc
 8. Trang chi tiết tin tức : http://localhost:8080/tin-tuc/30/top-11-phim-co-doanh-thu-cao-nhat-moi-thoi-ai
 
-### Một số hình ảnh minh họa trong trang web
+### Github Action
 
-#### 1. Trang chủ
+```yaml
+name: Java CI/CD Pipeline
 
-![trang chủ film](../images/trang-chu.png)
+on:
+  push:
+    branches:
+      - main
 
-#### 2. Phim lẻ
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-![phim lẻ](../images/phim-le.png)
+    steps:
+    - uses: actions/checkout@v2
 
-#### 3. Phim bộ
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'temurin'
 
-![phim bộ](../images/phim-bo.png)
+    - name: Build with Maven
+      working-directory: ./movie-app
+      run: |
+        echo "Maven version:"
+        mvn -version
+        mvn -B clean install
 
-#### 4. Phim chiếu rạp
+    - name: Build Docker Image
+      working-directory: ./movie-app
+      run: docker build -t buihien0109/movie-app:latest .
 
-![chiếu rạp](../images/phim-chieu-rap.png)
+    - name: Login to Docker Hub
+      run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
-#### 5. Phim chi tiết phim
-
-![chi tiết phim](../images/chi-tiet.png)
-
-#### 6. Tìm kiếm phim
-
-![tìm kiếm](../images/tim-kiem.png)
+    - name: Push Docker Image to Docker Hub
+      run: docker push buihien0109/movie-app:latest
+```
