@@ -17,7 +17,7 @@ toastr.options = {
 }
 
 const logout = () => {
-    axios.post('/api/auth/logout').then(res => {
+    axios.post('/logout').then(res => {
         if (res.status === 200) {
             toastr.success("Đăng xuất thành công");
             setTimeout(() => {

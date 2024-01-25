@@ -5,18 +5,22 @@ import com.example.movieapp.entity.User;
 import com.example.movieapp.exception.ResouceNotFoundException;
 import com.example.movieapp.model.request.UpsertBlogRequest;
 import com.example.movieapp.repository.BlogRepository;
+import com.example.movieapp.security.SecurityUtils;
 import com.example.movieapp.utils.FileUtils;
 import com.example.movieapp.utils.StringUtils;
 import com.github.slugify.Slugify;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service
@@ -26,18 +30,62 @@ public class BlogService {
     private final BlogRepository blogRepository;
     private final FileService fileService;
     private final Slugify slugify;
-    private final HttpSession session;
 
     // admin get all blogs
     @Transactional
-    public List<Blog> getAllBlogsAdmin() {
-        return blogRepository.findAll(Sort.by("createdAt").descending());
+    public Map<String, Object> getAllBlogsAdmin(int start, int length, int draw, int sortColumn, String sortOrder) {
+        log.info("start: {}, length: {}, draw: {}, sortColumn: {}, sortOrder: {}", start, length, draw, sortColumn, sortOrder);
+
+        Sort sort = getSort(sortColumn, sortOrder);
+        Pageable pageable = PageRequest.of(start / length, length, sort);
+        Page<Blog> pageData = blogRepository.findAll(pageable);
+
+        return getData(draw, pageData);
     }
 
     // admin get all blog of logged user
-    public List<Blog> getAllOwnBlogAdmin() {
-        User user = (User) session.getAttribute("currentUser");
-        return blogRepository.findByUser_IdOrderByCreatedAtDesc(user.getId());
+    public Map<String, Object> getAllOwnBlogsAdmin(int start, int length, int draw, int sortColumn, String sortOrder) {
+        log.info("start: {}, length: {}, draw: {}, sortColumn: {}, sortOrder: {}", start, length, draw, sortColumn, sortOrder);
+        User user = SecurityUtils.getCurrentUserLogin();
+
+        Sort sort = getSortOwnBlog(sortColumn, sortOrder);
+        Pageable pageable = PageRequest.of(start / length, length, sort);
+        Page<Blog> pageData = blogRepository.findByUser_Id(user.getId(), pageable);
+
+        return getData(draw, pageData);
+    }
+
+    private Map<String, Object> getData(int draw, Page<Blog> pageData) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("draw", draw);
+        data.put("recordsTotal", pageData.getTotalElements());
+        data.put("recordsFiltered", pageData.getTotalElements());
+        data.put("data", pageData.getContent());
+
+        return data;
+    }
+
+    private Sort getSort(int column, String dir) {
+        String sortField = switch (column) {
+            case 0 -> "title";
+            case 1 -> "user.name";
+            case 2 -> "status";
+            case 3 -> "createdAt";
+            default -> "createdAt"; // Mặc định sắp xếp theo title
+            // Các trường hợp khác tùy theo cấu trúc của bảng
+        };
+        return Sort.by(Sort.Direction.fromString(dir), sortField);
+    }
+
+    private Sort getSortOwnBlog(int column, String dir) {
+        String sortField = switch (column) {
+            case 0 -> "title";
+            case 1 -> "status";
+            case 2 -> "createdAt";
+            default -> "createdAt"; // Mặc định sắp xếp theo title
+            // Các trường hợp khác tùy theo cấu trúc của bảng
+        };
+        return Sort.by(Sort.Direction.fromString(dir), sortField);
     }
 
     public Blog getBlogById(Integer id) {
@@ -46,7 +94,7 @@ public class BlogService {
     }
 
     public Blog saveBlog(UpsertBlogRequest request) {
-        User user = (User) session.getAttribute("currentUser");
+        User user = SecurityUtils.getCurrentUserLogin();
 
         // Create blog
         Blog blog = Blog.builder()

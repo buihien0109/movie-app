@@ -145,11 +145,11 @@
         <div>
             <div class="d-flex justify-content-between align-items-center">
                 <h3 class="mb-3">Bình luận</h3>
-                <button class="btn btn-primary btn-create-review" th:if="${session.currentUser != null}">Viết bình
+                <button class="btn btn-primary btn-create-review" th:if="${isLogined}">Viết bình
                     luận
                 </button>
             </div>
-            <p th:if="${session.currentUser == null}">Vui lòng <a href="/dang-nhap"
+            <p th:if="not ${isLogined}">Vui lòng <a href="/dang-nhap"
                                                                   class="text-primary text-decoration-underline">đăng
                 nhập</a> để viết bình luận</p>
             <div class="review-list">
@@ -163,7 +163,7 @@
     </div>
 </section>
 
-<div class="modal fade" id="modal-review" tabindex="-1" aria-hidden="true" th:if="${session.currentUser != null}">
+<div class="modal fade" id="modal-review" tabindex="-1" aria-hidden="true" th:if="${isLogined}">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -257,7 +257,7 @@
     console.log({film, reviews, relateFilmList, episodeList, currentUser})
 </script>
 <script src="/js/film-detail.js"></script>
-<script src="/js/film-review.js" th:if="${session.currentUser != null}"></script>
+<script src="/js/film-review.js" th:if="${isLogined}"></script>
 </body>
 
 </html>

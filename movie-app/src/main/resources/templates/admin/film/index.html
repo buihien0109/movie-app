@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table id="table-film" class="table table-bordered table-hover">
                                 <thead>
                                 <tr>
                                     <th>Tên phim</th>
@@ -56,15 +56,31 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-
+                                <tr th:each="film : ${filmList}">
+                                    <td>
+                                        <a th:href="@{/admin/films/{id}/detail (id=${film.id})}"
+                                           th:text="${film.title}">Bee</a>
+                                    </td>
+                                    <td th:text="${film.type.getType()}">Loại phim</td>
+                                    <td th:text="${film.releaseYear}">Năm phát hành</td>
+                                    <td>
+                                        <span class="badge bg-info mr-1" th:each="genre : ${film.genres}"
+                                              th:text="${genre.name}">${genre.name}</span>
+                                    </td>
+                                    <td th:text="${film.view == null ? 0 : #numbers.formatInteger(film.view,3,'COMMA')}">
+                                        View
+                                    </td>
+                                    <td>
+                                        <span th:text="${film.rating == null ? 0 : film.rating}"></span>
+                                        <span style="color: #EDBB0E"><i class="fas fa-star"></i></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge" th:text="${film.status ? 'Công khai' : 'Nháp'}"
+                                              th:classappend="${film.status ? 'bg-success' : 'bg-secondary'}">Công khai</span>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -75,72 +91,15 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const films = [[${filmList}]];
-        console.log({films})
-
-        // render users from users to body of table
-        const tableBody = document.querySelector('table tbody');
-        const renderFilms = (filmList) => {
-            let html = '';
-            filmList.forEach(film => {
-                html += `
-                  <tr>
-                    <td>
-                        <a href="/admin/films/${film.id}/detail">${film.title}</a>
-                    </td>
-                    <td>
-                        ${showFilmType(film.type)}
-                    <td>
-                        ${film.releaseYear}
-                    </td>
-                    <td>
-                        ${film.genres.map(genre => `<span
-                            class="badge bg-info mr-1">${genre.name}</span>`).join('')}
-                    </td>
-                    <td>
-                        ${film.view == null ? 0 : formatCurrency(film.view)}
-                    </td>
-                    <td>
-                        <span>${film.rating == null ? 0 : film.rating}</span>
-                        <span style="color: #EDBB0E"><i class="fas fa-star"></i></span>
-                    </td>
-                    <td>
-                        ${film.status
-                        ? '<span class="badge bg-success">Công khai</span>'
-                        : '<span class="badge bg-secondary">Nháp</span>'}
-                    </td>
-                  </tr>
-                `;
-            })
-            tableBody.innerHTML = html;
-        }
-
-        // render film type
-        const showFilmType = (filmType) => {
-            switch (filmType) {
-                case 'PHIM_BO':
-                    return 'Phim bộ';
-                case 'PHIM_LE':
-                    return 'Phim lẻ';
-                case 'PHIM_CHIEU_RAP':
-                    return 'Phim chiếu rạp';
-                default:
-                    return 'Unknown';
-            }
-        }
-
-        // render pagination using pagination.js
-        const renderPagination = (filmList) => {
-            $('#pagination').pagination({
-                dataSource: filmList,
-                className: 'paginationjs-theme-blue paginationjs-big',
-                callback: function (data, pagination) {
-                    renderFilms(data);
-                },
-                hideOnlyOnePage: true
-            })
-        }
-        renderPagination(films);
+        $('#table-film').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+        });
     </script>
 </th:block>
 </body>

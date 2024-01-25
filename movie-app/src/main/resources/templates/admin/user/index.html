@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table id="table-user" class="table table-bordered table-hover">
                                 <thead>
                                 <tr>
                                     <th>Avatar</th>
@@ -53,13 +53,23 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                <tr th:each="user : ${userList}">
+                                    <td>
+                                        <img th:src="${user.avatar}" th:alt="${user.name}" width="50" height="50"
+                                             class="rounded-circle">
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/users/{id}/detail (id=${user.id})}"
+                                           th:text="${user.name}"></a>
+                                    </td>
+                                    <td th:text="${user.email}">Email</td>
+                                    <td>
+                                        <span class="badge" th:text="${user.role.name}"
+                                              th:classappend="${user.role.name == 'ADMIN' ? 'bg-success' : 'bg-secondary'}">ROLE_USER</span>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -70,45 +80,15 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const users = [[${userList}]];
-        console.log({users})
-
-        // render users from users to body of table
-        const tableBody = document.querySelector('table tbody');
-        const renderUsers = (userList) => {
-            let html = '';
-            userList.forEach(user => {
-                html += `
-                    <tr>
-                        <td>
-                            <img src="${user.avatar}" alt="${user.name}" width="50" height="50" class="rounded-circle">
-                        <td>
-                            <a href="/admin/users/${user.id}/detail">${user.name}</a>
-                        </td>
-                        <td>
-                            ${user.email}
-                        </td>
-                        <td>
-                            ${user.role}
-                        </td>
-                    </tr>
-                `;
-            })
-            tableBody.innerHTML = html;
-        }
-
-        // render pagination using pagination.js
-        const renderPagination = (userList) => {
-            $('#pagination').pagination({
-                dataSource: userList,
-                className: 'paginationjs-theme-blue paginationjs-big',
-                callback: function (data, pagination) {
-                    renderUsers(data);
-                },
-                hideOnlyOnePage: true
-            })
-        }
-        renderPagination(users);
+        $('#table-user').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+        });
     </script>
 </th:block>
 </body>

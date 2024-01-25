@@ -12,9 +12,7 @@ import java.util.Optional;
 public interface BlogRepository extends JpaRepository<Blog, Integer> {
     Page<Blog> findByStatus(Boolean status, Pageable pageable);
 
-    List<Blog> findByStatus(Boolean status, Sort sort);
-
-    List<Blog> findByUser_IdOrderByCreatedAtDesc(Integer id);
+    Page<Blog> findByUser_Id(Integer id, Pageable pageable);
 
     Optional<Blog> findByIdAndSlugAndStatus(Integer id, String slug, boolean b);
 }

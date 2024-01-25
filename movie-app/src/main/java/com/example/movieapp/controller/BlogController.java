@@ -17,14 +17,12 @@ public class BlogController {
     // Danh sách tất cả bài viết
     @GetMapping
     public String getHomePage(Model model) {
-        model.addAttribute("blogs", blogService.getAllBlogsAdmin());
         return "admin/blog/index";
     }
 
     // Danh sách bài viết của tôi
     @GetMapping("/own-blogs")
     public String getOwnPage(Model model) {
-        model.addAttribute("blogs", blogService.getAllOwnBlogAdmin());
         return "admin/blog/own-blog";
     }
 

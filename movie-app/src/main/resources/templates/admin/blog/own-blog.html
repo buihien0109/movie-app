@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table id="table-blog" class="table table-bordered table-hover">
                                 <thead>
                                 <tr>
                                     <th>Tiêu đề</th>
@@ -55,10 +55,6 @@
 
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,39 +65,36 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const blogs = [[${blogs}]];
-        console.log({blogs})
-
-        // render blogs from blogs to body of table
-        const tableBody = document.querySelector('table tbody');
-        const renderBlogs = (blogList) => {
-            let html = '';
-            blogList.forEach(blog => {
-                html += `
-                    <tr>
-                        <td>
-                            <a href="/admin/blogs/${blog.id}/detail">${blog.title}</a>
-                        </td>
-                        <td>${blog.status ? 'Công khai' : 'Nháp'}</td>
-                        <td>${formatDate(blog.createdAt)}</td>
-                    </tr>
-                `;
-            })
-            tableBody.innerHTML = html;
-        }
-
-        // render pagination using pagination.js
-        const renderPagination = (blogList) => {
-            $('#pagination').pagination({
-                dataSource: blogList,
-                className: 'paginationjs-theme-blue paginationjs-big',
-                callback: function (data, pagination) {
-                    renderBlogs(data);
+        $('#table-blog').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "/api/admin/blogs/own-blogs",
+                "type": "GET"
+            },
+            "columns": [
+                {"data": "title"},
+                {
+                    "data": "status",
+                    "render": function(data, type, row) {
+                        return data ? '<span class="badge bg-success">Công khai</span>' : '<span class="badge bg-secondary">Nháp</span>';
+                    }
                 },
-                hideOnlyOnePage : true
-            })
-        }
-        renderPagination(blogs);
+                {
+                    "data": "createdAt",
+                    "render": function(data, type, row) {
+                        return formatDate(data);
+                    }
+                }
+            ]
+        });
     </script>
 </th:block>
 </body>

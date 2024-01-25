@@ -22,8 +22,8 @@
                 <a class="nav-link py-0 d-flex align-items-center" data-toggle="dropdown" href="/admin/dashboard">
                     <div class="user-panel">
                         <div class="d-flex align-items-center image">
-                            <span>Admin</span>
-                            <img src="https://placehold.co/200x200?text=Admin"
+                            <span th:text="${userLogined_name}">Admin</span>
+                            <img th:src="${userLogined_avatar}"
                                  class="img-circle border ml-1" alt="User Image">
                         </div>
                     </div>

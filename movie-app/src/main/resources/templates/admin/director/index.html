@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table id="table-director" class="table table-bordered table-hover">
                                 <thead>
                                 <tr>
                                     <th>Avatar</th>
@@ -52,13 +52,17 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                <tr th:each="director : ${directorList}">
+                                    <td>
+                                        <img th:src="${director.avatar}" th:alt="${director.name}" width="50" height="50" class="rounded-circle">
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/directors/{id}/detail (id=${director.id})}" th:text="${director.name}">Bui Hien</a>
+                                    </td>
+                                    <td th:text="${#dates.format(director.birthday, 'dd/MM/yyyy')}">01/09/1997</td>
+                                </tr>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,42 +73,15 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const directors = [[${directorList}]];
-        console.log({directors})
-
-        // render users from users to body of table
-        const tableBody = document.querySelector('table tbody');
-        const renderDirectors = (directorList) => {
-            let html = '';
-            directorList.forEach(director => {
-                html += `
-                  <tr>
-                     <td>
-                          <img src="${director.avatar}" alt="${director.name}" width="50" height="50" class="rounded-circle">
-                      <td>
-                          <a href="/admin/directors/${director.id}/detail">${director.name}</a>
-                      </td>
-                      <td>
-                            ${formatDate(director.birthday)}
-                      </td>
-                  </tr>
-                `;
-            })
-            tableBody.innerHTML = html;
-        }
-
-        // render pagination using pagination.js
-        const renderPagination = (directorList) => {
-            $('#pagination').pagination({
-                dataSource: directorList,
-                className: 'paginationjs-theme-blue paginationjs-big',
-                callback: function (data, pagination) {
-                    renderDirectors(data);
-                },
-                hideOnlyOnePage: true
-            })
-        }
-        renderPagination(directors);
+        $('#table-director').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+        });
     </script>
 </th:block>
 </body>

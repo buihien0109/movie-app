@@ -34,12 +34,4 @@ public class AuthResource {
         authService.register(request);
         return ResponseEntity.ok().build();
     }
-
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
-        log.info("Logout request");
-
-        authService.logout();
-        return ResponseEntity.ok().build();
-    }
 }

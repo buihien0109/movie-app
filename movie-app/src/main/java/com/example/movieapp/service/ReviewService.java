@@ -8,8 +8,7 @@ import com.example.movieapp.exception.ResouceNotFoundException;
 import com.example.movieapp.model.request.UpsertReviewRequest;
 import com.example.movieapp.repository.FilmRepository;
 import com.example.movieapp.repository.ReviewRepository;
-import com.example.movieapp.repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
+import com.example.movieapp.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,16 +21,14 @@ import java.util.List;
 public class ReviewService {
     private final FilmRepository filmRepository;
     private final ReviewRepository reviewRepository;
-    private final UserRepository userRepository;
-    private final HttpSession session;
 
     public List<Review> getReviewsOfFilm(Integer filmId) {
         return reviewRepository.findByFilm_IdOrderByCreatedAtDesc(filmId);
     }
 
     public Review createReview(UpsertReviewRequest request) {
-        // get user from session
-        User user = (User) session.getAttribute("currentUser");
+        // get user from spring security
+        User user = SecurityUtils.getCurrentUserLogin();
 
         // find film and check film exist
         Film film = filmRepository.findById(request.getFilmId())
@@ -48,7 +45,7 @@ public class ReviewService {
 
     public Review updateReview(UpsertReviewRequest request, Integer id) {
         // get user from session
-        User user = (User) session.getAttribute("currentUser");
+        User user = SecurityUtils.getCurrentUserLogin();
 
         // find film and check film exist
         Film film = filmRepository.findById(request.getFilmId())
@@ -71,7 +68,7 @@ public class ReviewService {
 
     public void deleteReview(Integer id) {
         // get user from session
-        User user = (User) session.getAttribute("currentUser");
+        User user = SecurityUtils.getCurrentUserLogin();
 
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy review có id = " + id));

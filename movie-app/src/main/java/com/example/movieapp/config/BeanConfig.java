@@ -17,11 +17,6 @@ public class BeanConfig {
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public Slugify slugify() {
         return Slugify.builder().build();
     }

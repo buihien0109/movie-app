@@ -27,11 +27,11 @@
                     <a class="nav-link text-white" href="/phim-le">Phim lẻ</a>
                 </div>
                 <div>
-                    <div class="d-flex align-items-center" th:if="${session.currentUser != null}">
-                        <p class="text-white mb-0" th:text="${session.currentUser.name}"></p>
+                    <div class="d-flex align-items-center" th:if="${isLogined}">
+                        <p class="text-white mb-0" th:text="${userLogined_name}"></p>
                         <a class="text-white fst-italic ms-2" href="javascript:void(0)" onclick="logout()">(Đăng xuất)</a>
                     </div>
-                    <a class="text-white" href="/dang-nhap" th:if="${session.currentUser == null}">Đăng nhập</a>
+                    <a class="text-white" href="/dang-nhap" th:if="not ${isLogined}">Đăng nhập</a>
                 </div>
             </div>
         </div>

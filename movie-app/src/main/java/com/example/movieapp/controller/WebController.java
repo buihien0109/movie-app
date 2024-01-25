@@ -2,6 +2,7 @@ package com.example.movieapp.controller;
 
 import com.example.movieapp.entity.*;
 import com.example.movieapp.model.enums.FilmType;
+import com.example.movieapp.security.SecurityUtils;
 import com.example.movieapp.service.WebService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +77,7 @@ public class WebController {
         List<Episode> episodeList = webService.getEpisodesByFilmId(id);
         List<Film> relateFilmList = webService.getRelateFilms(id, 6);
         List<Review> reviewList = webService.getReviewsOfFilm(id);
-        User user = (User) session.getAttribute("currentUser");
+        User user = SecurityUtils.getCurrentUserLogin();
 
         model.addAttribute("film", film);
         model.addAttribute("episodeList", episodeList);
@@ -97,7 +98,7 @@ public class WebController {
         List<Episode> episodeList = webService.getEpisodesByFilmId(id);
         List<Review> reviewList = webService.getReviewsOfFilm(id);
         Episode currentEpisode = webService.getEpisodeByDisplayOrder(id, true, tap);
-        User user = (User) session.getAttribute("currentUser");
+        User user = SecurityUtils.getCurrentUserLogin();
 
         model.addAttribute("film", film);
         model.addAttribute("relateFilmList", relateFilmList);
@@ -129,9 +130,8 @@ public class WebController {
     }
 
     @GetMapping("/dang-nhap")
-    public String getLoginPage(HttpSession session) {
-        User user = (User) session.getAttribute("currentUser");
-        if (user != null) {
+    public String getLoginPage() {
+        if (SecurityUtils.isAuthenticated()) {
             return "redirect:/";
         }
         return "web/login";
@@ -139,8 +139,7 @@ public class WebController {
 
     @GetMapping("/dang-ky")
     public String getRegisterPage(HttpSession session) {
-        User user = (User) session.getAttribute("currentUser");
-        if (user != null) {
+        if (SecurityUtils.isAuthenticated()) {
             return "redirect:/";
         }
         return "web/register";

@@ -16,6 +16,24 @@ import org.springframework.web.multipart.MultipartFile;
 public class BlogResource {
     private final BlogService blogService;
 
+    @GetMapping
+    public ResponseEntity<?> getAllBlogs(@RequestParam("start") int start,
+                                         @RequestParam("length") int length,
+                                         @RequestParam("draw") int draw,
+                                         @RequestParam("order[0][column]") int sortColumn,
+                                         @RequestParam("order[0][dir]") String sortOrder) {
+        return ResponseEntity.ok(blogService.getAllBlogsAdmin(start, length, draw, sortColumn, sortOrder));
+    }
+
+    @GetMapping("/own-blogs")
+    public ResponseEntity<?> getAllOwnBlogs(@RequestParam("start") int start,
+                                            @RequestParam("length") int length,
+                                            @RequestParam("draw") int draw,
+                                            @RequestParam("order[0][column]") int sortColumn,
+                                            @RequestParam("order[0][dir]") String sortOrder) {
+        return ResponseEntity.ok(blogService.getAllOwnBlogsAdmin(start, length, draw, sortColumn, sortOrder));
+    }
+
     @PostMapping
     public ResponseEntity<?> createBlog(@RequestBody UpsertBlogRequest request) {
         return new ResponseEntity<>(blogService.saveBlog(request), HttpStatus.CREATED);

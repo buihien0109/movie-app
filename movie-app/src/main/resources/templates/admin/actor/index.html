@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table id="table-actor" class="table table-bordered table-hover">
                                 <thead>
                                 <tr>
                                     <th>Avatar</th>
@@ -52,13 +52,17 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                <tr th:each="actor : ${actorList}">
+                                    <td>
+                                        <img th:src="${actor.avatar}" th:alt="${actor.name}" width="50" height="50" class="rounded-circle">
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/actors/{id}/detail (id=${actor.id})}" th:text="${actor.name}">Bui Hien</a>
+                                    </td>
+                                    <td th:text="${#dates.format(actor.birthday, 'dd/MM/yyyy')}">01/09/1997</td>
+                                </tr>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,42 +73,15 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const actors = [[${actorList}]];
-        console.log({actors})
-
-        // render users from users to body of table
-        const tableBody = document.querySelector('table tbody');
-        const renderActors = (actorList) => {
-            let html = '';
-            actorList.forEach(actor => {
-                html += `
-                  <tr>
-                     <td>
-                          <img src="${actor.avatar}" alt="${actor.name}" width="50" height="50" class="rounded-circle">
-                      <td>
-                          <a href="/admin/actors/${actor.id}/detail">${actor.name}</a>
-                      </td>
-                      <td>
-                            ${formatDate(actor.birthday)}
-                      </td>
-                  </tr>
-                `;
-            })
-            tableBody.innerHTML = html;
-        }
-
-        // render pagination using pagination.js
-        const renderPagination = (actorList) => {
-            $('#pagination').pagination({
-                dataSource: actorList,
-                className: 'paginationjs-theme-blue paginationjs-big',
-                callback: function (data, pagination) {
-                    renderActors(data);
-                },
-                hideOnlyOnePage: true
-            })
-        }
-        renderPagination(actors);
+        $('#table-actor').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+        });
     </script>
 </th:block>
 </body>
