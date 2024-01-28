@@ -1,5 +1,6 @@
 package com.example.movieapp.entity;
 
+import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.enums.FilmType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,6 +39,11 @@ public class Film {
     @Enumerated(EnumType.STRING)
     FilmType type; // Loại phim: Phim lẻ, Phim bộ, Phim chiếu rạp
 
+    @Enumerated(EnumType.STRING)
+    FilmAccessType accessType; // Loại truy cập: Miễn phí, Trả phí
+
+    Integer price; // Giá tiền
+
     Boolean status; // Nháp: false, Công khai: true
     Date createdAt;
     Date updatedAt;
@@ -71,6 +77,10 @@ public class Film {
         if (status) {
             publishedAt = createdAt;
         }
+
+        if (FilmAccessType.FREE.equals(accessType)) {
+            price = null;
+        }
     }
 
     @PreUpdate
@@ -78,6 +88,10 @@ public class Film {
         updatedAt = new Date();
         if (status) {
             publishedAt = updatedAt;
+        }
+
+        if (FilmAccessType.FREE.equals(accessType)) {
+            price = null;
         }
     }
 }

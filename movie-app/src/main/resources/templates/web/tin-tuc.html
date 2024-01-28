@@ -1,74 +1,57 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{})}">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách tin tức</title>
-    <link rel="shortcut icon" href="/image/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
-          integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
-<th:block th:replace="~{web/fragments/header :: .header}"></th:block>
 
-<section class="py-4">
-    <div class="container">
-        <h3 class="mb-3">Tin tức</h3>
-        <div class="row">
-            <div class="col-6" th:each="blog : ${pageData.getContent()}">
-                <div class="blog-item bg-body-tertiary p-3 rounded mb-4">
-                    <a th:href="@{/tin-tuc/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}">
-                        <h5 th:text="${blog.title}">Top 15 Phim Cổ Trang Trung Quốc Hay Không Thể Bỏ Lỡ Năm 2023</h5>
-                        <p class="fst-italic" th:text="${#dates.format(blog.publishedAt, 'dd/MM/YYYY')}">August 20, 2023</p>
-                        <p class="mb-0 truncate" th:text="${blog.description}">Năm 2023 phim hàn quốc đã có nhiều nội dung được đổi mới và thu hút lượt xem
-                            nhiều hơn,
-                            vậy
-                            đâu là 10 bộ phim hàn quốc hot nhất năm 2023, Cùng Motchill điểm qua ...</p>
-                    </a>
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <h3 class="mb-3">Tin tức</h3>
+            <div class="row">
+                <div class="col-6" th:each="blog : ${pageData.getContent()}">
+                    <div class="blog-item bg-body-tertiary p-3 rounded mb-4">
+                        <a th:href="@{/tin-tuc/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}">
+                            <h5 th:text="${blog.title}">Top 15 Phim Cổ Trang Trung Quốc Hay Không Thể Bỏ Lỡ Năm
+                                2023</h5>
+                            <p class="fst-italic" th:text="${#dates.format(blog.publishedAt, 'dd/MM/YYYY')}">August 20,
+                                2023</p>
+                            <p class="mb-0 truncate" th:text="${blog.description}">Năm 2023 phim hàn quốc đã có nhiều
+                                nội dung được đổi mới và thu hút lượt xem
+                                nhiều hơn,
+                                vậy
+                                đâu là 10 bộ phim hàn quốc hot nhất năm 2023, Cùng Motchill điểm qua ...</p>
+                        </a>
+                    </div>
                 </div>
             </div>
+            <div class="d-flex justify-content-center mt-4" id="pagination">
+                <nav aria-label="..." th:if="${pageData.getTotalPages() > 1}">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled' : ''">
+                            <a class="page-link" th:href="@{/tin-tuc (page=${currentPage - 1})}"><i
+                                    class="fa-solid fa-caret-left"></i></a>
+                        </li>
+                        <li class="page-item" th:each="pageNum : ${#numbers.sequence(1, pageData.getTotalPages())}"
+                            th:classappend="${pageNum == currentPage} ? 'active' : ''">
+                            <a class="page-link" th:href="@{/tin-tuc (page=${pageNum})}" th:text="${pageNum}">1</a>
+                        </li>
+                        <li class="page-item"
+                            th:classappend="${currentPage == pageData.getTotalPages()} ? 'disabled' : ''">
+                            <a class="page-link" th:href="@{/tin-tuc (page=${currentPage + 1})}"><i
+                                    class="fa-solid fa-caret-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-        <div class="d-flex justify-content-center mt-4" id="pagination">
-            <nav aria-label="..." th:if="${pageData.getTotalPages() > 1}">
-                <ul class="pagination">
-                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled' : ''">
-                        <a class="page-link" th:href="@{/tin-tuc (page=${currentPage - 1})}"><i class="fa-solid fa-caret-left"></i></a>
-                    </li>
-                    <li class="page-item" th:each="pageNum : ${#numbers.sequence(1, pageData.getTotalPages())}"
-                        th:classappend="${pageNum == currentPage} ? 'active' : ''">
-                        <a class="page-link" th:href="@{/tin-tuc (page=${pageNum})}" th:text="${pageNum}">1</a>
-                    </li>
-                    <li class="page-item" th:classappend="${currentPage == pageData.getTotalPages()} ? 'disabled' : ''">
-                        <a class="page-link" th:href="@{/tin-tuc (page=${currentPage + 1})}"><i class="fa-solid fa-caret-right"></i></a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
-</section>
+    </section>
+</th:block>
 
-<th:block th:replace="~{web/fragments/footer :: footer}"></th:block>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
-        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
-        integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="/js/common.js"></script>
 </body>
 
 </html>

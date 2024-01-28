@@ -31,6 +31,10 @@ ul {
     color: #ff6901 !important;
 }
 
+.movie-item {
+    position: relative;
+}
+
 .movie-item .movie-poster {
     height: 250px;
 }
@@ -295,3 +299,24 @@ ul {
     line-height: 1.5em; /* Điều chỉnh dựa trên kích thước font và yêu cầu layout */
     max-height: 3em; /* 1.2em (line-height) * 2 (số dòng) */
 }
+
+.movie-item .btn-remove-wishlist {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    color: #fff;
+    background-color: #ff6901;
+    border: 1px solid #ff6901;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease-in-out;
+}
+
+

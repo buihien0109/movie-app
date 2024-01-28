@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #js})}">
+
+<head>
+    <title>Danh sách phim yêu thích</title>
+</head>
+
+<body>
+
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <h3 class="mb-3">Danh sách phim yêu thích</h3>
+            <div class="row">
+                <div class="col-3" th:each="wishlist : ${wishlistList}" th:with="film=${wishlist.film}"
+                     th:data-id="${film.id}">
+                    <div class="movie-item">
+                        <span class="btn-remove-wishlist" th:onclick="|removeFromWishList(${film.id})|"><i
+                                class="fa-solid fa-xmark"></i></span>
+                        <a th:href="@{/phim/{id}/{slug} (id=${film.id}, slug=${film.slug})}"
+                           class="movie-media">
+                            <div class="movie-poster rounded overflow-hidden">
+                                <img class="w-100 h-100"
+                                     th:src="${film.poster}" th:alt="${film.title}">
+                            </div>
+                            <p class="mt-2" th:text="${film.title}">Cô Đi Mà Lấy Chồng Tôi</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+<th:block id="js">
+    <script>
+        function removeFromWishList(id) {
+            // Xác nhận xem có muốn xóa không
+            if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm khỏi danh sách yêu thích?')) {
+                return;
+            }
+
+            axios.delete(`/api/wishlists?filmId=${id}`)
+                .then(function (response) {
+                    if (response.status === 204) {
+                        // Tìm phần tử có data-id bằng với id của wishlist vừa xóa
+                        const wishlistItem = document.querySelector(`div[data-id="${id}"]`);
+                        // Xóa phần tử đó đi
+                        wishlistItem.parentNode.removeChild(wishlistItem);
+
+                        toastr.success('Xóa phim khỏi danh sách yêu thích thành công');
+                    } else {
+                        toastr.error('Xóa sản phẩm khỏi danh sách yêu thích thất bại');
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    toastr.error(error.response.data.message);
+                });
+        }
+    </script>
+</th:block>
+</body>
+
+</html>

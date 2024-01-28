@@ -3,8 +3,9 @@ package com.example.movieapp.controller;
 import com.example.movieapp.entity.*;
 import com.example.movieapp.model.enums.FilmType;
 import com.example.movieapp.security.SecurityUtils;
+import com.example.movieapp.service.WatchHistoryService;
 import com.example.movieapp.service.WebService;
-import jakarta.servlet.http.HttpSession;
+import com.example.movieapp.service.WishlistService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebController {
     private final WebService webService;
+    private final WishlistService wishlistService;
+    private final WatchHistoryService watchHistoryService;
 
     @GetMapping("/")
     public String getHomePage(Model model) {
@@ -41,7 +44,7 @@ public class WebController {
     @GetMapping("/phim-le")
     public String getPhimLePage(Model model,
                                 @RequestParam(required = false, defaultValue = "1") Integer page,
-                                @RequestParam(required = false, defaultValue = "12") Integer limit) {
+                                @RequestParam(required = false, defaultValue = "18") Integer limit) {
         Page<Film> pageData = webService.getFilmsByType(FilmType.PHIM_LE, true, page, limit);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageData", pageData);
@@ -51,7 +54,7 @@ public class WebController {
     @GetMapping("/phim-bo")
     public String getPhimMoiPage(Model model,
                                  @RequestParam(required = false, defaultValue = "1") Integer page,
-                                 @RequestParam(required = false, defaultValue = "12") Integer limit) {
+                                 @RequestParam(required = false, defaultValue = "18") Integer limit) {
         Page<Film> pageData = webService.getFilmsByType(FilmType.PHIM_BO, true, page, limit);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageData", pageData);
@@ -61,7 +64,7 @@ public class WebController {
     @GetMapping("/phim-chieu-rap")
     public String getPhimChieuRapPage(Model model,
                                       @RequestParam(required = false, defaultValue = "1") Integer page,
-                                      @RequestParam(required = false, defaultValue = "12") Integer limit) {
+                                      @RequestParam(required = false, defaultValue = "18") Integer limit) {
         Page<Film> pageData = webService.getFilmsByType(FilmType.PHIM_CHIEU_RAP, true, page, limit);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageData", pageData);
@@ -70,7 +73,6 @@ public class WebController {
 
     @GetMapping("/phim/{id}/{slug}")
     public String getPhimLeDetailPage(Model model,
-                                      HttpSession session,
                                       @PathVariable Integer id,
                                       @PathVariable String slug) {
         Film film = webService.findFilmByIdAndSlug(id, slug);
@@ -78,18 +80,19 @@ public class WebController {
         List<Film> relateFilmList = webService.getRelateFilms(id, 6);
         List<Review> reviewList = webService.getReviewsOfFilm(id);
         User user = SecurityUtils.getCurrentUserLogin();
+        boolean isFavorite = wishlistService.checkFavorite(id);
 
         model.addAttribute("film", film);
         model.addAttribute("episodeList", episodeList);
         model.addAttribute("relateFilmList", relateFilmList);
         model.addAttribute("reviewList", reviewList);
         model.addAttribute("currentUser", user);
+        model.addAttribute("isFavorite", isFavorite);
         return "web/chi-tiet-phim";
     }
 
     @GetMapping("/xem-phim/{id}/{slug}")
     public String getXemPhimPage(Model model,
-                                 HttpSession session,
                                  @PathVariable Integer id,
                                  @PathVariable String slug,
                                  @RequestParam(required = false, defaultValue = "1") String tap) {
@@ -100,6 +103,10 @@ public class WebController {
         Episode currentEpisode = webService.getEpisodeByDisplayOrder(id, true, tap);
         User user = SecurityUtils.getCurrentUserLogin();
 
+        WatchHistory watchHistory = watchHistoryService.getWatchHistory(id, currentEpisode.getId());
+        boolean isFavorite = wishlistService.checkFavorite(id);
+
+
         model.addAttribute("film", film);
         model.addAttribute("relateFilmList", relateFilmList);
         model.addAttribute("episodeList", episodeList);
@@ -107,6 +114,8 @@ public class WebController {
         model.addAttribute("currentEpisode", currentEpisode);
         model.addAttribute("tap", tap);
         model.addAttribute("currentUser", user);
+        model.addAttribute("watchHistory", watchHistory);
+        model.addAttribute("isFavorite", isFavorite);
         return "web/xem-phim";
     }
 
@@ -129,6 +138,20 @@ public class WebController {
         return "web/chi-tiet-tin-tuc";
     }
 
+    @GetMapping("/phim-yeu-thich")
+    public String getWishlistPage(Model model) {
+        List<Wishlist> wishlistList = wishlistService.getWishlistsOfCurrentUser();
+        model.addAttribute("wishlistList", wishlistList);
+        return "web/phim-yeu-thich";
+    }
+
+    @GetMapping("/lich-su-xem-phim")
+    public String getWatchHistoryPage(Model model) {
+        List<WatchHistory> watchHistoryList = watchHistoryService.getWatchHistoriesOfCurrentUser();
+        model.addAttribute("watchHistoryList", watchHistoryList);
+        return "web/lich-su-xem-phim";
+    }
+
     @GetMapping("/dang-nhap")
     public String getLoginPage() {
         if (SecurityUtils.isAuthenticated()) {
@@ -138,7 +161,7 @@ public class WebController {
     }
 
     @GetMapping("/dang-ky")
-    public String getRegisterPage(HttpSession session) {
+    public String getRegisterPage() {
         if (SecurityUtils.isAuthenticated()) {
             return "redirect:/";
         }

@@ -35,7 +35,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers("/css/**", "/js/**", "/image/**", "/admin-assets/**", "/image_uploads/**").permitAll();
             auth.requestMatchers("/", "/phim-bo", "/phim-chieu-rap", "/phim-le", "/tin-tuc", "/tin-tuc/**", "/phim/**", "/xem-phim/**", "/dang-nhap", "/dang-ky", "/quen-mat-khau").permitAll();
-            auth.requestMatchers("/api/auth/**").permitAll();
+            auth.requestMatchers("/api/auth/**", "/api/view-film-logs").permitAll();
             auth.requestMatchers(HttpMethod.GET, "/api/videos/**").permitAll();
             auth.requestMatchers(HttpMethod.POST, "/api/videos").hasRole("ADMIN");
             auth.requestMatchers(HttpMethod.DELETE, "/api/videos/**").hasRole("ADMIN");

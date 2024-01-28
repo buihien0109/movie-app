@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #js})}">
+
+<head>
+    <title>Lịch sử xem phim</title>
+</head>
+
+<body>
+
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <div class="d-flex justify-content-between">
+                <h3 class="mb-3">Lịch sử xem phim</h3>
+                <a th:if="not ${#lists.isEmpty(watchHistoryList)}" href="javascript:void(0)" class="text-primary" id="btn-delete-all">Xóa tất cả lịch sử</a>
+            </div>
+            <div class="row watch-history-list">
+                <th:block th:if="${#lists.isEmpty(watchHistoryList)}">
+                    <p class="fst-italic text-muted mb-0 fs-6">Bạn chưa xem phim nào</p>
+                </th:block>
+                <th:block th:if="not ${#lists.isEmpty(watchHistoryList)}">
+                    <div class="col-3" th:each="watchHistory : ${watchHistoryList}" th:with="film=${watchHistory.film}, episode=${watchHistory.episode}"
+                         th:data-id="${watchHistory.id}">
+                        <div class="movie-item">
+                        <span class="btn-remove-wishlist" th:onclick="|removeFromWatchHistory(${watchHistory.id})|"><i
+                                class="fa-solid fa-xmark"></i></span>
+                            <a th:href="@{/xem-phim/{id}/{slug} (id=${film.id}, slug=${film.slug}, tap=${film.type.type == 'Phim bộ' ? episode.displayOrder : 'full'})}"
+                               class="movie-media">
+                                <div class="movie-poster rounded overflow-hidden position-relative">
+                                    <img class="w-100 h-100"
+                                         th:src="${film.poster}" th:alt="${film.title}">
+                                    <div class="progress position-absolute left-0 bottom-0 rounded-0 w-100" style="height: 10px">
+                                        <div class="progress-bar bg-danger" role="progressbar" th:style="'width: ' + ${watchHistory.duration * 100 / episode.video.duration} + '%'"></div>
+                                    </div>
+                                </div>
+                                <p class="mt-2 mb-1 d-flex align-items-center">
+                                    <th:block th:text="${film.title}"></th:block>
+                                    <span class="badge text-bg-primary ms-2"
+                                          th:if="${watchHistory.film.type.getType() == 'Phim bộ'}"
+                                          th:text="|Tập ${watchHistory.episode.displayOrder}|"></span></p>
+                                <div class="d-flex align-items-center">
+                                    <p class="text-muted fst-italic" style="font-size: 14px"
+                                       th:data-time="${watchHistory.watchTime}"></p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+<th:block id="js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/vi.min.js"></script>
+
+    <script th:inline="javascript">
+        const watchHistoryList = [[${watchHistoryList}]]
+        console.log(watchHistoryList)
+
+        moment.locale('vi');
+
+        // Update watch time của mỗi phim
+        const watchTimeElements = document.querySelectorAll('p[data-time]');
+        watchTimeElements.forEach(function (watchTimeElement) {
+            const watchTime = watchTimeElement.getAttribute('data-time');
+            const watchTimeMoment = moment(watchTime);
+            const watchTimeFromNow = watchTimeMoment.fromNow();
+
+            watchTimeElement.innerText = watchTimeFromNow;
+        });
+
+        // Xóa tất cả lịch sử xem phim
+        const btnDeleteAll = document.querySelector('#btn-delete-all');
+        btnDeleteAll.addEventListener('click', function () {
+            // Xác nhận xem có muốn xóa không
+            if (!confirm('Bạn có chắc chắn muốn xóa tất cả lịch sử xem phim không?')) {
+                return;
+            }
+
+            axios.post('/api/watch-history/delete-all')
+                .then(function (response) {
+                    if (response.status === 204) {
+                        // Xóa tất cả phần tử có data-id
+                        document.querySelectorAll('div[data-id]').forEach(function (watchHistoryItem) {
+                            watchHistoryItem.parentNode.removeChild(watchHistoryItem);
+                        });
+
+                        // Hiển thị message
+                        document.querySelector('.watch-history-list').innerHTML = '<p class="fst-italic text-muted mb-0 fs-6">Bạn chưa xem phim nào</p>';
+
+                        // Ẩn nút xóa tất cả
+                        btnDeleteAll.classList.add('d-none');
+
+                        toastr.success('Xóa tất cả lịch sử xem phim thành công');
+                    } else {
+                        toastr.error('Xóa tất cả lịch sử xem phim thất bại');
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    toastr.error(error.response.data.message);
+                });
+        });
+
+
+        // Xóa lịch sử xem phim
+        function removeFromWatchHistory(id) {
+            // Xác nhận xem có muốn xóa không
+            if (!confirm('Bạn có chắc chắn muốn xóa phim này khỏi danh sách lịch sử xem phim không?')) {
+                return;
+            }
+
+            axios.delete(`/api/watch-history/${id}`)
+                .then(function (response) {
+                    if (response.status === 204) {
+                        // Tìm phần tử có data-id bằng với id của watch history vừa xóa
+                        const watchHistoryItem = document.querySelector(`div[data-id="${id}"]`);
+
+                        // Xóa phần tử đó đi
+                        watchHistoryItem.parentNode.removeChild(watchHistoryItem);
+
+                        // Nếu không còn phim nào trong danh sách yêu thích thì hiển thị message
+                        if (document.querySelectorAll('div[data-id]').length === 0) {
+                            document.querySelector('.watch-history-list').innerHTML = '<p class="fst-italic text-muted mb-0 fs-6">Bạn chưa xem phim nào</p>';
+
+                            // Ẩn nút xóa tất cả
+                            btnDeleteAll.classList.add('d-none');
+                        }
+
+                        toastr.success('Xóa phim lich sử xem phim thành công');
+                    } else {
+                        toastr.error('Xóa sản phẩm khỏi lich sử xem phim thất bại');
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    toastr.error(error.response.data.message);
+                });
+        }
+    </script>
+</th:block>
+</body>
+
+</html>

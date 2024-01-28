@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.slugify.Slugify;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class BeanConfig {
@@ -18,6 +17,9 @@ public class BeanConfig {
 
     @Bean
     public Slugify slugify() {
-        return Slugify.builder().build();
+        return Slugify.builder()
+                .customReplacement("đ", "d")
+                .customReplacement("Đ", "D")
+                .build();
     }
 }

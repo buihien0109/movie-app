@@ -25,11 +25,26 @@
                     <a class="nav-link text-white" href="/phim-bo">Phim bộ</a>
                     <a class="nav-link text-white" href="/phim-chieu-rap">Phim chiếu rạp</a>
                     <a class="nav-link text-white" href="/phim-le">Phim lẻ</a>
+                    <a class="nav-link text-white" href="/mua-phim">Mua phim</a>
                 </div>
                 <div>
                     <div class="d-flex align-items-center" th:if="${isLogined}">
-                        <p class="text-white mb-0" th:text="${userLogined_name}"></p>
-                        <a class="text-white fst-italic ms-2" href="javascript:void(0)" onclick="logout()">(Đăng xuất)</a>
+                        <a class="text-white fs-5" href="/lich-su-xem-phim" data-bs-toggle="tooltip" data-bs-title="Lịch sử xem phim">
+                            <span><i class="fa-solid fa-clock-rotate-left"></i></span>
+                        </a>
+                        <a class="text-white ms-3 fs-5" href="/phim-yeu-thich" data-bs-toggle="tooltip" data-bs-title="Phim yêu thích">
+                            <span><i class="fa-solid fa-bookmark"></i></span>
+                        </a>
+                        <div class="dropdown ms-3">
+                            <p class="text-white mb-0 dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                <th:block th:text="${userLogined_name}"></th:block>
+                            </p>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="logout()">Đăng xuất</a></li>
+                            </ul>
+                        </div>
                     </div>
                     <a class="text-white" href="/dang-nhap" th:if="not ${isLogined}">Đăng nhập</a>
                 </div>
