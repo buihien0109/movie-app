@@ -87,6 +87,9 @@
                 "url": "/api/admin/orders",
                 "type": "GET"
             },
+            order: [
+                [2, "desc"] // Sắp xếp theo cột "createdAt" (index 2) theo chiều giảm dần
+            ],
             "columns": [
                 {
                     "data": "id", "render": function (data, type, row) {

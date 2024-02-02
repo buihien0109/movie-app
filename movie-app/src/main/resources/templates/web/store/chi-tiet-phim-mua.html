@@ -99,7 +99,7 @@
                         <div class="d-flex align-items-center">
                             <button type="button"
                                     class="d-inline-block btn btn-danger px-5 py-2 mt-3 rounded me-2 text-white"
-                                    data-bs-toggle="modal" data-bs-target="#modal-purchase"
+                                    id="btn-modal-purchase"
                                     th:if="not ${isBuyed}">
                                 <span><i class="fa-solid fa-basket-shopping"></i></span> Mua phim: <span
                                     th:text="|${#numbers.formatInteger(film.price,3,'COMMA')}đ|"></span>
@@ -317,7 +317,7 @@
     </div>
 
     <div class="modal fade" id="modal-purchase" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-         aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
+         aria-labelledby="staticBackdropLiveLabel" aria-hidden="true" th:if="${isLogined}">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -333,7 +333,8 @@
                                          th:src="${film.poster}" th:alt="${film.title}">
                                 </div>
                                 <p class="my-2" th:text="${film.title}">Cô Đi Mà Lấy Chồng Tôi</p>
-                                <h5 class="fw-medium text-danger" th:text="|${#numbers.formatInteger(film.price,3,'COMMA')}đ|">100000</h5>
+                                <h5 class="fw-medium text-danger"
+                                    th:text="|${#numbers.formatInteger(film.price,3,'COMMA')}đ|">100000</h5>
                             </div>
                         </div>
                         <div class="col-6">
@@ -368,6 +369,43 @@
                                     </div>
                                 </li>
                             </ul>
+                            <div class="info-bank-transfer bg-body-tertiary p-2">
+                                <h5>Thông tin chuyển khoản</h5>
+                                <div class="text-small fw-semibold">
+                                    <div class="row mb-2">
+                                        <div class="col-4">Ngân hàng</div>
+                                        <div class="col-8 text-gray-500">Vietcombank</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4">Số tài khoản</div>
+                                        <div class="col-8 text-gray-500">02482042829349</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4">Chủ tài khoản</div>
+                                        <div class="col-8 text-gray-500">Nguyễn Văn A</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4">Nội dung CK</div>
+                                        <div class="col-8 text-gray-500">[Họ tên] - [Email] - [Tên phim]</div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <p class="fw-normal fst-italic">Ví dụ NDCK: Nguyễn Văn A - a@gmail.com -
+                                            <th:block th:text="${film.title}"></th:block>
+                                        </p>
+                                        <p class="fw-normal fst-italic">Sau khi chuyển khoản thành công. Hãy bấm vào
+                                            "<span class="fw-semibold">Xác nhận đơn hàng</span>"
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <button class="d-block w-100 btn btn-success" id="btn-submit-order">Xác nhận
+                                                mua hàng
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -389,12 +427,7 @@
     <script th:inline="javascript">
         const film = [[${film}]];
         const reviews = [[${reviewList}]];
-        const relateFilmList = [[${relateFilmList}]];
-        const episodeList = [[${episodeList}]];
         const currentUser = [[${currentUser}]];
-        const isFavorite = [[${isFavorite}]];
-
-        console.log({film, reviews, relateFilmList, episodeList, currentUser})
 
         // Scroll to review using vanilla javascript
         const btnScrollReview = document.getElementById('btn-scroll-review');
@@ -431,8 +464,19 @@
             modalTrailer.show();
         })
     </script>
+    <script th:if="not ${isLogined}">
+        // Xử lý khi bấm vào nút mua phim
+        const btnModalPurchase = document.getElementById('btn-modal-purchase');
+        btnModalPurchase.addEventListener('click', () => {
+            // Nếu người dùng chưa đăng nhập thì thông báo
+            if (!currentUser) {
+                toastr.warning('Vui lòng đăng nhập để mua phim');
+            }
+        })
+    </script>
     <script src="/js/film-detail/film-detail.js"></script>
     <script src="/js/film-detail/film-review.js" th:if="${isLogined}"></script>
+    <script src="/js/film-detail/film-purchase.js" th:if="${isLogined}"></script>
 </th:block>
 </body>
 </html>

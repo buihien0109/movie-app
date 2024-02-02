@@ -7,6 +7,7 @@ import com.example.movieapp.exception.BadRequestException;
 import com.example.movieapp.exception.ResourceNotFoundException;
 import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.enums.OrderStatus;
+import com.example.movieapp.model.request.CreateOrderRequest;
 import com.example.movieapp.model.request.UpdateOrderRequest;
 import com.example.movieapp.repository.FilmRepository;
 import com.example.movieapp.repository.OrderRepository;
@@ -31,6 +32,7 @@ import java.util.Optional;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final FilmRepository filmRepository;
+    private final MailService mailService;
 
     public List<Order> getOrdersOfCurrentUser() {
         User user = SecurityUtils.getCurrentUserLogin();
@@ -75,7 +77,42 @@ public class OrderService {
         return Sort.by(Sort.Direction.fromString(dir), sortField);
     }
 
-    public Order updateOrder(Integer id, UpdateOrderRequest request) {
+    public Order createOrderByCustomer(CreateOrderRequest request) {
+        log.info("request: {}", request);
+        // Kiểm tra xem phim có tồn tại hay không
+        Film film = filmRepository.findByIdAndAccessType(request.getFilmId(), FilmAccessType.PAID)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim"));
+
+        // Kiểm tra xem người dùng đã mua phim này chưa
+        User user = SecurityUtils.getCurrentUserLogin();
+        if (orderRepository.existsByUser_IdAndFilm_IdAndStatus(user.getId(), film.getId(), OrderStatus.SUCCESS)) {
+            throw new BadRequestException("Người dùng đã mua phim này rồi");
+        }
+
+        // Tạo mới order
+        Order order = Order.builder()
+                .user(user)
+                .film(film)
+                .amount(film.getPrice())
+                .status(OrderStatus.PENDING)
+                .paymentMethod(request.getPaymentMethod())
+                .build();
+
+        // Lưu vào database
+        orderRepository.save(order);
+
+        // Gửi mail xác nhận đặt hàng
+        Map<String, Object> data = new HashMap<>();
+        data.put("email", user.getEmail());
+        data.put("user", user);
+        data.put("order", order);
+        mailService.sendMailConfirmOrder(data);
+        log.info("Email sent to: {}", user.getEmail());
+
+        return order;
+    }
+
+    public Order updateOrderByAdmin(Integer id, UpdateOrderRequest request) {
         log.info("id: {}, request: {}", id, request);
         // Kiểm tra xem id có tồn tại hay không
         Order order = getOrderById(id);
