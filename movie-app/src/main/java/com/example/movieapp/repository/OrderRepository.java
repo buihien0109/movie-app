@@ -1,6 +1,7 @@
 package com.example.movieapp.repository;
 
 import com.example.movieapp.entity.Order;
+import com.example.movieapp.model.dto.OrderDto;
 import com.example.movieapp.model.dto.RevenueDto;
 import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.enums.OrderStatus;
@@ -13,7 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
-    List<Order> findByUser_Id(Integer id, Sort sort);
+    // Get all orders of user by user id and sort by created date descending -> return List<OrderDto>. In OrderDto has FilmDto
+    @Query("SELECT new com.example.movieapp.model.dto.OrderDto(o.id, o.amount, o.status, o.paymentMethod, o.createdAt, new com.example.movieapp.model.dto.FilmDto(f.id, f.title, f.slug, f.poster, f.type, f.accessType, f.rating, f.price, f.status, f.trailerUrl)) FROM Order o JOIN o.film f WHERE o.user.id = ?1")
+    List<OrderDto> findByUser_Id(Integer id, Sort sort);
 
     List<Order> findAllByCreatedAtBetweenOrderByCreatedAtDesc(Date start, Date end);
 

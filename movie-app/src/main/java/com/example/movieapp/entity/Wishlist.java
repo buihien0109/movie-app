@@ -18,7 +18,7 @@ import java.util.Date;
 public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    Integer id;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

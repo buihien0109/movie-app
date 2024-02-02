@@ -20,7 +20,7 @@ import java.util.Date;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    Integer id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

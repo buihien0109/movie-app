@@ -1,6 +1,7 @@
 package com.example.movieapp.controller;
 
 import com.example.movieapp.entity.*;
+import com.example.movieapp.model.dto.*;
 import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.enums.FilmType;
 import com.example.movieapp.security.SecurityUtils;
@@ -32,11 +33,11 @@ public class WebController {
 
     @GetMapping("/")
     public String getHomePage(Model model) {
-        List<Film> phimHotList = webService.getPhimHot(8);
-        Page<Film> phimLeList = webService.getFilmsByType(FilmType.PHIM_LE, FilmAccessType.FREE, true, 1, 6);
-        Page<Film> phimBoList = webService.getFilmsByType(FilmType.PHIM_BO, FilmAccessType.FREE, true, 1, 6);
-        Page<Film> phimChieuRapList = webService.getFilmsByType(FilmType.PHIM_CHIEU_RAP, FilmAccessType.FREE, true, 1, 6);
-        Page<Blog> blogList = webService.getAllBlogs(1, 4);
+        List<FilmDto> phimHotList = webService.getPhimHot(8);
+        Page<FilmDto> phimLeList = webService.getFilmsByType(FilmType.PHIM_LE, FilmAccessType.FREE, true, 1, 6);
+        Page<FilmDto> phimBoList = webService.getFilmsByType(FilmType.PHIM_BO, FilmAccessType.FREE, true, 1, 6);
+        Page<FilmDto> phimChieuRapList = webService.getFilmsByType(FilmType.PHIM_CHIEU_RAP, FilmAccessType.FREE, true, 1, 6);
+        Page<BlogDto> blogList = webService.getAllBlogs(1, 4);
 
         model.addAttribute("phimHotList", phimHotList);
         model.addAttribute("phimLeList", phimLeList.getContent());
@@ -50,7 +51,7 @@ public class WebController {
     public String getPhimLePage(Model model,
                                 @RequestParam(required = false, defaultValue = "1") Integer page,
                                 @RequestParam(required = false, defaultValue = "18") Integer limit) {
-        Page<Film> pageData = webService.getFilmsByType(FilmType.PHIM_LE, FilmAccessType.FREE, true, page, limit);
+        Page<FilmDto> pageData = webService.getFilmsByType(FilmType.PHIM_LE, FilmAccessType.FREE, true, page, limit);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageData", pageData);
         return "web/film/phim-le";
@@ -60,7 +61,7 @@ public class WebController {
     public String getPhimMoiPage(Model model,
                                  @RequestParam(required = false, defaultValue = "1") Integer page,
                                  @RequestParam(required = false, defaultValue = "18") Integer limit) {
-        Page<Film> pageData = webService.getFilmsByType(FilmType.PHIM_BO, FilmAccessType.FREE, true, page, limit);
+        Page<FilmDto> pageData = webService.getFilmsByType(FilmType.PHIM_BO, FilmAccessType.FREE, true, page, limit);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageData", pageData);
         return "web/film/phim-bo";
@@ -70,7 +71,7 @@ public class WebController {
     public String getPhimChieuRapPage(Model model,
                                       @RequestParam(required = false, defaultValue = "1") Integer page,
                                       @RequestParam(required = false, defaultValue = "18") Integer limit) {
-        Page<Film> pageData = webService.getFilmsByType(FilmType.PHIM_CHIEU_RAP, FilmAccessType.FREE, true, page, limit);
+        Page<FilmDto> pageData = webService.getFilmsByType(FilmType.PHIM_CHIEU_RAP, FilmAccessType.FREE, true, page, limit);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageData", pageData);
         return "web/film/phim-chieu-rap";
@@ -82,7 +83,7 @@ public class WebController {
                                  @RequestParam(required = false, defaultValue = "18") Integer limit,
                                  @PathVariable String slug) {
         Genre genre = genreService.getGenreBySlug(slug);
-        Page<Film> pageData = filmService.getFilmsOfGenre(slug, FilmAccessType.FREE, true, page, limit);
+        Page<FilmDto> pageData = filmService.getFilmsOfGenre(slug, FilmAccessType.FREE, true, page, limit);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageData", pageData);
         model.addAttribute("genre", genre);
@@ -95,7 +96,7 @@ public class WebController {
                                  @RequestParam(required = false, defaultValue = "18") Integer limit,
                                  @PathVariable String slug) {
         Country country = countryService.getCountryBySlug(slug);
-        Page<Film> pageData = filmService.getFilmsOfCountry(slug, FilmAccessType.FREE, true, page, limit);
+        Page<FilmDto> pageData = filmService.getFilmsOfCountry(slug, FilmAccessType.FREE, true, page, limit);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageData", pageData);
         model.addAttribute("country", country);
@@ -106,7 +107,7 @@ public class WebController {
     public String getMuaPhimPage(Model model,
                                  @RequestParam(required = false, defaultValue = "1") Integer page,
                                  @RequestParam(required = false, defaultValue = "18") Integer limit) {
-        Page<Film> pageData = webService.getFilmsByAccessType(FilmAccessType.PAID, true, page, limit);
+        Page<FilmDto> pageData = webService.getFilmsByAccessType(FilmAccessType.PAID, true, page, limit);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageData", pageData);
         return "web/store/cua-hang";
@@ -117,9 +118,9 @@ public class WebController {
                                  @PathVariable Integer id,
                                  @PathVariable String slug) {
         Film film = webService.findFilmByIdAndSlug(id, slug, FilmAccessType.PAID);
-        List<Episode> episodeList = webService.getEpisodesByFilmId(id);
-        List<Film> relateFilmList = webService.getRelateFilms(id, 6);
-        List<Review> reviewList = webService.getReviewsOfFilm(id);
+        List<EpisodeDto> episodeList = webService.getEpisodesByFilmId(id);
+        List<Film> relateFilmList = webService.getRelateProFilms(id, 6);
+        List<ReviewDto> reviewList = webService.getReviewsOfFilm(id);
         User user = SecurityUtils.getCurrentUserLogin();
         boolean isFavorite = wishlistService.checkFavorite(id);
         boolean isBuyed = orderService.checkUserBoughtFilm(id);
@@ -139,9 +140,9 @@ public class WebController {
                                       @PathVariable Integer id,
                                       @PathVariable String slug) {
         Film film = webService.findFilmByIdAndSlug(id, slug, FilmAccessType.FREE);
-        List<Episode> episodeList = webService.getEpisodesByFilmId(id);
-        List<Film> relateFilmList = webService.getRelateFilms(id, 6);
-        List<Review> reviewList = webService.getReviewsOfFilm(id);
+        List<EpisodeDto> episodeList = webService.getEpisodesByFilmId(id);
+        List<FilmDto> relateFilmList = webService.getRelateFilms(id, 6);
+        List<ReviewDto> reviewList = webService.getReviewsOfFilm(id);
         User user = SecurityUtils.getCurrentUserLogin();
         boolean isFavorite = wishlistService.checkFavorite(id);
 
@@ -160,15 +161,15 @@ public class WebController {
                                  @PathVariable String slug,
                                  @RequestParam(required = false, defaultValue = "1") String tap) {
         Film film = webService.findFilmByIdAndSlug(id, slug, FilmAccessType.FREE);
-        List<Film> relateFilmList = webService.getRelateFilms(id, 6);
-        List<Episode> episodeList = webService.getEpisodesByFilmId(id);
-        List<Review> reviewList = webService.getReviewsOfFilm(id);
-        Episode currentEpisode = webService.getEpisodeByDisplayOrder(id, true, tap);
+        List<FilmDto> relateFilmList = webService.getRelateFilms(id, 6);
+        List<EpisodeDto> episodeList = webService.getEpisodesByFilmId(id);
+        List<ReviewDto> reviewList = webService.getReviewsOfFilm(id);
+        EpisodeDto currentEpisode = webService.getEpisodeByDisplayOrder(id, true, tap);
         User user = SecurityUtils.getCurrentUserLogin();
         boolean isFavorite = wishlistService.checkFavorite(id);
 
         if(currentEpisode != null) {
-            WatchHistory watchHistory = watchHistoryService.getWatchHistory(id, currentEpisode.getId());
+            WatchHistoryDto watchHistory = watchHistoryService.getWatchHistory(id, currentEpisode.getId());
             model.addAttribute("watchHistory", watchHistory);
         }
 
@@ -190,16 +191,16 @@ public class WebController {
                                     @PathVariable String slug,
                                     @RequestParam(required = false, defaultValue = "1") String tap) {
         Film film = webService.findFilmByIdAndSlug(id, slug, FilmAccessType.PAID);
-        List<Film> relateFilmList = webService.getRelateFilms(id, 6);
-        List<Episode> episodeList = webService.getEpisodesByFilmId(id);
-        List<Review> reviewList = webService.getReviewsOfFilm(id);
-        Episode currentEpisode = webService.getEpisodeByDisplayOrder(id, true, tap);
+        List<Film> relateFilmList = webService.getRelateProFilms(id, 6);
+        List<EpisodeDto> episodeList = webService.getEpisodesByFilmId(id);
+        List<ReviewDto> reviewList = webService.getReviewsOfFilm(id);
+        EpisodeDto currentEpisode = webService.getEpisodeByDisplayOrder(id, true, tap);
         User user = SecurityUtils.getCurrentUserLogin();
         boolean isFavorite = wishlistService.checkFavorite(id);
         boolean isBuyed = orderService.checkUserBoughtFilm(id);
 
         if(currentEpisode != null) {
-            WatchHistory watchHistory = watchHistoryService.getWatchHistory(id, currentEpisode.getId());
+            WatchHistoryDto watchHistory = watchHistoryService.getWatchHistory(id, currentEpisode.getId());
             model.addAttribute("watchHistory", watchHistory);
         }
 
@@ -219,7 +220,7 @@ public class WebController {
     public String getBlogsPage(Model model,
                                @RequestParam(required = false, defaultValue = "1") Integer page,
                                @RequestParam(required = false, defaultValue = "10") Integer limit) {
-        Page<Blog> pageData = webService.getAllBlogs(page, limit);
+        Page<BlogDto> pageData = webService.getAllBlogs(page, limit);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageData", pageData);
         return "web/tin-tuc/tin-tuc";
@@ -229,8 +230,8 @@ public class WebController {
     public String getBlogDetailPage(Model model,
                                     @PathVariable Integer id,
                                     @PathVariable String slug) {
-        Blog blog = webService.getBlogByIdAndSlug(id, slug);
-        Page<Blog> blogPage = blogService.getNewestBlogs(0, 6, id);
+        BlogDetailDto blog = webService.getBlogByIdAndSlug(id, slug);
+        Page<BlogDto> blogPage = blogService.getNewestBlogs(0, 6, id);
         model.addAttribute("blog", blog);
         model.addAttribute("newBlogList", blogPage.getContent());
         return "web/tin-tuc/chi-tiet-tin-tuc";
@@ -238,14 +239,14 @@ public class WebController {
 
     @GetMapping("/phim-yeu-thich")
     public String getWishlistPage(Model model) {
-        List<Wishlist> wishlistList = wishlistService.getWishlistsOfCurrentUser();
+        List<WishlistDto> wishlistList = wishlistService.getWishlistsOfCurrentUser();
         model.addAttribute("wishlistList", wishlistList);
         return "web/user/phim-yeu-thich";
     }
 
     @GetMapping("/lich-su-xem-phim")
     public String getWatchHistoryPage(Model model) {
-        List<WatchHistory> watchHistoryList = watchHistoryService.getWatchHistoriesOfCurrentUser();
+        List<WatchHistoryDto> watchHistoryList = watchHistoryService.getWatchHistoriesOfCurrentUser();
         model.addAttribute("watchHistoryList", watchHistoryList);
         return "web/user/lich-su-xem-phim";
     }
@@ -259,14 +260,14 @@ public class WebController {
 
     @GetMapping("/lich-su-giao-dich")
     public String getOrderHistoryPage(Model model) {
-        List<Order> orderList = orderService.getOrdersOfCurrentUser();
+        List<OrderDto> orderList = orderService.getOrdersOfCurrentUser();
         model.addAttribute("orderList", orderList);
         return "web/user/lich-su-giao-dich";
     }
 
     @GetMapping("/danh-sach-phim-mua")
     public String getPhimBuyedPage(Model model) {
-        List<Film> filmList = filmService.getFilmsBuyedOfCurrentUser();
+        List<FilmDto> filmList = filmService.getFilmsBuyedOfCurrentUser();
         model.addAttribute("filmList", filmList);
         return "web/user/danh-sach-phim-mua";
     }

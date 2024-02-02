@@ -3,6 +3,7 @@ package com.example.movieapp.service;
 import com.example.movieapp.entity.Blog;
 import com.example.movieapp.entity.User;
 import com.example.movieapp.exception.ResourceNotFoundException;
+import com.example.movieapp.model.dto.BlogDto;
 import com.example.movieapp.model.request.UpsertBlogRequest;
 import com.example.movieapp.repository.BlogRepository;
 import com.example.movieapp.security.SecurityUtils;
@@ -32,7 +33,7 @@ public class BlogService {
     private final Slugify slugify;
 
     // Lấy danh sách bài viết mới nhất theo số lượng và ngày publish nhưng không có chứa bài viết đang xem
-    public Page<Blog> getNewestBlogs(int page, int size, Integer blogId) {
+    public Page<BlogDto> getNewestBlogs(int page, int size, Integer blogId) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedAt"));
         return blogRepository.findByIdNotAndStatus(blogId, true, pageable);
     }

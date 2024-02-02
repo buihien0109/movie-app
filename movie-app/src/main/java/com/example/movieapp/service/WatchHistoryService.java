@@ -6,6 +6,7 @@ import com.example.movieapp.entity.User;
 import com.example.movieapp.entity.WatchHistory;
 import com.example.movieapp.exception.BadRequestException;
 import com.example.movieapp.exception.ResourceNotFoundException;
+import com.example.movieapp.model.dto.WatchHistoryDto;
 import com.example.movieapp.model.request.WatchHistoryRequest;
 import com.example.movieapp.repository.EpisodeRepository;
 import com.example.movieapp.repository.FilmRepository;
@@ -74,14 +75,13 @@ public class WatchHistoryService {
         watchHistoryRepository.save(watchHistory);
     }
 
-    public List<WatchHistory> getWatchHistoriesOfCurrentUser() {
+    public List<WatchHistoryDto> getWatchHistoriesOfCurrentUser() {
         log.info("Getting watch histories of current user");
         User user = SecurityUtils.getCurrentUserLogin();
-        List<WatchHistory> watchHistoryList = watchHistoryRepository.findByUser_Id(
+
+        return watchHistoryRepository.findByUser_Id(
                 user.getId(),
                 Sort.by(Sort.Direction.DESC, "watchTime"));
-
-        return watchHistoryList;
     }
 
     public void deleteWatchFilm(Integer id) {
@@ -110,7 +110,7 @@ public class WatchHistoryService {
         watchHistoryRepository.deleteAllByUser_Id(user.getId());
     }
 
-    public WatchHistory getWatchHistory(Integer filmId, Integer episodeId) {
+    public WatchHistoryDto getWatchHistory(Integer filmId, Integer episodeId) {
         // Lấy thông tin user từ context
         User user = SecurityUtils.getCurrentUserLogin();
 

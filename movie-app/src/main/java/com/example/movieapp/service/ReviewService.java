@@ -5,6 +5,7 @@ import com.example.movieapp.entity.Review;
 import com.example.movieapp.entity.User;
 import com.example.movieapp.exception.BadRequestException;
 import com.example.movieapp.exception.ResourceNotFoundException;
+import com.example.movieapp.model.dto.ReviewDto;
 import com.example.movieapp.model.request.UpsertReviewRequest;
 import com.example.movieapp.repository.FilmRepository;
 import com.example.movieapp.repository.ReviewRepository;
@@ -22,7 +23,7 @@ public class ReviewService {
     private final FilmRepository filmRepository;
     private final ReviewRepository reviewRepository;
 
-    public List<Review> getReviewsOfFilm(Integer filmId) {
+    public List<ReviewDto> getReviewsOfFilm(Integer filmId) {
         return reviewRepository.findByFilm_IdOrderByCreatedAtDesc(filmId);
     }
 

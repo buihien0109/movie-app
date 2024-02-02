@@ -2,6 +2,7 @@ package com.example.movieapp.service;
 
 import com.example.movieapp.entity.*;
 import com.example.movieapp.exception.ResourceNotFoundException;
+import com.example.movieapp.model.dto.FilmDto;
 import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.request.CreateFilmRequest;
 import com.example.movieapp.model.request.UpdateFilmRequest;
@@ -137,7 +138,7 @@ public class FilmService {
         return film.getPoster();
     }
 
-    public List<Film> getFilmsBuyedOfCurrentUser() {
+    public List<FilmDto> getFilmsBuyedOfCurrentUser() {
         User user = SecurityUtils.getCurrentUserLogin();
         return filmRepository.findFilmsBuyedOfUser(user.getId());
     }
@@ -146,12 +147,12 @@ public class FilmService {
         return filmRepository.findByAccessType(filmAccessType);
     }
 
-    public Page<Film> getFilmsOfGenre(String slug, FilmAccessType filmAccessType, boolean status, Integer page, Integer limit) {
+    public Page<FilmDto> getFilmsOfGenre(String slug, FilmAccessType filmAccessType, boolean status, Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page - 1, limit);
         return filmRepository.findByAccessTypeAndStatusAndGenres_SlugOrderByPublishedAtDesc(filmAccessType, status, slug, pageable);
     }
 
-    public Page<Film> getFilmsOfCountry(String slug, FilmAccessType filmAccessType, boolean status, Integer page, Integer limit) {
+    public Page<FilmDto> getFilmsOfCountry(String slug, FilmAccessType filmAccessType, boolean status, Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page - 1, limit);
         return filmRepository.findByAccessTypeAndStatusAndCountry_SlugOrderByPublishedAtDesc(filmAccessType, status, slug, pageable);
     }

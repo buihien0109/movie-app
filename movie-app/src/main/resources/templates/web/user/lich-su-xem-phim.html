@@ -36,7 +36,7 @@
                                     <div class="progress position-absolute left-0 bottom-0 rounded-0 w-100"
                                          style="height: 10px">
                                         <div class="progress-bar bg-danger" role="progressbar"
-                                             th:style="'width: ' + ${watchHistory.duration * 100 / episode.video.duration} + '%'"></div>
+                                             th:style="'width: ' + ${watchHistory.duration * 100 / episode.duration} + '%'"></div>
                                     </div>
                                     <span th:if="${film.accessType.toString() == 'PAID'}"
                                           class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">PRO</span>
@@ -60,7 +60,7 @@
                                     <div class="progress position-absolute left-0 bottom-0 rounded-0 w-100"
                                          style="height: 10px">
                                         <div class="progress-bar bg-danger" role="progressbar"
-                                             th:style="'width: ' + ${watchHistory.duration * 100 / episode.video.duration} + '%'"></div>
+                                             th:style="'width: ' + ${watchHistory.duration * 100 / episode.duration} + '%'"></div>
                                     </div>
                                 </div>
                                 <p class="mt-2 mb-1 d-flex align-items-center">

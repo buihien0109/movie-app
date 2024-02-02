@@ -4,6 +4,7 @@ import com.example.movieapp.entity.Blog;
 import com.example.movieapp.entity.Episode;
 import com.example.movieapp.entity.Film;
 import com.example.movieapp.entity.Review;
+import com.example.movieapp.model.dto.*;
 import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.enums.FilmType;
 import com.example.movieapp.repository.BlogRepository;
@@ -30,7 +31,7 @@ public class WebService {
     private final EpisodeRepository episodeRepository;
     private final ReviewRepository reviewRepository;
 
-    public Page<Film> getFilmsByType(FilmType type, FilmAccessType accessType, Boolean status, Integer page, Integer limit) {
+    public Page<FilmDto> getFilmsByType(FilmType type, FilmAccessType accessType, Boolean status, Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("publishedAt").descending());
         return filmRepository.findByTypeAndAccessTypeAndStatus(type, accessType, true, pageable);
     }
@@ -43,40 +44,48 @@ public class WebService {
         return filmRepository.findByIdAndSlugAndAccessType(id, slug, accessType).orElse(null);
     }
 
-    public List<Film> getPhimHot(Integer limit) {
-        return filmRepository.findPhimHot(limit);
+    public List<FilmDto> getPhimHot(Integer limit) {
+        List<FilmDto> filmDtoList = filmRepository.findPhimHot();
+        if (filmDtoList.size() > limit) {
+            return filmDtoList.subList(0, limit);
+        }
+        return filmDtoList;
     }
 
-    public List<Film> getRelateFilms(Integer filmId, Integer limit) {
+    public List<FilmDto> getRelateFilms(Integer filmId, Integer limit) {
         Film film = findFilmById(filmId);
         if (film == null) {
             return new ArrayList<>();
         }
-        return filmRepository.findAll().stream()
-                .filter(f -> !f.getId().equals(filmId))
-                .filter(f -> f.getType().equals(film.getType()) && f.getAccessType().equals(film.getAccessType()))
-                .limit(limit)
-                .toList();
+        return filmRepository.findRelateFilms(film.getType(), film.getAccessType(), true, filmId, PageRequest.of(0, limit)).getContent();
     }
 
-    public Page<Blog> getAllBlogs(Integer page, Integer limit) {
+    public List<Film> getRelateProFilms(Integer filmId, Integer limit) {
+        Film film = findFilmById(filmId);
+        if (film == null) {
+            return new ArrayList<>();
+        }
+        return filmRepository.findRelateProFilms(film.getType(), film.getAccessType(), true, filmId, PageRequest.of(0, limit)).getContent();
+    }
+
+    public Page<BlogDto> getAllBlogs(Integer page, Integer limit) {
         return blogRepository.findByStatus(true, PageRequest.of(page - 1, limit, Sort.by("publishedAt").descending()));
     }
 
     // get blog by id and slug
-    public Blog getBlogByIdAndSlug(Integer id, String slug) {
+    public BlogDetailDto getBlogByIdAndSlug(Integer id, String slug) {
         return blogRepository.findByIdAndSlugAndStatus(id, slug, true).orElse(null);
     }
 
-    public List<Episode> getEpisodesByFilmId(Integer filmId) {
+    public List<EpisodeDto> getEpisodesByFilmId(Integer filmId) {
         return episodeRepository.findByFilm_IdAndStatusOrderByDisplayOrderAsc(filmId, true);
     }
 
-    public List<Review> getReviewsOfFilm(Integer filmId) {
+    public List<ReviewDto> getReviewsOfFilm(Integer filmId) {
         return reviewRepository.findByFilm_IdOrderByCreatedAtDesc(filmId);
     }
 
-    public Episode getEpisodeByDisplayOrder(Integer filmId, Boolean status, String tap) {
+    public EpisodeDto getEpisodeByDisplayOrder(Integer filmId, Boolean status, String tap) {
         log.info("tap: {}", tap);
         if (tap == null) {
             return null;
@@ -88,8 +97,8 @@ public class WebService {
         }
     }
 
-    public Page<Film> getFilmsByAccessType(FilmAccessType filmAccessType, boolean b, Integer page, Integer limit) {
+    public Page<FilmDto> getFilmsByAccessType(FilmAccessType filmAccessType, boolean status, Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("publishedAt").descending());
-        return filmRepository.findByAccessTypeAndStatus(filmAccessType, true, pageable);
+        return filmRepository.findByAccessTypeAndStatus(filmAccessType, status, pageable);
     }
 }

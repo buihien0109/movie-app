@@ -5,6 +5,7 @@ import com.example.movieapp.entity.Order;
 import com.example.movieapp.entity.User;
 import com.example.movieapp.exception.BadRequestException;
 import com.example.movieapp.exception.ResourceNotFoundException;
+import com.example.movieapp.model.dto.OrderDto;
 import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.enums.OrderStatus;
 import com.example.movieapp.model.request.CreateOrderRequest;
@@ -34,7 +35,7 @@ public class OrderService {
     private final FilmRepository filmRepository;
     private final MailService mailService;
 
-    public List<Order> getOrdersOfCurrentUser() {
+    public List<OrderDto> getOrdersOfCurrentUser() {
         User user = SecurityUtils.getCurrentUserLogin();
         return orderRepository.findByUser_Id(user.getId(), Sort.by("createdAt").descending());
     }

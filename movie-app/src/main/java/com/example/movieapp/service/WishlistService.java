@@ -5,6 +5,7 @@ import com.example.movieapp.entity.User;
 import com.example.movieapp.entity.Wishlist;
 import com.example.movieapp.exception.BadRequestException;
 import com.example.movieapp.exception.ResourceNotFoundException;
+import com.example.movieapp.model.dto.WishlistDto;
 import com.example.movieapp.model.request.AddWishlistRequest;
 import com.example.movieapp.repository.FilmRepository;
 import com.example.movieapp.repository.WishlistRepository;
@@ -23,7 +24,7 @@ public class WishlistService {
     private final FilmRepository filmRepository;
 
     // create method get list WishListPublic by userId
-    public List<Wishlist> getWishlistsOfCurrentUser() {
+    public List<WishlistDto> getWishlistsOfCurrentUser() {
         User user = SecurityUtils.getCurrentUserLogin();
         return wishlistRepository.findByUser_Id(user.getId());
     }

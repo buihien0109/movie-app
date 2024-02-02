@@ -1,6 +1,7 @@
 package com.example.movieapp;
 
 import com.example.movieapp.entity.*;
+import com.example.movieapp.model.dto.ReviewDto;
 import com.example.movieapp.repository.*;
 import com.example.movieapp.utils.StringUtils;
 import com.github.slugify.Slugify;
@@ -68,11 +69,11 @@ public class DateTests {
         List<Film> films = filmRepository.findAll();
         for (Film film : films) {
             // Get all review of film
-            List<Review> reviews = reviewRepository.findByFilm_IdOrderByCreatedAtDesc(film.getId());
+            List<ReviewDto> reviews = reviewRepository.findByFilm_IdOrderByCreatedAtDesc(film.getId());
 
             // Tính toán rating trung bình và làm tròn 1 chữ số thập phân
             double rating = 0;
-            for (Review review : reviews) {
+            for (ReviewDto review : reviews) {
                 rating += review.getRating();
             }
             if (!reviews.isEmpty()) {

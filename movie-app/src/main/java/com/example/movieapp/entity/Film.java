@@ -23,7 +23,7 @@ import java.util.Set;
 public class Film {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    Integer id;
 
     String title;
     String slug;
