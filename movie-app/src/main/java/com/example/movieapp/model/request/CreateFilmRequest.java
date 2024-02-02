@@ -30,6 +30,9 @@ public class CreateFilmRequest {
     @NotNull(message = "Trạng thái không được để trống")
     Boolean status;
 
+    @NotNull(message = "Quốc gia không được để trống")
+    Integer countryId;
+
     Set<Integer> genreIds;
     Set<Integer> directorIds;
     Set<Integer> actorIds;

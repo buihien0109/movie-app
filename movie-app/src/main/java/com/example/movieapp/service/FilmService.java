@@ -5,10 +5,7 @@ import com.example.movieapp.exception.ResourceNotFoundException;
 import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.request.CreateFilmRequest;
 import com.example.movieapp.model.request.UpdateFilmRequest;
-import com.example.movieapp.repository.ActorRepository;
-import com.example.movieapp.repository.DirectorRepository;
-import com.example.movieapp.repository.FilmRepository;
-import com.example.movieapp.repository.GenreRepository;
+import com.example.movieapp.repository.*;
 import com.example.movieapp.security.SecurityUtils;
 import com.example.movieapp.utils.FileUtils;
 import com.example.movieapp.utils.StringUtils;
@@ -34,6 +31,7 @@ public class FilmService {
     private final ActorRepository actorRepository;
     private final DirectorRepository directorRepository;
     private final Slugify slugify;
+    private final CountryRepository countryRepository;
 
     public List<Film> getAllFilms() {
         return filmRepository.findAll();
@@ -49,6 +47,9 @@ public class FilmService {
     }
 
     public Film saveFilm(CreateFilmRequest request) {
+        Country country = countryRepository.findById(request.getCountryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy quốc gia có id = " + request.getCountryId()));
+
         // get all genres by genreIds
         Set<Genre> genres = genreRepository.findByIdIn(request.getGenreIds());
 
@@ -67,6 +68,7 @@ public class FilmService {
                 .poster(StringUtils.generateLinkImage(request.getTitle()))
                 .type(request.getType())
                 .status(request.getStatus())
+                .country(country)
                 .accessType(request.getAccessType())
                 .price(request.getPrice())
                 .genres(genres)
@@ -79,6 +81,9 @@ public class FilmService {
     public Film updateFilm(Integer id, UpdateFilmRequest request) {
         Film existingFilm = filmRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim có id = " + id));
+
+        Country country = countryRepository.findById(request.getCountryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy quốc gia có id = " + request.getCountryId()));
 
         // get all genres by genreIds
         Set<Genre> genres = genreRepository.findByIdIn(request.getGenreIds());
@@ -96,6 +101,7 @@ public class FilmService {
         existingFilm.setReleaseYear(request.getReleaseYear());
         existingFilm.setType(request.getType());
         existingFilm.setStatus(request.getStatus());
+        existingFilm.setCountry(country);
         existingFilm.setAccessType(request.getAccessType());
         existingFilm.setPrice(request.getPrice());
         existingFilm.setGenres(genres);

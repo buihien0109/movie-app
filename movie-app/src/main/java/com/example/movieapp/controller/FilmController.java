@@ -22,6 +22,7 @@ public class FilmController {
     private final ActorService actorService;
     private final ReviewService reviewService;
     private final EpisodeService episodeService;
+    private final CountryService countryService;
 
     @GetMapping
     public String getHomePage(Model model) {
@@ -36,6 +37,7 @@ public class FilmController {
         model.addAttribute("genreList", genreService.getAllGenres());
         model.addAttribute("actorList", actorService.getAllActors());
         model.addAttribute("typeList", FilmType.values());
+        model.addAttribute("countryList", countryService.getAllCountries());
         return "admin/film/create";
     }
 
@@ -48,6 +50,7 @@ public class FilmController {
         model.addAttribute("genreList", genreService.getAllGenres());
         model.addAttribute("actorList", actorService.getAllActors());
         model.addAttribute("typeList", FilmType.values());
+        model.addAttribute("countryList", countryService.getAllCountries());
         return "admin/film/detail";
     }
 }

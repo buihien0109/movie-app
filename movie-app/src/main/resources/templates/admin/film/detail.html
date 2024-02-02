@@ -9,6 +9,15 @@
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+        <style>
+            .select2-container .select2-selection--single {
+                height: 38px;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 38px;
+            }
+        </style>
     </th:block>
 
 </head>
@@ -132,6 +141,15 @@
                                             </div>
 
                                             <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Quốc gia</label>
+                                                    <div class="select2-purple">
+                                                        <select class="select2 form-control" id="country" name="country">
+                                                            <option th:each="country : ${countryList}" th:value="${country.id}" th:selected="${country.id == film.country.id}"
+                                                                    th:text="${country.name}"></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <div class="form-group">
                                                     <label>Trạng thái</label>
                                                     <select class="form-control" id="status" name="status">
@@ -350,6 +368,9 @@
                 title: {
                     required: true
                 },
+                description: {
+                    required: true
+                },
                 releaseYear: {
                     required: true
                 },
@@ -361,11 +382,17 @@
                 },
                 price: {
                     required: true
+                },
+                country: {
+                    required: true
                 }
             },
             messages: {
                 title: {
                     required: "Tên phim không được để trống"
+                },
+                description: {
+                    required: "Mô tả không được để trống"
                 },
                 releaseYear: {
                     required: "Năm phát hành không được để trống"
@@ -378,6 +405,9 @@
                 },
                 price: {
                     required: "Giá không được để trống"
+                },
+                country: {
+                    required: "Quốc gia không được để trống"
                 }
             },
             errorElement: 'span',
@@ -402,9 +432,10 @@
         const filmDirectors = $("#director");
         const filmActors = $("#actor");
         const filmGenres = $("#genre");
+        const filmCountry = $("#country");
         const btnUpdate = document.getElementById("btn-update")
 
-        // Tạo khóa học
+        // Cập nhật phim
         btnUpdate.addEventListener("click", async () => {
             if (!$('#form-update-film').valid()) return false;
 
@@ -413,6 +444,7 @@
                 description: filmDescription.value,
                 type: filmType.value,
                 status: filmStatus.value === "true",
+                countryId: Number(filmCountry.val()),
                 releaseYear: Number(filmReleaseYear.value),
                 directorIds: filmDirectors.val().map(e => Number(e)),
                 actorIds: filmActors.val().map(e => Number(e)),
@@ -420,7 +452,6 @@
                 accessType: accessType.checked ? "PAID" : "FREE",
                 price: accessType.checked ? Number(document.getElementById("price").value) : null
             }
-
             console.log(data)
 
             try {
