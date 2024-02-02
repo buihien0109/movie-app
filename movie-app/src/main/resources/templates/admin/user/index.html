@@ -49,7 +49,9 @@
                                     <th>Avatar</th>
                                     <th>Họ tên</th>
                                     <th>Email</th>
+                                    <th>Số điện thoại</th>
                                     <th>Role</th>
+                                    <th>Trạng thái</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -63,9 +65,14 @@
                                            th:text="${user.name}"></a>
                                     </td>
                                     <td th:text="${user.email}">Email</td>
+                                    <td th:text="${user.phone}">Phone</td>
                                     <td>
                                         <span class="badge" th:text="${user.role.name}"
                                               th:classappend="${user.role.name == 'ADMIN' ? 'bg-success' : 'bg-secondary'}">ROLE_USER</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge" th:text="${user.enabled ? 'Đã kích hoạt' : 'Chưa kích hoạt'}"
+                                              th:classappend="${user.enabled ? 'bg-success' : 'bg-secondary'}">Đã kích hoạt</span>
                                     </td>
                                 </tr>
                                 </tbody>
