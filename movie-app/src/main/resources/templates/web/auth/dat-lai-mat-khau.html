@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #js})}">
+
+<head>
+    <title>Đặt lại mật khẩu</title>
+</head>
+
+<body>
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a class="text-primary" href="/static">Trang chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Đặt lại mật khẩu</li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+    <section class="pb-4">
+        <div class="container">
+            <div class="row" th:if="${data.success == false}">
+                <h4 th:text="${data.message}"></h4>
+            </div>
+            <div class="row justify-content-center" th:if="${data.success == true}">
+                <div class="col-4">
+                    <div class="register-container">
+                        <div id="custom-register-form">
+                            <form id="customer-reset-password-form">
+                                <div class="register-form-container">
+                                    <div class="register-text text-center">
+                                        <h3 class="mb-2">Đặt lại mật khẩu</h3>
+                                        <p>Vui lòng điền thông tin vào form bên dưới.</p>
+                                    </div>
+                                    <div class="register-form p-5 rounded bg-body-tertiary">
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">Mật khẩu mới</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="password"
+                                                       name="password"/>
+                                                <span class="input-group-text icon-toggle-password">
+                                                    <i class="fa-regular fa-eye"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">Nhập lại mật khẩu mới</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="confirm-password"
+                                                       name="confirmPassword"/>
+                                                <span class="input-group-text icon-toggle-password">
+                                                    <i class="fa-regular fa-eye"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="register-toggle-btn">
+                                            <div class="form-action-button">
+                                                <button type="submit" class="btn btn-primary pz-4">Xác nhận</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+<th:block id="js">
+    <th:block th:if="${data.success == true}">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"
+                integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/additional-methods.min.js"
+                integrity="sha512-TiQST7x/0aMjgVTcep29gi+q5Lk5gVTUPE9XgN0g96rwtjEjLpod4mlBRKWHeBcvGBAEvJBmfDqh2hfMMmg+5A=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <script th:inline="javascript">
+            const data = [[${data}]];
+            console.log(data)
+
+            // hide/show password with icon in inputs using valina javascript
+            const togglePasswordBtns = document.querySelectorAll('.icon-toggle-password');
+            const passwordInputs = document.querySelectorAll('input[type="password"]');
+            togglePasswordBtns.forEach((btn, index) => {
+                btn.addEventListener('click', () => {
+                    if (passwordInputs[index].type === 'password') {
+                        passwordInputs[index].type = 'text';
+                        btn.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
+                    } else {
+                        passwordInputs[index].type = 'password';
+                        btn.innerHTML = '<i class="fa-regular fa-eye"></i>';
+                    }
+                });
+            });
+
+            // validation form
+            $('#customer-reset-password-form').validate({
+                rules: {
+                    password: {
+                        required: true
+                    },
+                    confirmPassword: {
+                        required: true,
+                        equalTo: "#password"
+                    }
+                },
+                messages: {
+                    password: {
+                        required: "Mật khẩu không được để trống",
+                    },
+                    confirmPassword: {
+                        required: "Nhập lại mật khẩu không được để trống",
+                        equalTo: "Nhập lại mật khẩu không khớp"
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+
+            // handle change password form submit using axios
+            const resetPasswordForm = document.getElementById('customer-reset-password-form');
+            resetPasswordForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                if (!$('#customer-reset-password-form').valid()) {
+                    return;
+                }
+
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+                const request = {
+                    token: data.token,
+                    newPassword: password,
+                    confirmPassword
+                };
+                console.log(request)
+                axios.post('/api/auth/change-password', request)
+                    .then((res) => {
+                        if (res.status === 200) {
+                            toastr.success('Thay đổi mật khẩu thành công');
+
+                            setTimeout(() => {
+                                window.location.href = '/dang-nhap';
+                            }, 1500);
+                        } else {
+                            toastr.error('Thay đổi mật khẩu thất bại');
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        toastr.error(err.response.data.message);
+                    });
+            });
+        </script>
+    </th:block>
+</th:block>
+</body>
+
+</html>

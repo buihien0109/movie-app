@@ -4,6 +4,7 @@ import com.example.movieapp.entity.Blog;
 import com.example.movieapp.entity.Episode;
 import com.example.movieapp.entity.Film;
 import com.example.movieapp.entity.Review;
+import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.enums.FilmType;
 import com.example.movieapp.repository.BlogRepository;
 import com.example.movieapp.repository.EpisodeRepository;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -28,16 +30,17 @@ public class WebService {
     private final EpisodeRepository episodeRepository;
     private final ReviewRepository reviewRepository;
 
-    public Page<Film> getFilmsByType(FilmType type, Boolean status, Integer page, Integer limit) {
-        return filmRepository.findByTypeAndStatus(type, true, PageRequest.of(page - 1, limit, Sort.by("publishedAt").descending()));
+    public Page<Film> getFilmsByType(FilmType type, FilmAccessType accessType, Boolean status, Integer page, Integer limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("publishedAt").descending());
+        return filmRepository.findByTypeAndAccessTypeAndStatus(type, accessType, true, pageable);
     }
 
     private Film findFilmById(Integer filmId) {
         return filmRepository.findById(filmId).orElse(null);
     }
 
-    public Film findFilmByIdAndSlug(Integer id, String slug) {
-        return filmRepository.findByIdAndSlug(id, slug).orElse(null);
+    public Film findFilmByIdAndSlug(Integer id, String slug, FilmAccessType accessType) {
+        return filmRepository.findByIdAndSlugAndAccessType(id, slug, accessType).orElse(null);
     }
 
     public List<Film> getPhimHot(Integer limit) {
@@ -49,7 +52,11 @@ public class WebService {
         if (film == null) {
             return new ArrayList<>();
         }
-        return filmRepository.findAll().stream().filter(f -> !f.getId().equals(filmId)).filter(f -> f.getType().equals(film.getType())).limit(limit).toList();
+        return filmRepository.findAll().stream()
+                .filter(f -> !f.getId().equals(filmId))
+                .filter(f -> f.getType().equals(film.getType()) && f.getAccessType().equals(film.getAccessType()))
+                .limit(limit)
+                .toList();
     }
 
     public Page<Blog> getAllBlogs(Integer page, Integer limit) {
@@ -79,5 +86,10 @@ public class WebService {
         } else {
             return episodeRepository.findByFilm_IdAndStatusAndDisplayOrder(filmId, status, Integer.parseInt(tap)).orElse(null);
         }
+    }
+
+    public Page<Film> getFilmsByAccessType(FilmAccessType filmAccessType, boolean b, Integer page, Integer limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("publishedAt").descending());
+        return filmRepository.findByAccessTypeAndStatus(filmAccessType, true, pageable);
     }
 }

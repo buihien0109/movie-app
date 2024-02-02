@@ -11,20 +11,34 @@
 <th:block id="main-content">
     <section class="py-4">
         <div class="container">
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a class="text-primary" href="/static">Trang chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tin tức
+                    </li>
+                </ol>
+            </nav>
             <h3 class="mb-3">Tin tức</h3>
             <div class="row">
                 <div class="col-6" th:each="blog : ${pageData.getContent()}">
-                    <div class="blog-item bg-body-tertiary p-3 rounded mb-4">
-                        <a th:href="@{/tin-tuc/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}">
-                            <h5 th:text="${blog.title}">Top 15 Phim Cổ Trang Trung Quốc Hay Không Thể Bỏ Lỡ Năm
-                                2023</h5>
-                            <p class="fst-italic" th:text="${#dates.format(blog.publishedAt, 'dd/MM/YYYY')}">August 20,
-                                2023</p>
-                            <p class="mb-0 truncate" th:text="${blog.description}">Năm 2023 phim hàn quốc đã có nhiều
-                                nội dung được đổi mới và thu hút lượt xem
-                                nhiều hơn,
-                                vậy
-                                đâu là 10 bộ phim hàn quốc hot nhất năm 2023, Cùng Motchill điểm qua ...</p>
+                    <div class="blog-item bg-body-tertiary rounded mb-4 overflow-hidden">
+                        <a th:href="@{/tin-tuc/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}" class="d-flex">
+                            <div class="blog-thumbnail">
+                                <img th:src="${blog.thumbnail}" th:alt="${blog.title}">
+                            </div>
+                            <div class="blog-info p-3">
+                                <h5 th:text="${blog.title}" class="truncate-1-heading">Top 15 Phim Cổ Trang Trung Quốc Hay Không Thể Bỏ Lỡ Năm
+                                    2023</h5>
+                                <p class="fst-italic" th:text="${#dates.format(blog.publishedAt, 'dd/MM/YYYY')}">August
+                                    20,
+                                    2023</p>
+                                <p class="mb-0 truncate" th:text="${blog.description}">Năm 2023 phim hàn quốc đã có
+                                    nhiều nội dung được
+                                    đổi mới và thu hút lượt xem
+                                    nhiều hơn,
+                                    vậy
+                                    đâu là 10 bộ phim hàn quốc hot nhất năm 2023, Cùng Motchill điểm qua ...</p>
+                            </div>
                         </a>
                     </div>
                 </div>

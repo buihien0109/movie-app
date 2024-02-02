@@ -2,6 +2,7 @@ package com.example.movieapp.rest;
 
 import com.example.movieapp.model.request.WatchHistoryRequest;
 import com.example.movieapp.service.WatchHistoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ public class WatchHistoryResource {
     private final WatchHistoryService watchHistoryService;
 
     @PostMapping
-    public ResponseEntity<?> watchFilm(@RequestBody WatchHistoryRequest request) {
+    public ResponseEntity<?> watchFilm(@Valid @RequestBody WatchHistoryRequest request) {
         watchHistoryService.saveWatchFilm(request);
         return ResponseEntity.noContent().build();
     }

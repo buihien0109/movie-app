@@ -2,7 +2,7 @@ package com.example.movieapp.service;
 
 import com.example.movieapp.entity.Director;
 import com.example.movieapp.exception.BadRequestException;
-import com.example.movieapp.exception.ResouceNotFoundException;
+import com.example.movieapp.exception.ResourceNotFoundException;
 import com.example.movieapp.model.request.CreateDirectorRequest;
 import com.example.movieapp.model.request.UpdateDirectorRequest;
 import com.example.movieapp.repository.DirectorRepository;
@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +28,7 @@ public class DirectorService {
     private final FileService fileService;
 
     public List<Director> getAllDirectors() {
-        return directorRepository.findAll();
+        return directorRepository.findAll(Sort.by("createdAt").descending());
     }
 
     public Page<Director> getAllDirectors(Integer page, Integer size) {
@@ -36,7 +37,7 @@ public class DirectorService {
 
     public Director getDirectorById(Integer id) {
         return directorRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đạo diễn có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đạo diễn có id = " + id));
     }
 
     public Director saveDirector(CreateDirectorRequest request) {
@@ -51,7 +52,7 @@ public class DirectorService {
 
     public Director updateDirector(Integer id, UpdateDirectorRequest request) {
         Director existingDirector = directorRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đạo diễn có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đạo diễn có id = " + id));
 
         existingDirector.setName(request.getName());
         existingDirector.setDescription(request.getDescription());
@@ -61,7 +62,7 @@ public class DirectorService {
 
     public void deleteDirector(Integer id) {
         Director existingDirector = directorRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đạo diễn có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đạo diễn có id = " + id));
 
         // Kiểm tra xem đạo diễn có đang áp dụng cho phim nào không. Nếu count > 0 thì không được xóa -> throw exception
         long count = filmRepository.countByDirectors_Id(id);
@@ -80,7 +81,7 @@ public class DirectorService {
 
     public String updateAvatar(Integer directorId, MultipartFile file) {
         Director director = directorRepository.findById(directorId)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đạo diễn"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đạo diễn"));
 
         // Kiểm tra xem đạo diễn có avatar không. Nếu có thì xóa file avatar sau đó lưu file mới
         if (director.getAvatar() != null) {

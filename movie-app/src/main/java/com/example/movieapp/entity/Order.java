@@ -1,5 +1,7 @@
 package com.example.movieapp.entity;
 
+import com.example.movieapp.model.enums.OrderPaymentMethod;
+import com.example.movieapp.model.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -28,7 +30,17 @@ public class Order {
     @JoinColumn(name = "film_id")
     Film film;
 
-    Integer price;
+    Integer amount;
+
+    @Enumerated(EnumType.STRING)
+    OrderStatus status;
+
+    @Enumerated(EnumType.STRING)
+    OrderPaymentMethod paymentMethod;
+
+    @Column(columnDefinition = "TEXT")
+    String note;
+
     Date createdAt;
     Date updatedAt;
 

@@ -67,33 +67,6 @@
                                             <textarea id="description" class="form-control" rows="12"
                                                       name="description"></textarea>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Trạng thái</label>
-                                            <select class="form-control" id="status" name="status">
-                                                <option value="false" selected>Nháp</option>
-                                                <option value="true">Công khai</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Năm phát hành</label>
-                                            <input type="text" class="form-control" id="releaseYear"
-                                                   name="releaseYear"/>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Loại phim</label>
-                                            <div class="select2-purple">
-                                                <select class="form-control" id="type" name="type">
-                                                    <option th:each="type : ${typeList}" th:value="${type}"
-                                                            th:text="${type.getType()}"></option>
-                                                </select>
-                                            </div>
-                                        </div>
-
                                         <div class="form-group">
                                             <label>Đạo diễn</label>
                                             <div class="select2-purple">
@@ -125,6 +98,45 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Trạng thái</label>
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="false" selected>Nháp</option>
+                                                <option value="true">Công khai</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Năm phát hành</label>
+                                            <input type="text" class="form-control" id="releaseYear"
+                                                   name="releaseYear"/>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Loại phim</label>
+                                            <div class="select2-purple">
+                                                <select class="form-control" id="type" name="type">
+                                                    <option th:each="type : ${typeList}" th:value="${type}"
+                                                            th:text="${type.getType()}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <input class="custom-control-input" type="checkbox"
+                                                       id="accessType">
+                                                <label for="accessType" class="custom-control-label">Phim trả
+                                                    phí</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="form-group-price">
+
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -141,6 +153,21 @@
     <script th:inline="javascript">
         $(".select2").select2();
 
+        const accessType = document.getElementById("accessType");
+        const formGroupPrice = document.getElementById("form-group-price");
+
+        // Hiển thị form nhập giá nếu là phim trả phí
+        accessType.addEventListener("change", () => {
+            if (accessType.checked) {
+                formGroupPrice.innerHTML = `
+                    <label>Giá</label>
+                    <input type="text" class="form-control" id="price" name="price"/>
+                `
+            } else {
+                formGroupPrice.innerHTML = ""
+            }
+        })
+
         $('#form-create-film').validate({
             rules: {
                 title: {
@@ -153,6 +180,9 @@
                     required: true
                 },
                 status: {
+                    required: true
+                },
+                price: {
                     required: true
                 }
             },
@@ -168,6 +198,9 @@
                 },
                 status: {
                     required: "Trạng thái không được để trống"
+                },
+                price: {
+                    required: "Giá không được để trống"
                 }
             },
             errorElement: 'span',
@@ -206,7 +239,9 @@
                 releaseYear: Number(filmReleaseYear.value),
                 directorIds: filmDirectors.val().map(e => Number(e)),
                 actorIds: filmActors.val().map(e => Number(e)),
-                genreIds: filmGenres.val().map(e => Number(e))
+                genreIds: filmGenres.val().map(e => Number(e)),
+                accessType: accessType.checked ? "PAID" : "FREE",
+                price: accessType.checked ? Number(document.getElementById("price").value) : null
             }
 
             console.log(data)

@@ -10,6 +10,7 @@
               integrity="sha512-K1k7jSn9RDKEcn/ugqVVvWYu0bcS3q1w6m/5pQSnrj0bCfIqF6Wk49lkmckSb4wglvTP9V17LtS0q0XxYccXbg=="
               crossorigin="anonymous" referrerpolicy="no-referrer"/>
     </th:block>
+
 </head>
 
 <body>
@@ -19,7 +20,7 @@
         <div class="container">
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a class="text-primary" href="/">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a class="text-primary" href="/static">Trang chủ</a></li>
                     <li class="breadcrumb-item">
                         <a th:switch="${film.type.type}">
                             <a class="text-primary" th:case="'Phim lẻ'" href="/phim-le">Phim lẻ</a>
@@ -28,30 +29,29 @@
                             <a class="text-primary" th:case="*" href="#">Không xác định</a> <!-- Trường hợp mặc định -->
                         </a>
                     </li>
-                    <li class="breadcrumb-item"><a class="text-primary"
-                                                   th:href="@{/phim/{id}/{slug} (id=${film.id}, slug=${film.slug})}"
-                                                   th:text="${film.title}">Nhà Bà Nữ</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Xem phim</li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${film.title}">Cô Đi Mà Lấy Chồng
+                        Tôi
+                    </li>
                 </ol>
             </nav>
-            <div id="screen" class="py-5 mb-5">
-                <div class="container">
-                    <div class="w-75 mx-auto">
-                        <video controls width="100%">
-                            <source th:src="${currentEpisode != null && currentEpisode.video != null && currentEpisode.video.url != null ? currentEpisode.video.url : ''}"
-                                    type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                </div>
-            </div>
             <div class="row mt-4">
                 <div class="col-3">
-                    <img id="movie-poster" class="rounded w-100"
-                         th:src="${film.poster}" alt="">
+                    <div class="movie-poster overflow-hidden position-relative rounded">
+                        <img id="movie-poster" class="w-100"
+                             th:src="${film.poster}" alt="">
+                        <span class="play-icon"><i class="fa-regular fa-circle-play"></i></span>
+                        <span th:if="${film.type.toString() == 'PHIM_BO'}"
+                              class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">Phim bộ</span>
+                    </div>
                 </div>
                 <div class="col-9">
-                    <h4 class="mb-3" th:text="${film.title}">Cô Đi Mà Lấy Chồng Tôi</h4>
+                    <div class="d-flex align-items-center mb-3">
+                        <h4 class="mb-0" th:text="${film.title}">Cô Đi Mà Lấy Chồng Tôi</h4>
+                        <div class="d-flex align-items-center bg-body-tertiary p-1 rounded ms-2">
+                            <span class="fw-bold me-1">8.0</span>
+                            <span class="rating-icon text-yellow-300"><i class="fa-solid fa-star"></i></span>
+                        </div>
+                    </div>
                     <div class="p-3 bg-body-tertiary">
                         <div class="row">
                             <div class="col-2">
@@ -70,6 +70,14 @@
                             </div>
                             <div class="col-10">
                                 <p th:text="${film.releaseYear}">2021</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <p>Quốc gia</p>
+                            </div>
+                            <div class="col-10">
+                                <p th:text="${film.country.name}">Việt Nam</p>
                             </div>
                         </div>
                         <div class="row">
@@ -106,21 +114,32 @@
                             </div>
                         </div>
                     </div>
-                    <div id="btn-wishlist-container" th:if="${episodeList.size() > 0}" th:with="episode = ${episodeList.get(0)}">
-                        <button th:if="${isLogined && isFavorite}" class="d-inline-block btn bg-dark px-5 py-2 mt-3 rounded text-white" th:onclick="|removeFromWishList(${film.id})|">
-                            <span><i class="fa-solid fa-trash-can"></i></span> Loại khỏi yêu thích
-                        </button>
-                        <button th:if="${isLogined && not isFavorite}" class="d-inline-block btn bg-dark px-5 py-2 mt-3 rounded text-white" th:onclick="|addToWishList(${film.id})|">
-                            <span><i class="fa-solid fa-heart"></i></span> Thêm vào yêu thích
-                        </button>
-                    </div>
+                    <th:block th:if="${episodeList.size() > 0}" th:with="episode = ${episodeList.get(0)}">
+                        <div class="d-flex align-items-center">
+                            <a class="d-inline-block btn btn-danger px-5 py-2 mt-3 rounded me-2"
+                               th:href="@{/xem-phim/{id}/{slug} (id=${film.id}, slug=${film.slug}, tap=${film.type.type == 'Phim bộ' ? episode.displayOrder : 'full'})}">
+                                <span><i class="fa-solid fa-play"></i></span>
+                                Xem phim</a>
+                            <div id="btn-wishlist-container">
+                                <button th:if="${isLogined && isFavorite}"
+                                        class="d-inline-block btn bg-dark px-5 py-2 mt-3 rounded text-white"
+                                        th:onclick="|removeFromWishList(${film.id})|">
+                                    <span><i class="fa-solid fa-trash-can"></i></span> Loại khỏi yêu thích
+                                </button>
+                                <button th:if="${isLogined && not isFavorite}"
+                                        class="d-inline-block btn bg-dark px-5 py-2 mt-3 rounded text-white"
+                                        th:onclick="|addToWishList(${film.id})|">
+                                    <span><i class="fa-solid fa-heart"></i></span> Thêm vào yêu thích
+                                </button>
+                            </div>
+                        </div>
+                    </th:block>
                 </div>
             </div>
 
             <div class="mt-4" th:if="${film.type.type == 'Phim bộ'}">
                 <h3 class="mb-3">Tập phim</h3>
                 <a class="btn btn-dark me-2"
-                   th:classappend="${tap == #strings.toString(episode.displayOrder) ? 'disabled' : ''}"
                    th:href="@{/xem-phim/{id}/{slug} (id=${film.id}, slug=${film.slug}, tap=${episode.displayOrder})}"
                    th:each="episode : ${episodeList}" th:text="${episode.title}">Tập 1</a>
             </div>
@@ -156,9 +175,10 @@
                         luận
                     </button>
                 </div>
-                <p th:if="not ${isLogined}">Vui lòng <a href="/dang-nhap"
-                                                        class="text-primary text-decoration-underline">đăng
-                    nhập</a> để viết bình luận</p>
+                <p th:if="not ${isLogined}">
+                    Vui lòng
+                    <a href="/dang-nhap" class="text-primary text-decoration-underline">đăng nhập</a>
+                    để viết bình luận</p>
                 <div class="review-list">
 
                 </div>
@@ -230,6 +250,29 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalTrailer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Trailer:
+                        <th:block th:text="${film.title}"></th:block>
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="aspect-ratio: 16/9">
+                        <iframe class="w-100 h-100" src="https://www.youtube.com/embed/ByAn8DF8Ykk?si=uAm6Nub1qNQFoE10"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen></iframe>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </th:block>
 
 <th:block id="js">
@@ -242,19 +285,46 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.js"
             integrity="sha512-GzbaI5EsNzdEUq6/2XLYpr1y9CUZRIVsUeWTAFgULtQa5jZ3Nug8i0nZKM6jp9NffBCZhymPPQFcF0DK+JkRpw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
     <script th:inline="javascript">
         const film = [[${film}]];
         const reviews = [[${reviewList}]];
-        const currentEpisode = [[${currentEpisode}]];
+        const relateFilmList = [[${relateFilmList}]];
+        const episodeList = [[${episodeList}]];
         const currentUser = [[${currentUser}]];
-        const watchHistory = [[${watchHistory}]];
-        const video = document.querySelector('#screen video');
+        const isFavorite = [[${isFavorite}]];
+
+        console.log({film, reviews, relateFilmList, episodeList, currentUser})
+
+        // Handle show trailer
+        const modalTrailer = new bootstrap.Modal(document.getElementById('modalTrailer'));
+
+        // add event modal trailer show
+        modalTrailer._element.addEventListener('show.bs.modal', function (event) {
+            const modalBody = modalTrailer._element.querySelector('.modal-body');
+            modalBody.innerHTML = `
+                <div style="aspect-ratio: 16/9">
+                     <iframe class="w-100 h-100" src="${film.trailerUrl}"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen></iframe>
+                </div>
+            `;
+        })
+
+        // add event modal trailer hide
+        modalTrailer._element.addEventListener('hide.bs.modal', function (event) {
+            const modalBody = modalTrailer._element.querySelector('.modal-body');
+            modalBody.innerHTML = '';
+        })
+
+        // add event to element class "play-icon" to show modal trailer
+        const playIcon = document.querySelector('.play-icon');
+        playIcon.addEventListener('click', () => {
+            modalTrailer.show();
+        })
     </script>
     <script src="/js/film-detail/film-detail.js"></script>
     <script src="/js/film-detail/film-review.js" th:if="${isLogined}"></script>
-    <script src="/js/film-detail/film-view-history.js" th:if="${isLogined}"></script>
-    <script src="/js/film-detail/film-view-history-anonymous.js" th:if="not ${isLogined}"></script>
 </th:block>
 </body>
 

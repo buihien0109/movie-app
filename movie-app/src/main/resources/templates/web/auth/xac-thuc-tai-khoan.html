@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{})}">
+
+<head>
+    <title>Xác thực tài khoản</title>
+</head>
+
+<body>
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a class="text-primary" href="/static">Trang chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Xác thực tài khoản</li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+    <section class="pb-4">
+        <div class="container">
+            <h4 th:text="${data.message}"></h4>
+            <a class="btn btn-primary mt-1" th:if="${data.success == true}" href="/dang-nhap">Đăng nhập tài khoản</a>
+        </div>
+    </section>
+</th:block>
+</body>
+
+</html>

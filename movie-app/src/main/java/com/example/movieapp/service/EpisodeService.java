@@ -2,7 +2,7 @@ package com.example.movieapp.service;
 
 import com.example.movieapp.entity.Episode;
 import com.example.movieapp.entity.Film;
-import com.example.movieapp.exception.ResouceNotFoundException;
+import com.example.movieapp.exception.ResourceNotFoundException;
 import com.example.movieapp.model.request.UpsertEpisodeRequest;
 import com.example.movieapp.repository.EpisodeRepository;
 import com.example.movieapp.repository.FilmRepository;
@@ -28,7 +28,7 @@ public class EpisodeService {
     public Episode saveEpisode(UpsertEpisodeRequest request) {
         // Check film is exist
         Film film = filmRepository.findById(request.getFilmId())
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phim có id = " + request.getFilmId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim có id = " + request.getFilmId()));
 
         Episode episode = Episode.builder()
                 .title(request.getTitle())
@@ -42,11 +42,11 @@ public class EpisodeService {
 
     public Episode updateEpisode(Integer id, UpsertEpisodeRequest request) {
         Episode existingEpisode = episodeRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy tập phim có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tập phim có id = " + id));
 
         // Check film is exist
         Film film = filmRepository.findById(request.getFilmId())
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phim có id = " + request.getFilmId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim có id = " + request.getFilmId()));
 
         existingEpisode.setTitle(request.getTitle());
         existingEpisode.setDisplayOrder(request.getDisplayOrder());
@@ -57,7 +57,7 @@ public class EpisodeService {
 
     public void deleteEpisode(Integer id) {
         Episode existingEpisode = episodeRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy tập phim có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tập phim có id = " + id));
         episodeRepository.deleteById(id);
 
         // Delete video
@@ -68,7 +68,7 @@ public class EpisodeService {
 
     public Episode uploadVideo(Integer id, MultipartFile file) {
         Episode existingEpisode = episodeRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy tập phim có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tập phim có id = " + id));
 
         // Delete old video
         if (existingEpisode.getVideo() != null) {

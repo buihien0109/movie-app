@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #js})}">
+<head>
+    <title>Đăng ký</title>
+</head>
+<body>
+
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <h3 class="mb-3 text-center">Đăng ký</h3>
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <form class="p-5 rounded bg-body-tertiary" id="form-register">
+                        <div class="mb-3 form-group">
+                            <label for="name" class="form-label">Tên</label>
+                            <input type="text" class="form-control" id="name" name="name">
+                        </div>
+                        <div class="mb-3 form-group">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Mật khẩu</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" name="password"/>
+                                <span class="input-group-text icon-toggle-password">
+                                    <i class="fa-regular fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Nhập lại mật khẩu</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirm-password"
+                                       name="confirmPassword"/>
+                                <span class="input-group-text icon-toggle-password">
+                                    <i class="fa-regular fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-primary px-4">Đăng Ký</button>
+                            <a class="text-primary" href="/dang-nhap">Đăng nhập?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+<th:block id="js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"
+            integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/additional-methods.min.js"
+            integrity="sha512-TiQST7x/0aMjgVTcep29gi+q5Lk5gVTUPE9XgN0g96rwtjEjLpod4mlBRKWHeBcvGBAEvJBmfDqh2hfMMmg+5A=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        // hide/show password with icon in inputs using valina javascript
+        const togglePasswordBtns = document.querySelectorAll('.icon-toggle-password');
+        const passwordInputs = document.querySelectorAll('input[type="password"]');
+        togglePasswordBtns.forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                if (passwordInputs[index].type === 'password') {
+                    passwordInputs[index].type = 'text';
+                    btn.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
+                } else {
+                    passwordInputs[index].type = 'password';
+                    btn.innerHTML = '<i class="fa-regular fa-eye"></i>';
+                }
+            });
+        });
+
+        // validation form
+        $('#form-register').validate({
+            rules: {
+                name: {
+                    required: true
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+                password: {
+                    required: true
+                },
+                confirmPassword: {
+                    required: true,
+                    equalTo: "#password"
+                }
+            },
+            messages: {
+                name: {
+                    required: "Tên người dùng không được để trống",
+                },
+                email: {
+                    required: "Email không được để trống",
+                    email: "Email không đúng định dạng"
+                },
+                password: {
+                    required: "Mật khẩu không được để trống",
+                },
+                confirmPassword: {
+                    required: "Nhập lại mật khẩu không được để trống",
+                    equalTo: "Nhập lại mật khẩu không khớp"
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        // handle register form submit using axios
+        const registerForm = document.getElementById('form-register');
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            if (!$('#form-register').valid()) {
+                return;
+            }
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const data = {
+                name,
+                email,
+                password,
+                confirmPassword
+            };
+            console.log(data)
+            axios.post('/api/auth/register', data)
+                .then((res) => {
+                    if (res.status === 200) {
+                        toastr.success('Đăng ký thành công, một email xác nhận đã được gửi đến email của bạn. Vui lòng kiểm tra email để xác nhận tài khoản');
+                        setTimeout(() => {
+                            window.location.href = '/dang-nhap';
+                        }, 1500);
+                    } else {
+                        toastr.error('Đăng ký tài khoản thất bại');
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                    toastr.error(err.response.data.message);
+                });
+        });
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,8 +1,10 @@
 package com.example.movieapp.service;
 
+import com.example.movieapp.entity.Film;
 import com.example.movieapp.entity.Genre;
 import com.example.movieapp.exception.BadRequestException;
-import com.example.movieapp.exception.ResouceNotFoundException;
+import com.example.movieapp.exception.ResourceNotFoundException;
+import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.request.UpsertGenreRequest;
 import com.example.movieapp.repository.FilmRepository;
 import com.example.movieapp.repository.GenreRepository;
@@ -11,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +29,7 @@ public class GenreService {
     private final Slugify slugify;
 
     public List<Genre> getAllGenres() {
-        return genreRepository.findAll();
+        return genreRepository.findAll(Sort.by("createdAt").descending());
     }
 
     public Page<Genre> getAllGenres(Integer page, Integer size) {
@@ -34,7 +38,7 @@ public class GenreService {
 
     public Genre getGenreById(Integer id) {
         return genreRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy thể loại có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thể loại có id = " + id));
     }
 
     public Genre saveGenre(UpsertGenreRequest request) {
@@ -52,7 +56,7 @@ public class GenreService {
 
     public Genre updateGenre(Integer id, UpsertGenreRequest genre) {
         Genre existingGenre = genreRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy thể loại có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thể loại có id = " + id));
 
         // Kiểm tra tên thể loại đã tồn tại hay chưa. Nếu đã tồn tại và không phải là thể loại cần update thì throw exception
         if (genreRepository.findByName(genre.getName()).isPresent() && !Objects.equals(existingGenre.getName(), genre.getName())) {
@@ -66,7 +70,7 @@ public class GenreService {
 
     public void deleteGenre(Integer id) {
         Genre existingGenre = genreRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy thể loại có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thể loại có id = " + id));
 
         // Đếm số phim có thể loại này
         long count = filmRepository.countByGenres_Id(existingGenre.getId());
@@ -75,5 +79,10 @@ public class GenreService {
         }
 
         genreRepository.deleteById(id);
+    }
+
+    public Genre getGenreBySlug(String slug) {
+        return genreRepository.findBySlug(slug)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thể loại có slug = " + slug));
     }
 }

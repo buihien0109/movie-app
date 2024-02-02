@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Tất cả đơn hàng</title>
+
+    <th:block id="css">
+
+    </th:block>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh sách đơn hàng
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <a href="/admin/orders" type="button" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table id="table-blog" class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Họ tên</th>
+                                    <th>Ngày tạo đơn</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hình thức thanh toán</th>
+                                    <th>Phim</th>
+                                    <th>Giá tiền</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        $('#table-blog').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "processing": true,
+            "serverSide": true,
+            language: {
+                "loadingRecords": "Loading..."
+            },
+            "ajax": {
+                "url": "/api/admin/orders",
+                "type": "GET"
+            },
+            "columns": [
+                {
+                    "data": "id", "render": function (data, type, row) {
+                        return `<a href="/admin/orders/${row.id}/detail">${data}</a>`;
+                    }
+                },
+                {
+                    "data": "user.name",
+                    "render": function (data, type, row) {
+                        return `<a href="/admin/users/${row.user.id}/detail">${data}</a>`;
+                    }
+                },
+                {
+                    "data": "createdAt",
+                    "render": function (data, type, row) {
+                        return formatDate(data);
+                    }
+                },
+                {
+                    "data": "status",
+                    "render": function (data, type, row) {
+                        if (data === 'PENDING') {
+                            return `<span class="badge badge-warning">Chờ xử lý</span>`;
+                        } else if (data === 'SUCCESS') {
+                            return `<span class="badge badge-success">Thành công</span>`;
+                        } else if (data === 'CANCEL') {
+                            return `<span class="badge badge-secondary">Đã hủy</span>`;
+                        }
+                    }
+                },
+                {
+                    "data": "paymentMethod",
+                    "render": function (data, type, row) {
+                        if (data === 'MOMO') {
+                            return `<span class="badge badge-info">Momo</span>`;
+                        } else if (data === 'ZALO_PAY') {
+                            return `<span class="badge badge-info">ZaloPay</span>`;
+                        } else if (data === 'BANK_TRANSFER') {
+                            return `<span class="badge badge-info">Chuyển khoản ngân hàng</span>`;
+                        }
+                    }
+                },
+                {
+                    "data": "film.title",
+                    "render": function (data, type, row) {
+                        return `<a href="/admin/films/${row.film.id}/detail">${data}</a>`;
+                    }
+                },
+                {
+                    "data": "amount",
+                    "render": function (data, type, row) {
+                        return formatCurrency(data);
+                    }
+                }
+            ]
+        });
+    </script>
+</th:block>
+</body>
+
+</html>

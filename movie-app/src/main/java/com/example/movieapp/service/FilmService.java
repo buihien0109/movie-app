@@ -1,16 +1,15 @@
 package com.example.movieapp.service;
 
-import com.example.movieapp.entity.Actor;
-import com.example.movieapp.entity.Director;
-import com.example.movieapp.entity.Film;
-import com.example.movieapp.entity.Genre;
-import com.example.movieapp.exception.ResouceNotFoundException;
+import com.example.movieapp.entity.*;
+import com.example.movieapp.exception.ResourceNotFoundException;
+import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.request.CreateFilmRequest;
 import com.example.movieapp.model.request.UpdateFilmRequest;
 import com.example.movieapp.repository.ActorRepository;
 import com.example.movieapp.repository.DirectorRepository;
 import com.example.movieapp.repository.FilmRepository;
 import com.example.movieapp.repository.GenreRepository;
+import com.example.movieapp.security.SecurityUtils;
 import com.example.movieapp.utils.FileUtils;
 import com.example.movieapp.utils.StringUtils;
 import com.github.slugify.Slugify;
@@ -18,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,7 +45,7 @@ public class FilmService {
 
     public Film getFilmById(Integer id) {
         return filmRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phim có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim có id = " + id));
     }
 
     public Film saveFilm(CreateFilmRequest request) {
@@ -67,6 +67,8 @@ public class FilmService {
                 .poster(StringUtils.generateLinkImage(request.getTitle()))
                 .type(request.getType())
                 .status(request.getStatus())
+                .accessType(request.getAccessType())
+                .price(request.getPrice())
                 .genres(genres)
                 .directors(directors)
                 .actors(actors)
@@ -76,7 +78,7 @@ public class FilmService {
 
     public Film updateFilm(Integer id, UpdateFilmRequest request) {
         Film existingFilm = filmRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phim có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim có id = " + id));
 
         // get all genres by genreIds
         Set<Genre> genres = genreRepository.findByIdIn(request.getGenreIds());
@@ -94,6 +96,8 @@ public class FilmService {
         existingFilm.setReleaseYear(request.getReleaseYear());
         existingFilm.setType(request.getType());
         existingFilm.setStatus(request.getStatus());
+        existingFilm.setAccessType(request.getAccessType());
+        existingFilm.setPrice(request.getPrice());
         existingFilm.setGenres(genres);
         existingFilm.setDirectors(directors);
         existingFilm.setActors(actors);
@@ -102,7 +106,7 @@ public class FilmService {
 
     public void deleteFilm(Integer id) {
         Film existingFilm = filmRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phim có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim có id = " + id));
 
         // Kiểm tra xem phim có poster không. Nếu có thì xóa file poster
         if (existingFilm.getPoster() != null) {
@@ -114,7 +118,7 @@ public class FilmService {
 
     public String updatePoster(Integer id, MultipartFile file) {
         Film film = filmRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phim"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim"));
 
         // Kiểm tra xem phim có poster không. Nếu có thì xóa file poster sau đó lưu file mới
         if (film.getPoster() != null) {
@@ -125,5 +129,24 @@ public class FilmService {
         film.setPoster(filePath);
         filmRepository.save(film);
         return film.getPoster();
+    }
+
+    public List<Film> getFilmsBuyedOfCurrentUser() {
+        User user = SecurityUtils.getCurrentUserLogin();
+        return filmRepository.findFilmsBuyedOfUser(user.getId());
+    }
+
+    public List<Film> getAllFilmsByAccessType(FilmAccessType filmAccessType) {
+        return filmRepository.findByAccessType(filmAccessType);
+    }
+
+    public Page<Film> getFilmsOfGenre(String slug, FilmAccessType filmAccessType, boolean status, Integer page, Integer limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        return filmRepository.findByAccessTypeAndStatusAndGenres_SlugOrderByPublishedAtDesc(filmAccessType, status, slug, pageable);
+    }
+
+    public Page<Film> getFilmsOfCountry(String slug, FilmAccessType filmAccessType, boolean status, Integer page, Integer limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        return filmRepository.findByAccessTypeAndStatusAndCountry_SlugOrderByPublishedAtDesc(filmAccessType, status, slug, pageable);
     }
 }

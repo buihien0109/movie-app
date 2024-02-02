@@ -13,8 +13,8 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class CustomExceptionHandler {
-    @ExceptionHandler(ResouceNotFoundException.class)
-    public ResponseEntity<?> handleResourceNotFoundException(ResouceNotFoundException e) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException e) {
         return new ResponseEntity<>(
                 new ErrorResponse(HttpStatus.NOT_FOUND, e.getMessage()),
                 HttpStatus.NOT_FOUND

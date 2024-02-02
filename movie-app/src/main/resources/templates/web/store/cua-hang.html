@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{})}">
+
+<head>
+    <title>Danh sách phim</title>
+</head>
+
+<body>
+
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <h3 class="mb-3">Danh sách phim</h3>
+            <div class="row">
+                <div class="col-2" th:each="film : ${pageData.getContent()}">
+                    <div class="movie-item mb-4">
+                        <a th:href="@{/cua-hang/phim/{id}/{slug} (id=${film.id}, slug=${film.slug})}"
+                           class="movie-media">
+                            <div class="movie-poster rounded overflow-hidden position-relative">
+                                <img class="w-100 h-100"
+                                     th:src="${film.poster}" th:alt="${film.title}">
+                                <span th:if="${film.type.toString() == 'PHIM_BO'}"
+                                      class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">Phim bộ</span>
+                            </div>
+                            <p class="mt-2 mb-1" th:text="${film.title}">Cô Đi Mà Lấy Chồng Tôi</p>
+                            <div class="d-flex align-items-center text-muted" style="font-size: 14px">
+                                <span>
+                                    <span class="fw-medium" th:text="${film.rating}"></span>
+                                    <span style="color: #EDBB0E"><i class="fa fa-star"></i></span>
+                                </span>
+                                <span class="ms-2 fw-medium" th:text="|${#numbers.formatInteger(film.price,3,'COMMA')}đ|">100000</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center" id="pagination">
+                <nav aria-label="..." th:if="${pageData.getTotalPages() > 1}">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled' : ''">
+                            <a class="page-link" th:href="@{/cua-hang (page=${currentPage - 1})}"><i
+                                    class="fa-solid fa-caret-left"></i></a>
+                        </li>
+                        <li class="page-item" th:each="pageNum : ${#numbers.sequence(1, pageData.getTotalPages())}"
+                            th:classappend="${pageNum == currentPage} ? 'active' : ''">
+                            <a class="page-link" th:href="@{/cua-hang (page=${pageNum})}" th:text="${pageNum}">1</a>
+                        </li>
+                        <li class="page-item"
+                            th:classappend="${currentPage == pageData.getTotalPages()} ? 'disabled' : ''">
+                            <a class="page-link" th:href="@{/cua-hang (page=${currentPage + 1})}"><i
+                                    class="fa-solid fa-caret-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+</body>
+
+</html>

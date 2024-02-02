@@ -2,6 +2,7 @@ package com.example.movieapp.rest;
 
 import com.example.movieapp.model.request.UpsertBlogRequest;
 import com.example.movieapp.service.BlogService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,12 +36,12 @@ public class BlogResource {
     }
 
     @PostMapping
-    public ResponseEntity<?> createBlog(@RequestBody UpsertBlogRequest request) {
+    public ResponseEntity<?> createBlog(@Valid @RequestBody UpsertBlogRequest request) {
         return new ResponseEntity<>(blogService.saveBlog(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateBlog(@PathVariable Integer id, @RequestBody UpsertBlogRequest request) {
+    public ResponseEntity<?> updateBlog(@PathVariable Integer id, @Valid @RequestBody UpsertBlogRequest request) {
         return ResponseEntity.ok(blogService.updateBlog(id, request));
     }
 

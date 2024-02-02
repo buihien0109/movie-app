@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap");
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: "Roboto", sans-serif;
+                background-color: #dae1e7;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 600px;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.12),
+                    0 2px 4px 0 rgba(0, 0, 0, 0.08);
+                background-color: #fff;
+                margin: 30px auto 0;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .header {
+                background-color: #f3f6fa;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100px;
+            }
+
+            .header h2 span {
+                color: #7fad39;
+                text-transform: uppercase;
+            }
+
+            .content {
+                padding: 30px;
+            }
+
+            .content h3 {
+                text-align: center;
+                margin-bottom: 30px;
+                text-transform: uppercase;
+            }
+
+            .content p {
+                margin-bottom: 16px;
+                line-height: 24px;
+            }
+
+            .btn-action {
+                display: inline-block;
+                font-size: 14px;
+                padding: 10px 28px 10px;
+                color: #ffffff;
+                background: #7fad39;
+                text-decoration: none;
+                margin-bottom: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h2><span>Motchill</span></h2>
+            </div>
+            <div class="content">
+                <h3>Xác thực tài khoản</h3>
+                <p>Chào <b th:text="${username}">Bùi Hiên</b></p>
+                <p>
+                    Chúng tôi rất vui mừng thông báo rằng tài khoản của bạn đã
+                    được tạo thành công.
+                </p>
+
+                <p>
+                    Để hoàn tất quá trình đăng ký và xác thực tài khoản, vui
+                    lòng nhấp vào liên kết dưới đây:
+                </p>
+
+                <a class="btn-action" th:href="@{http://localhost:8080/xac-thuc-tai-khoan (token=${token})}">Link Xác Thực</a>
+
+                <p>
+                    Liên kết này sẽ hết hạn sau 24 giờ. Nếu bạn không thực hiện
+                    xác thực trong thời gian này, bạn sẽ cần tạo một yêu cầu xác
+                    thực mới.
+                </p>
+
+                <p>
+                    Nếu bạn không thực hiện yêu cầu này, vui lòng báo cho chúng
+                    tôi biết bằng cách trả lời email này.
+                </p>
+
+                <p>
+                    Cảm ơn bạn đã tham gia với chúng tôi và chúng tôi rất mong
+                    được phục vụ bạn!
+                </p>
+            </div>
+        </div>
+    </body>
+</html>

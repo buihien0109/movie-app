@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{})}">
+
+<head>
+    <title th:text="|Thể loại ${genre.name}|"></title>
+</head>
+
+<body>
+
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <h3 class="mb-3">Thể loại:
+                <th:block th:text="${genre.name}"></th:block>
+            </h3>
+            <div class="row">
+                <div class="col-2" th:each="film : ${pageData.getContent()}">
+                    <div class="movie-item">
+                        <a th:href="@{/phim/{id}/{slug} (id=${film.id}, slug=${film.slug})}"
+                           class="movie-media">
+                            <div class="movie-poster rounded overflow-hidden position-relative">
+                                <img class="w-100 h-100"
+                                     th:src="${film.poster}" th:alt="${film.title}">
+                                <span th:if="${film.type.toString() == 'PHIM_BO'}"
+                                      class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">Phim bộ</span>
+                            </div>
+                            <p class="mt-2" th:text="${film.title}">Cô Đi Mà Lấy Chồng Tôi</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-4" id="pagination">
+                <nav aria-label="..." th:if="${pageData.getTotalPages() > 1}">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled' : ''">
+                            <a class="page-link"
+                               th:href="@{/the-loai/{slug} (slug=${genre.slug}, page=${currentPage - 1})}"><i
+                                    class="fa-solid fa-caret-left"></i></a>
+                        </li>
+                        <li class="page-item" th:each="pageNum : ${#numbers.sequence(1, pageData.getTotalPages())}"
+                            th:classappend="${pageNum == currentPage} ? 'active' : ''">
+                            <a class="page-link" th:href="@{/the-loai/{slug} (slug=${genre.slug}, page=${pageNum})}"
+                               th:text="${pageNum}">1</a>
+                        </li>
+                        <li class="page-item"
+                            th:classappend="${currentPage == pageData.getTotalPages()} ? 'disabled' : ''">
+                            <a class="page-link"
+                               th:href="@{/the-loai/{slug} (slug=${genre.slug}, page=${currentPage + 1})}"><i
+                                    class="fa-solid fa-caret-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+</body>
+
+</html>

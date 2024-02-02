@@ -1,10 +1,8 @@
 package com.example.movieapp.service;
 
 import com.example.movieapp.entity.Actor;
-import com.example.movieapp.entity.Genre;
-import com.example.movieapp.entity.User;
 import com.example.movieapp.exception.BadRequestException;
-import com.example.movieapp.exception.ResouceNotFoundException;
+import com.example.movieapp.exception.ResourceNotFoundException;
 import com.example.movieapp.model.request.CreateActorRequest;
 import com.example.movieapp.model.request.UpdateActorRequest;
 import com.example.movieapp.repository.ActorRepository;
@@ -15,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +28,7 @@ public class ActorService {
     private final FileService fileService;
 
     public List<Actor> getAllActors() {
-        return actorRepository.findAll();
+        return actorRepository.findAll(Sort.by("createdAt").descending());
     }
 
     public Page<Actor> getAllActors(Integer page, Integer size) {
@@ -38,7 +37,7 @@ public class ActorService {
 
     public Actor getActorById(Integer id) {
         return actorRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy diễn viên có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy diễn viên có id = " + id));
     }
 
     public Actor saveActor(CreateActorRequest request) {
@@ -53,7 +52,7 @@ public class ActorService {
 
     public Actor updateActor(Integer id, UpdateActorRequest request) {
         Actor existingActor = actorRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy diễn viên có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy diễn viên có id = " + id));
 
         existingActor.setName(request.getName());
         existingActor.setDescription(request.getDescription());
@@ -63,7 +62,7 @@ public class ActorService {
 
     public void deleteActor(Integer id) {
         Actor existingActor = actorRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy diễn viên có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy diễn viên có id = " + id));
 
         // Kiểm tra xem diễn viên có đang áp dụng cho phim nào không. Nếu count > 0 thì không được xóa -> throw exception
         long count = filmRepository.countByActors_Id(id);
@@ -82,7 +81,7 @@ public class ActorService {
 
     public String updateAvatar(Integer actorId, MultipartFile file) {
         Actor actor = actorRepository.findById(actorId)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy diễn viên"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy diễn viên"));
 
         // Kiểm tra xem diễn viên có avatar không. Nếu có thì xóa file avatar sau đó lưu file mới
         if (actor.getAvatar() != null) {

@@ -3,7 +3,7 @@
       th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
 
 <head>
-    <title>Danh mục genre</title>
+    <title>Tất cả thể loại</title>
 </head>
 
 <body>
@@ -19,7 +19,7 @@
                             <a href="/admin/dashboard">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item active">
-                            Danh mục thể loại
+                            Danh sách thể loại
                         </li>
                     </ol>
                 </div>
@@ -139,8 +139,12 @@
                         <td>${pagination.pageSize * (pagination.pageNumber - 1) + (index + 1)}</td>
                         <td>${genre.name}</td>
                         <td>
-                            <button class="btn btn-warning" onclick="openModalUpdate(${genre.id})">Edit</button>
-                            <button class="btn btn-danger" onclick="deleteGenre(${genre.id})">Delete</button>
+                            <button class="btn btn-success btn-sm" onclick="openModalUpdate(${genre.id})">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteGenre(${genre.id})">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </td>
                     </tr>
                 `
@@ -191,7 +195,7 @@
 
             axios.post("/api/admin/genres", {name})
                 .then(res => {
-                    genres.push(res.data)
+                    genres.unshift(res.data)
                     renderPagination(genres)
                     inputNameEl.value = "";
 

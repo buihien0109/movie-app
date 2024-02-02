@@ -18,11 +18,13 @@
                     <div class="movie-item">
                         <span class="btn-remove-wishlist" th:onclick="|removeFromWishList(${film.id})|"><i
                                 class="fa-solid fa-xmark"></i></span>
-                        <a th:href="@{/phim/{id}/{slug} (id=${film.id}, slug=${film.slug})}"
+                        <a th:href="${film.accessType.toString() == 'PAID' ? '/cua-hang/phim/' + film.id + '/' + film.slug : '/phim/' + film.id + '/' + film.slug}"
                            class="movie-media">
-                            <div class="movie-poster rounded overflow-hidden">
+                            <div class="movie-poster rounded overflow-hidden position-relative">
                                 <img class="w-100 h-100"
                                      th:src="${film.poster}" th:alt="${film.title}">
+                                <span th:if="${film.accessType.toString() == 'PAID'}"
+                                      class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">PRO</span>
                             </div>
                             <p class="mt-2" th:text="${film.title}">Cô Đi Mà Lấy Chồng Tôi</p>
                         </a>

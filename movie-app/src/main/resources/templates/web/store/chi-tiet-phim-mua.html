@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: #main-content}, ~{:: #js})}">
+<head>
+    <title th:text="${film.title}">Tiêu đề phim</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.css"
+              integrity="sha512-K1k7jSn9RDKEcn/ugqVVvWYu0bcS3q1w6m/5pQSnrj0bCfIqF6Wk49lkmckSb4wglvTP9V17LtS0q0XxYccXbg=="
+              crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    </th:block>
+</head>
+<body>
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a class="text-primary" href="/static">Trang chủ</a></li>
+                    <li class="breadcrumb-item">
+                        <a class="text-primary" href="/cua-hang">Cửa hàng</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${film.title}">Cô Đi Mà Lấy Chồng
+                        Tôi
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+
+    <section id="movie-detail" class="py-5">
+        <div class="bg-movie-detail"
+             th:style="|background-image: url(${film.poster});|">
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-3">
+                    <div class="movie-thumbnail position-relative">
+                        <img class="rounded w-100"
+                             th:src="${film.poster}"
+                             th:alt="${film.title}">
+                        <span class="play-icon"><i class="fa-regular fa-circle-play"></i></span>
+                        <span th:if="${film.type.toString() == 'PHIM_BO'}"
+                              class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">Phim bộ</span>
+                    </div>
+                </div>
+                <div class="col-9">
+                    <div class="movie-info text-white">
+                        <h2 class="mb-2" th:text="${film.title}">Đầu Gấu Đụng Đầu Đất</h2>
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="rating-icon fs-4 text-yellow-300"><i class="fa-solid fa-star"></i></span>
+                            <span class="fs-3 fw-bold ms-2" th:text="${film.rating}">7.6</span>
+                        </div>
+                        <div>
+                            <p class="fw-bold mb-1">Nội dung</p>
+                            <p class="text-small opacity-50" th:text="${film.description}">Tiếp nối phần trước, Alienoid
+                                2: Đa Chiều Hỗn Chiến
+                                (Alienoid: Return To The Future) tiếp tục xoay quanh câu chuyện giữa các nhân vật ở hai
+                                chiều không gian đang đối mặt với cuộc đua giành lấy gươm thần. Trong bối cảnh của một
+                                thế giới đa chiều, nơi quá khứ và tương lai được kết nối bởi cánh cổng thời gian, đã tạo
+                                nên một trận chiến hỗn loạn giữa con người, đạo sĩ, pháp sư và người ngoài hành tinh <a
+                                        class="text-yellow-300 opacity-100" href="#">Xem thêm</a></p>
+                        </div>
+                        <div class="d-flex align-content-center">
+                            <div class="d-flex flex-column me-3 text-small">
+                                <p class="opacity-50 mb-1">Năm phát hành</p>
+                                <p class="fw-bold" th:text="${film.releaseYear}">21/02/2024</p>
+                            </div>
+                            <div class="d-flex flex-column me-3 text-small">
+                                <p class="opacity-50 mb-1">Thể loại</p>
+                                <p class="fw-bold">
+                                    <th:block th:each="genre, state : ${film.genres}"
+                                              th:text="${state.index < film.genres.size() - 1 ? genre.name + ', ' : genre.name}"></th:block>
+                                </p>
+                            </div>
+                            <div class="d-flex flex-column me-3 text-small">
+                                <p class="opacity-50 mb-1">Quốc gia</p>
+                                <p class="fw-bold" th:text="${film.country.name}">Việt Nam</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <a href="javascript:void(0)" class="text-small d-flex me-4 align-items-center text-white"
+                               data-bs-toggle="modal" data-bs-target="#modalTrailer">
+                                    <span class="btn-action btn-see-trailer rounded-circle d-flex justify-content-center align-items-center">
+                                        <i class="fa-solid fa-play"></i>
+                                    </span>
+                                <span class="ms-1">Xem trailer</span>
+                            </a>
+                            <a href="javascript:void(0)" class="text-small d-flex align-items-center text-white"
+                               id="btn-scroll-review">
+                                    <span class="btn-action btn-see-review rounded-circle d-flex justify-content-center align-items-center">
+                                        <i class="fa-solid fa-star"></i>
+                                    </span>
+                                <span class="ms-1">Xem review</span>
+                            </a>
+                        </div>
+
+
+                        <div class="d-flex align-items-center">
+                            <button type="button"
+                                    class="d-inline-block btn btn-danger px-5 py-2 mt-3 rounded me-2 text-white"
+                                    data-bs-toggle="modal" data-bs-target="#modal-purchase"
+                                    th:if="not ${isBuyed}">
+                                <span><i class="fa-solid fa-basket-shopping"></i></span> Mua phim: <span
+                                    th:text="|${#numbers.formatInteger(film.price,3,'COMMA')}đ|"></span>
+                            </button>
+
+                            <th:block th:if="${episodeList.size() > 0}" th:with="episode = ${episodeList.get(0)}">
+                                <a class="d-inline-block btn btn-danger px-5 py-2 mt-3 rounded me-2 text-white"
+                                   th:if="${isBuyed}"
+                                   th:href="@{/store/xem-phim/{id}/{slug} (id=${film.id}, slug=${film.slug}, tap=${film.type.type == 'Phim bộ' ? episode.displayOrder : 'full'})}">
+                                    <span><i class="fa-solid fa-play"></i></span>
+                                    Xem phim
+                                </a>
+                            </th:block>
+
+                            <div id="btn-wishlist-container">
+                                <button th:if="${isLogined && isFavorite}"
+                                        class="d-inline-block btn bg-dark px-5 py-2 mt-3 rounded text-white"
+                                        th:onclick="|removeFromWishList(${film.id})|">
+                                    <span><i class="fa-solid fa-trash-can"></i></span> Loại khỏi yêu thích
+                                </button>
+                                <button th:if="${isLogined && not isFavorite}"
+                                        class="d-inline-block btn bg-dark px-5 py-2 mt-3 rounded text-white"
+                                        th:onclick="|addToWishList(${film.id})|">
+                                    <span><i class="fa-solid fa-heart"></i></span> Thêm vào yêu thích
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-body-tertiary py-4" th:if="${isBuyed && film.type.type == 'Phim bộ'}">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div>
+                        <h3 class="mb-3">Tập phim</h3>
+                        <a class="btn btn-dark me-2"
+                           th:href="@{/store/xem-phim/{id}/{slug} (id=${film.id}, slug=${film.slug}, tap=${episode.displayOrder})}"
+                           th:each="episode : ${episodeList}" th:text="${episode.title}">Tập 1</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="book-ticket" class="py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-9">
+                    <section>
+                        <div class="mb-4">
+                            <h4 class="mb-4">Diễn viên & Đoàn làm phim</h4>
+                            <div class="d-flex flex-nowrap overflow-auto pb-3">
+                                <div th:each="director : ${film.directors}" class="text-center" style="flex: 0 0 13%;">
+                                    <img th:src="${director.avatar}" th:alt="${director.name}"
+                                         style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%">
+                                    <p th:text="${director.name}" class="mb-1 mt-2 text-gray-800 text-semi"></p>
+                                    <p class="mb-0 text-small text-gray-500">Đạo diễn</p>
+                                </div>
+                                <div th:each="actor : ${film.actors}" class="text-center" style="flex: 0 0 13%;">
+                                    <img th:src="${actor.avatar}" th:alt="${actor.name}"
+                                         style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%">
+                                    <p th:text="${actor.name}" class="mb-1 mt-2 text-gray-800 text-semi"></p>
+                                    <p class="mb-0 text-small text-gray-500">Diễn viên</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="review-container">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h4 class="mb-3">Bình luận</h4>
+                                <button class="btn btn-primary btn-create-review" th:if="${isLogined}">
+                                    Viết bình luận
+                                </button>
+                            </div>
+                            <p th:if="not ${isLogined}">
+                                Vui lòng
+                                <a href="/dang-nhap" class="text-primary text-decoration-underline">đăng nhập</a>
+                                để viết bình luận</p>
+                            <div class="review-list">
+
+                            </div>
+
+                            <div id="review-pagination" class="d-flex justify-content-center align-items-center">
+
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-3">
+                    <h4 class="mb-2">Phim liên quan</h4>
+
+                    <div class="row">
+                        <div class="col-12" th:each="filmRelate : ${relateFilmList}">
+                            <div class="movie-showing-now-suggest d-flex py-3 border-bottom">
+                                <div class="me-3 movie-thumbnail">
+                                    <a th:href="@{/cua-hang/phim/{id}/{slug} (id=${filmRelate.id}, slug=${filmRelate.slug})}">
+                                        <img class="rounded"
+                                             th:src="${filmRelate.poster}"
+                                             th:alt="${filmRelate.title}">
+                                    </a>
+                                </div>
+                                <div>
+                                    <p class="mb-1 text-gray-800 fw-semibold text-semi">
+                                        <a th:href="@{/cua-hang/phim/{id}/{slug} (id=${filmRelate.id}, slug=${filmRelate.slug})}"
+                                           class="text-gray-800 fw-semibold text-semi" th:text="${filmRelate.title}">Alienoid
+                                            2: Đa Chiều Hỗn Chiến</a>
+                                    </p>
+                                    <p class="mb-1 text-small text-gray-500">
+                                        <th:block th:each="genre, state : ${filmRelate.genres}"
+                                                  th:text="${state.index < filmRelate.genres.size() - 1 ? genre.name + ', ' : genre.name}"></th:block>
+                                    </p>
+                                    <p class="mb-0 d-flex align-items-center">
+                                    <span class="text-small">
+                                        <span class="text-yellow-300"><i class="fa-solid fa-star"></i></span>
+                                        <span class="text-gray-500" th:text="${filmRelate.rating}">8.3</span>
+                                    </span>
+                                        <span class="text-small text-gray-500 mx-2">|</span>
+                                        <span class="text-small text-gray-800 fw-semibold"
+                                              th:text="|${#numbers.formatInteger(filmRelate.price,3,'COMMA')}đ|"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modal-review" tabindex="-1" aria-hidden="true" th:if="${isLogined}">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Đánh giá phim</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="review-product-info text-center">
+                        <p th:text="${film.title}"></p>
+                    </div>
+                    <div class="review-product-rating">
+                        <div class="text-center">
+                        <span class="review-product-rating-item" data-rating="1" data-message="Không thích"><i
+                                class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="2" data-message="Rất tệ"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="3" data-message="Tệ"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="4" data-message="Dưới trung bình"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="5" data-message="Trung bình"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="6" data-message="Khá ổn"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="7" data-message="Tốt"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="8" data-message="Rất Tốt"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="9" data-message="Tuyệt Vời"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="10" data-message="Xuất sắc"><i
+                                    class="fa fa-star"></i></span>
+                        </div>
+                        <div class="text-center">
+                            <p class="review-product-rating-result"></p>
+                        </div>
+                    </div>
+                    <div class="review-product-content">
+                        <form id="form-review">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                    <textarea rows="5" id="review-content"
+                                              placeholder="Hãy chia sẻ cảm nhận của bạn về bộ phim"
+                                              class="form-control" name="content"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="review-product-btn d-flex justify-content-center mt-3">
+                        <button class="btn btn-primary" id="btn-send-review">Hoàn tất</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalTrailer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Trailer:
+                        <th:block th:text="${film.title}"></th:block>
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="aspect-ratio: 16/9">
+                        <iframe class="w-100 h-100" src="https://www.youtube.com/embed/ByAn8DF8Ykk?si=uAm6Nub1qNQFoE10"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen></iframe>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-purchase" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLiveLabel">Mua Phim</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="movie-item">
+                                <div class="movie-poster rounded overflow-hidden">
+                                    <img class="w-100 h-100"
+                                         th:src="${film.poster}" th:alt="${film.title}">
+                                </div>
+                                <p class="my-2" th:text="${film.title}">Cô Đi Mà Lấy Chồng Tôi</p>
+                                <h5 class="fw-medium text-danger" th:text="|${#numbers.formatInteger(film.price,3,'COMMA')}đ|">100000</h5>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="mb-3">Hình thức thanh toán</h5>
+                            <ul class="payment-container ps-0">
+                                <li class="payment-item">
+                                    <div class="d-flex align-items-center">
+                                        <input type="radio" name="payment-method" id="bank-transfer"
+                                               value="BANK_TRANSFER" checked>
+                                        <label for="bank-transfer">
+                                            <span>Chuyển khoản trực tiếp</span>
+                                            <img src="/image/bank-transfer.png" alt="logo momo">
+                                        </label>
+                                    </div>
+                                </li>
+                                <li class="payment-item">
+                                    <div class="d-flex align-items-center">
+                                        <input type="radio" name="payment-method" id="momo" value="MOMO">
+                                        <label for="momo">
+                                            <span>Thanh toán bằng Ví MoMo</span>
+                                            <img src="/image/logo-momo.svg" alt="logo momo">
+                                        </label>
+                                    </div>
+                                </li>
+                                <li class="payment-item">
+                                    <div class="d-flex align-items-center">
+                                        <input type="radio" name="payment-method" id="zalopay" value="ZALO_PAY">
+                                        <label for="zalopay">
+                                            <span>Thanh toán bằng Ví ZaloPay</span>
+                                            <img src="/image/logo-zalopay.webp" alt="logo momo">
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block id="js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"
+            integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/additional-methods.min.js"
+            integrity="sha512-TiQST7x/0aMjgVTcep29gi+q5Lk5gVTUPE9XgN0g96rwtjEjLpod4mlBRKWHeBcvGBAEvJBmfDqh2hfMMmg+5A=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.js"
+            integrity="sha512-GzbaI5EsNzdEUq6/2XLYpr1y9CUZRIVsUeWTAFgULtQa5jZ3Nug8i0nZKM6jp9NffBCZhymPPQFcF0DK+JkRpw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script th:inline="javascript">
+        const film = [[${film}]];
+        const reviews = [[${reviewList}]];
+        const relateFilmList = [[${relateFilmList}]];
+        const episodeList = [[${episodeList}]];
+        const currentUser = [[${currentUser}]];
+        const isFavorite = [[${isFavorite}]];
+
+        console.log({film, reviews, relateFilmList, episodeList, currentUser})
+
+        // Scroll to review using vanilla javascript
+        const btnScrollReview = document.getElementById('btn-scroll-review');
+        const reviewContainer = document.getElementById('review-container');
+        btnScrollReview.addEventListener('click', () => {
+            reviewContainer.scrollIntoView({behavior: 'smooth'});
+        })
+
+        // Handle show trailer
+        const modalTrailer = new bootstrap.Modal(document.getElementById('modalTrailer'));
+
+        // add event modal trailer show
+        modalTrailer._element.addEventListener('show.bs.modal', function (event) {
+            const modalBody = modalTrailer._element.querySelector('.modal-body');
+            modalBody.innerHTML = `
+                <div style="aspect-ratio: 16/9">
+                     <iframe class="w-100 h-100" src="${film.trailerUrl}"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen></iframe>
+                </div>
+            `;
+        })
+
+        // add event modal trailer hide
+        modalTrailer._element.addEventListener('hide.bs.modal', function (event) {
+            const modalBody = modalTrailer._element.querySelector('.modal-body');
+            modalBody.innerHTML = '';
+        })
+
+        // add event to element class "play-icon" to show modal trailer
+        const playIcon = document.querySelector('.play-icon');
+        playIcon.addEventListener('click', () => {
+            modalTrailer.show();
+        })
+    </script>
+    <script src="/js/film-detail/film-detail.js"></script>
+    <script src="/js/film-detail/film-review.js" th:if="${isLogined}"></script>
+</th:block>
+</body>
+</html>

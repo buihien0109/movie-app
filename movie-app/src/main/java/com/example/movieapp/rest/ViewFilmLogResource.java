@@ -1,6 +1,7 @@
 package com.example.movieapp.rest;
 
 import com.example.movieapp.service.ViewFilmLogService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +16,7 @@ public class ViewFilmLogResource {
     private final ViewFilmLogService viewFilmLogService;
 
     @PostMapping
-    public ResponseEntity<?> createViewFilmLog(@RequestParam Integer filmId) {
+    public ResponseEntity<?> createViewFilmLog(@Valid @RequestParam Integer filmId) {
         viewFilmLogService.createViewFilmLog(filmId);
         return ResponseEntity.noContent().build();
     }

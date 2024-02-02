@@ -1,10 +1,7 @@
 package com.example.movieapp.rest;
 
-import com.example.movieapp.entity.Genre;
-import com.example.movieapp.entity.User;
 import com.example.movieapp.model.request.CreateUserRequest;
 import com.example.movieapp.model.request.UpdateUserRequest;
-import com.example.movieapp.model.request.UpsertGenreRequest;
 import com.example.movieapp.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RestController

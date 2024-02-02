@@ -61,7 +61,12 @@
                                         <a th:href="@{/admin/films/{id}/detail (id=${film.id})}"
                                            th:text="${film.title}">Bee</a>
                                     </td>
-                                    <td th:text="${film.type.getType()}">Loại phim</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <th:block th:text="${film.type.getType()}"></th:block>
+                                            <span th:if="${film.accessType.toString() == 'PAID'}" class="d-inline-block badge bg-danger ml-2">Premium</span>
+                                        </div>
+                                    </td>
                                     <td th:text="${film.releaseYear}">Năm phát hành</td>
                                     <td>
                                         <span class="badge bg-info mr-1" th:each="genre : ${film.genres}"

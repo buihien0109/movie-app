@@ -4,7 +4,7 @@ import com.example.movieapp.entity.Film;
 import com.example.movieapp.entity.User;
 import com.example.movieapp.entity.Wishlist;
 import com.example.movieapp.exception.BadRequestException;
-import com.example.movieapp.exception.ResouceNotFoundException;
+import com.example.movieapp.exception.ResourceNotFoundException;
 import com.example.movieapp.model.request.AddWishlistRequest;
 import com.example.movieapp.repository.FilmRepository;
 import com.example.movieapp.repository.WishlistRepository;
@@ -34,7 +34,7 @@ public class WishlistService {
         // Kiểm tra xem filmId có tồn tại trong database không
         // Nếu không tồn tại thì throw exception
         Film film = filmRepository.findById(request.getFilmId())
-                .orElseThrow(() -> new ResouceNotFoundException("Phim không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Phim không tồn tại"));
 
         // Kiểm tra xem phim đã có trong danh sách yêu thích của user chưa
         // Nếu có rồi thì throw exception
@@ -58,7 +58,7 @@ public class WishlistService {
         // Nếu không tồn tại thì throw exception
         // Nếu tồn tại thì xóa phim đó khỏi danh sách yêu thích
         Wishlist wishlist = wishlistRepository.findByUser_IdAndFilm_Id(user.getId(), filmId)
-                .orElseThrow(() -> new ResouceNotFoundException("Phim không tồn tại trong danh sách yêu thích"));
+                .orElseThrow(() -> new ResourceNotFoundException("Phim không tồn tại trong danh sách yêu thích"));
 
         wishlistRepository.delete(wishlist);
     }

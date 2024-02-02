@@ -27,13 +27,18 @@ public class User {
     @Column(unique = true)
     String email;
 
+    String phone;
+
     @JsonIgnore
+    @Column(nullable = false)
     String password;
 
     String avatar;
 
     @Enumerated(EnumType.STRING)
     UserRole role;
+
+    private Boolean enabled;
 
     Date createdAt;
     Date updatedAt;
@@ -42,6 +47,14 @@ public class User {
     public void prePersist() {
         createdAt = new Date();
         updatedAt = createdAt;
+
+        if (role == null) {
+            role = UserRole.USER;
+        }
+
+        if (enabled == null) {
+            enabled = false;
+        }
     }
 
     @PreUpdate

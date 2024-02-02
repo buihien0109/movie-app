@@ -71,10 +71,20 @@
                                         </div>
 
                                         <div class="form-group">
+                                            <label>Số điện thoại</label>
+                                            <input type="text" class="form-control" id="phone"
+                                                   th:value="${user.phone}" name="phone"/>
+                                        </div>
+
+                                        <div class="form-group">
                                             <label>Role</label>
                                             <select class="form-select form-control" id="role" name="role">
-                                                <option value="USER" th:selected="${user.role.value.equals('ROLE_USER')}">USER</option>
-                                                <option value="ADMIN" th:selected="${user.role.value.equals('ROLE_ADMIN')}">ADMIN</option>
+                                                <option value="USER"
+                                                        th:selected="${user.role.value.equals('ROLE_USER')}">USER
+                                                </option>
+                                                <option value="ADMIN"
+                                                        th:selected="${user.role.value.equals('ROLE_ADMIN')}">ADMIN
+                                                </option>
                                             </select>
                                         </div>
                                     </form>
@@ -108,6 +118,10 @@
                 name: {
                     required: true
                 },
+                phone: {
+                    required: true,
+                    pattern: /^(0\d{9}|(\+84|84)[1-9]\d{8})$/
+                },
                 role: {
                     required: true
                 }
@@ -115,6 +129,10 @@
             messages: {
                 name: {
                     required: "Tên user không được để trống"
+                },
+                phone: {
+                    required: "Số điện thoại không được để trống",
+                    pattern: "Số điện thoại không đúng định dạng"
                 },
                 role: {
                     required: "Role không được để trống"
@@ -135,6 +153,7 @@
 
         // Truy cập vào các thành phần
         const userName = document.getElementById("name");
+        const userPhone = document.getElementById("phone");
         const userRole = document.getElementById("role");
         const btnUpdate = document.getElementById("btn-update")
 
@@ -144,6 +163,7 @@
 
             const data = {
                 name: userName.value,
+                phone: userPhone.value,
                 role: userRole.value
             }
             console.log(data);

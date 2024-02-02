@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #js})}">
+
+<head>
+    <title th:text="${blog.title}">Document</title>
+</head>
+
+<body>
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a class="text-primary" href="/static">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a class="text-primary" href="/tin-tuc">Tin tức</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${blog.title}">Top 15 Phim Cổ Trang
+                        Trung Quốc Hay Không Thể Bỏ Lỡ Năm 2023
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+
+    <section class="pb-4">
+        <div class="container">
+            <div class="row h-100 position-relative">
+                <div class="col-8">
+                    <h3 class="mb-3" th:text="${blog.title}">Top 15 Phim Cổ Trang Trung Quốc Hay Không Thể Bỏ Lỡ Năm
+                        2023</h3>
+                    <p class="fst-italic" th:text="${#dates.format(blog.publishedAt, 'dd/MM/YYYY')}">August 20, 2023</p>
+                    <div class="blog-detail" id="blog-detail" th:utext="${blog.content}"></div>
+                </div>
+                <div class="col-4">
+                    <div class="position-sticky" style="top: 1.5rem">
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <h4 class="mb-3">Mục lục</h4>
+                                <div class="toc-container border-start" id="toc-container">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h4 class="mb-3">Bài viết mới nhất</h4>
+                            <div class="col-12" th:each="newBlog : ${newBlogList}">
+                                <div class="blog-suggest d-flex py-3 border-bottom">
+                                    <div class="me-3 blog-thumbnail">
+                                        <a th:href="@{/tin-tuc/{id}/{slug} (id=${newBlog.id}, slug=${newBlog.slug})}">
+                                            <img class="rounded"
+                                                 th:src="${newBlog.thumbnail}"
+                                                 th:alt="${newBlog.title}">
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <p class="mb-1 text-gray-800 fw-semibold text-semi">
+                                            <a th:href="@{/tin-tuc/{id}/{slug} (id=${newBlog.id}, slug=${newBlog.slug})}"
+                                               class="text-gray-800 fw-semibold text-semi" th:text="${newBlog.title}">Alienoid
+                                                2: Đa Chiều Hỗn Chiến</a>
+                                        </p>
+                                        <p class="mb-1 text-small text-gray-500"
+                                           th:text="${#dates.format(blog.publishedAt, 'dd/MM/YYYY')}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            generateTOC();
+            addScrollSpy();
+        });
+
+        function generateTOC() {
+            const contentDiv = document.getElementById('blog-detail');
+            const headings = contentDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+            const tocContainer = document.getElementById('toc-container');
+            tocContainer.setAttribute('id', 'toc-container');
+
+            const tocList = document.createElement('ul');
+            tocList.classList.add('list-unstyled', 'ps-2');
+            tocContainer.appendChild(tocList);
+
+            headings.forEach(function (heading, index) {
+                const headingText = heading.textContent;
+                const anchorId = 'toc-anchor-' + index;
+
+                heading.setAttribute('id', anchorId);
+
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+                link.classList.add('text-gray-500', 'text-small', 'd-block', 'p-2')
+                link.textContent = headingText;
+                link.setAttribute('href', '#' + anchorId);
+
+                listItem.appendChild(link);
+                tocList.appendChild(listItem);
+            });
+        }
+
+        function addScrollSpy() {
+            const contentDiv = document.getElementById('blog-detail');
+            const headings = contentDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            const tocItems = document.querySelectorAll('#toc-container li a');
+
+            let lastId;
+            let cur = [];
+
+            window.addEventListener('scroll', function () {
+                const fromTop = window.scrollY + 60;
+
+                headings.forEach(function (heading, index) {
+                    if (heading.offsetTop <= fromTop) {
+                        cur = heading;
+                    }
+                });
+
+                let id = cur ? cur.id : "";
+
+                if (lastId !== id) {
+                    lastId = id;
+
+                    tocItems.forEach(function (item) {
+                        item.classList.remove('active');
+                    });
+
+                    let activeLink = document.querySelector('[href="#' + id + '"]');
+                    if (activeLink) {
+                        activeLink.classList.add('active');
+                    }
+                }
+            });
+        }
+    </script>
+</th:block>
+</body>
+
+</html>

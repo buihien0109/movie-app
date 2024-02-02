@@ -5,7 +5,7 @@ import com.example.movieapp.entity.Film;
 import com.example.movieapp.entity.User;
 import com.example.movieapp.entity.WatchHistory;
 import com.example.movieapp.exception.BadRequestException;
-import com.example.movieapp.exception.ResouceNotFoundException;
+import com.example.movieapp.exception.ResourceNotFoundException;
 import com.example.movieapp.model.request.WatchHistoryRequest;
 import com.example.movieapp.repository.EpisodeRepository;
 import com.example.movieapp.repository.FilmRepository;
@@ -34,11 +34,11 @@ public class WatchHistoryService {
 
         // Kiểm tra xem phim có tồn tại không? Nếu không tồn tại thì throw exception
         Film film = filmRepository.findById(request.getFilmId())
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phim với id: " + request.getFilmId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim với id: " + request.getFilmId()));
 
         // Kiểm tra xem tập phim có tồn tại không? Nếu không tồn tại thì throw exception
         Episode episode = episodeRepository.findById(request.getEpisodeId())
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy tập phim với id: " + request.getEpisodeId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tập phim với id: " + request.getEpisodeId()));
 
         // Kiểm tra xem thời lượng xem có hợp lệ không? Nếu không hợp lệ thì throw exception
         if (request.getDuration() < 0 || request.getDuration() > episode.getVideo().getDuration()) {
@@ -90,7 +90,7 @@ public class WatchHistoryService {
 
         // Kiểm tra lịch sử có tồn tại không? Nếu không tồn tại thì throw exception
         WatchHistory watchHistory = watchHistoryRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy lịch sử xem phim với id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy lịch sử xem phim với id: " + id));
 
         // Kiểm tra xem lịch sử xem phim này có phải của user hiện tại không? Nếu không phải thì throw exception
         if (!watchHistory.getUser().getId().equals(user.getId())) {

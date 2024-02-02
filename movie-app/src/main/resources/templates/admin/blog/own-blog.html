@@ -80,7 +80,11 @@
                 "type": "GET"
             },
             "columns": [
-                {"data": "title"},
+                {
+                    "data": "title", "render": function (data, type, row) {
+                        return `<a href="/admin/blogs/${row.id}/detail">${data}</a>`;
+                    }
+                },
                 {
                     "data": "status",
                     "render": function(data, type, row) {

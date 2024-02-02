@@ -13,31 +13,60 @@
         <div class="container">
             <div class="d-flex justify-content-between">
                 <h3 class="mb-3">Lịch sử xem phim</h3>
-                <a th:if="not ${#lists.isEmpty(watchHistoryList)}" href="javascript:void(0)" class="text-primary" id="btn-delete-all">Xóa tất cả lịch sử</a>
+                <a th:if="not ${#lists.isEmpty(watchHistoryList)}" href="javascript:void(0)" class="text-primary"
+                   id="btn-delete-all">Xóa tất cả lịch sử</a>
             </div>
             <div class="row watch-history-list">
                 <th:block th:if="${#lists.isEmpty(watchHistoryList)}">
                     <p class="fst-italic text-muted mb-0 fs-6">Bạn chưa xem phim nào</p>
                 </th:block>
                 <th:block th:if="not ${#lists.isEmpty(watchHistoryList)}">
-                    <div class="col-3" th:each="watchHistory : ${watchHistoryList}" th:with="film=${watchHistory.film}, episode=${watchHistory.episode}"
+                    <div class="col-3" th:each="watchHistory : ${watchHistoryList}"
+                         th:with="film=${watchHistory.film}, episode=${watchHistory.episode}"
                          th:data-id="${watchHistory.id}">
                         <div class="movie-item">
                         <span class="btn-remove-wishlist" th:onclick="|removeFromWatchHistory(${watchHistory.id})|"><i
                                 class="fa-solid fa-xmark"></i></span>
-                            <a th:href="@{/xem-phim/{id}/{slug} (id=${film.id}, slug=${film.slug}, tap=${film.type.type == 'Phim bộ' ? episode.displayOrder : 'full'})}"
+                            <a th:if="${film.accessType.toString() == 'PAID'}"
+                               th:href="@{/store/xem-phim/{id}/{slug} (id=${film.id}, slug=${film.slug}, tap=${film.type.toString() == 'PHIM_BO' ? episode.displayOrder : 'full'})}"
                                class="movie-media">
                                 <div class="movie-poster rounded overflow-hidden position-relative">
                                     <img class="w-100 h-100"
                                          th:src="${film.poster}" th:alt="${film.title}">
-                                    <div class="progress position-absolute left-0 bottom-0 rounded-0 w-100" style="height: 10px">
-                                        <div class="progress-bar bg-danger" role="progressbar" th:style="'width: ' + ${watchHistory.duration * 100 / episode.video.duration} + '%'"></div>
+                                    <div class="progress position-absolute left-0 bottom-0 rounded-0 w-100"
+                                         style="height: 10px">
+                                        <div class="progress-bar bg-danger" role="progressbar"
+                                             th:style="'width: ' + ${watchHistory.duration * 100 / episode.video.duration} + '%'"></div>
+                                    </div>
+                                    <span th:if="${film.accessType.toString() == 'PAID'}"
+                                          class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">PRO</span>
+                                </div>
+                                <p class="mt-2 mb-1 d-flex align-items-center">
+                                    <th:block th:text="${film.title}"></th:block>
+                                    <span class="badge text-bg-primary ms-2"
+                                          th:if="${watchHistory.film.type.toString() == 'PHIM_BO'}"
+                                          th:text="|Tập ${watchHistory.episode.displayOrder}|"></span></p>
+                                <div class="d-flex align-items-center">
+                                    <p class="text-muted fst-italic" style="font-size: 14px"
+                                       th:data-time="${watchHistory.watchTime}"></p>
+                                </div>
+                            </a>
+                            <a th:if="${film.accessType.toString() == 'FREE'}"
+                               th:href="@{/xem-phim/{id}/{slug} (id=${film.id}, slug=${film.slug}, tap=${film.type.toString() == 'PHIM_BO' ? episode.displayOrder : 'full'})}"
+                               class="movie-media">
+                                <div class="movie-poster rounded overflow-hidden position-relative">
+                                    <img class="w-100 h-100"
+                                         th:src="${film.poster}" th:alt="${film.title}">
+                                    <div class="progress position-absolute left-0 bottom-0 rounded-0 w-100"
+                                         style="height: 10px">
+                                        <div class="progress-bar bg-danger" role="progressbar"
+                                             th:style="'width: ' + ${watchHistory.duration * 100 / episode.video.duration} + '%'"></div>
                                     </div>
                                 </div>
                                 <p class="mt-2 mb-1 d-flex align-items-center">
                                     <th:block th:text="${film.title}"></th:block>
                                     <span class="badge text-bg-primary ms-2"
-                                          th:if="${watchHistory.film.type.getType() == 'Phim bộ'}"
+                                          th:if="${watchHistory.film.type.toString() == 'PHIM_BO'}"
                                           th:text="|Tập ${watchHistory.episode.displayOrder}|"></span></p>
                                 <div class="d-flex align-items-center">
                                     <p class="text-muted fst-italic" style="font-size: 14px"

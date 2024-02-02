@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #js})}">
+
+<head>
+    <title>Thông tin cá nhân</title>
+</head>
+
+<body>
+
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a class="text-primary" href="/static">Trang chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Thông tin cá nhân
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+    <section class="pb-4">
+        <div class="container">
+            <div class="row py-2">
+                <div class="col-6">
+                    <button type="button" class="btn btn-primary px-4" id="btn-update">
+                        Cập nhật
+                    </button>
+                    <button type="button" class="btn btn-success px-4" data-bs-toggle="modal"
+                            data-bs-target="#modalChangePassword">
+                        Đổi mật khẩu
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="form-update-user" class="bg-body-tertiary p-4">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Họ tên</label>
+                                    <input type="text" class="form-control" id="name"
+                                           th:value="${user.name}" name="name"/>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="text" class="form-control" id="email" name="email"
+                                           th:value="${user.email}" disabled/>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="phone" name="phone"
+                                           th:value="${user.phone}"/>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mt-4">
+                                <div class="user-avatar-container d-flex align-items-start flex-column">
+                                    <img id="avatar-preview" th:src="${user.avatar}" alt="" class="w-100"
+                                         style="aspect-ratio: 1 / 1;">
+                                    <label for="avatar" class="btn btn-warning w-100 mt-2">Đổi Avatar</label>
+                                    <input type="file" id="avatar" class="d-none">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalChangePassword" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Đổi mật khẩu</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-update-password">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Mật khẩu cũ</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="old-password" name="oldPassword"/>
+                                <span class="input-group-text icon-toggle-password">
+                                    <i class="fa-regular fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Mật khẩu mới</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="new-password" name="newPassword"/>
+                                <span class="input-group-text icon-toggle-password">
+                                    <i class="fa-regular fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Nhập lại mật khẩu mới</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirm-password"
+                                       name="confirmPassword"/>
+                                <span class="input-group-text icon-toggle-password">
+                                    <i class="fa-regular fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="btn-update-password">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+
+<th:block id="js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"
+            integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/additional-methods.min.js"
+            integrity="sha512-TiQST7x/0aMjgVTcep29gi+q5Lk5gVTUPE9XgN0g96rwtjEjLpod4mlBRKWHeBcvGBAEvJBmfDqh2hfMMmg+5A=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            // hide/show password with icon in inputs using valina javascript
+            const togglePasswordBtns = document.querySelectorAll('.icon-toggle-password');
+            const passwordInputs = document.querySelectorAll('input[type="password"]');
+            togglePasswordBtns.forEach((btn, index) => {
+                btn.addEventListener('click', () => {
+                    if (passwordInputs[index].type === 'password') {
+                        passwordInputs[index].type = 'text';
+                        btn.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
+                    } else {
+                        passwordInputs[index].type = 'password';
+                        btn.innerHTML = '<i class="fa-regular fa-eye"></i>';
+                    }
+                });
+            });
+
+            // add event listener to avatar input change
+            const avatarInput = document.getElementById('avatar');
+            const avatarPreview = document.getElementById('avatar-preview');
+            avatarInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+
+                // create form data with key file and value is file in input
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Send post request to url /api/v1/users/update-avatar, then check request status and set src for avatar preview
+                axios.post('/api/users/update-avatar', formData)
+                    .then(res => {
+                        if (res.status === 200) {
+                            avatarPreview.src = res.data;
+                            toastr.success('Cập nhật avatar thành công');
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        toastr.error(err.response.data.message);
+                    });
+            });
+
+            // validation form update profile
+            $('#form-update-user').validate({
+                rules: {
+                    name: {
+                        required: true
+                    },
+                    phone: {
+                        required: true,
+                        pattern: /^(0\d{9}|(\+84|84)[1-9]\d{8})$/
+                    }
+                },
+                messages: {
+                    name: {
+                        required: "Họ tên không được để trống",
+                    },
+                    phone: {
+                        required: "Số điện thoại không được để trống",
+                        pattern: "Số điện thoại không đúng định dạng"
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+
+            // add event listener to update profile form
+            const btnUpdateProfile = document.getElementById('btn-update');
+            btnUpdateProfile.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                if (!$('#form-update-user').valid()) {
+                    return;
+                }
+
+                const name = document.querySelector('#name').value;
+                const phone = document.querySelector('#phone').value;
+
+                // create data with key username and value is username in input
+                const data = {
+                    name: name,
+                    phone: phone
+                };
+
+                // Send post request to url /api/v1/users/update-profile, then check request status and set src for avatar preview
+                axios.put('/api/users/update-profile', data)
+                    .then(res => {
+                        if (res.status === 204) {
+                            toastr.success('Cập nhật thông tin thành công');
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        toastr.error(err.response.data.message);
+                    });
+            });
+
+            // validation form update password
+            $('#form-update-password').validate({
+                rules: {
+                    oldPassword: {
+                        required: true
+                    },
+                    newPassword: {
+                        required: true
+                    },
+                    confirmPassword: {
+                        required: true,
+                        equalTo: "#new-password" // Trùng với id của input new password
+                    }
+                },
+                messages: {
+                    oldPassword: {
+                        required: "Mật khẩu cũ không được để trống"
+                    },
+                    newPassword: {
+                        required: "Mật khẩu mới không được để trống"
+                    },
+                    confirmPassword: {
+                        required: "Mật khẩu xác nhận không được để trống",
+                        equalTo: "Mật khẩu xác nhận không khớp"
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+
+            // add event close modal and reset form when modal is hidden
+            const modalChangePassword = document.getElementById('modalChangePassword');
+            modalChangePassword.addEventListener('hidden.bs.modal', function (event) {
+                document.querySelector('#form-update-password').reset();
+
+                // clear all error message when modal is hidden
+                $("#form-update-password").validate().resetForm();
+
+                // remove all class is-invalid when modal is hidden
+                const invalidInputs = document.querySelectorAll('.is-invalid');
+                invalidInputs.forEach(input => {
+                    input.classList.remove('is-invalid');
+                });
+            });
+
+            // add event listener to update password form
+            const btnUpdatePassword = document.getElementById('btn-update-password');
+            btnUpdatePassword.addEventListener('click', () => {
+                if (!$('#form-update-password').valid()) {
+                    return;
+                }
+
+                const oldPassword = document.querySelector('#old-password').value;
+                const newPassword = document.querySelector('#new-password').value;
+                const confirmPassword = document.querySelector('#confirm-password').value;
+
+                // create data with key username and value is username in input
+                const data = {
+                    oldPassword: oldPassword,
+                    newPassword: newPassword,
+                    confirmPassword: confirmPassword
+                };
+
+                // Send post request to url /api/v1/users/update-password, then check request status and set src for avatar preview
+                axios.put('/api/users/update-password', data)
+                    .then(res => {
+                        if (res.status === 204) {
+                            toastr.success('Cập nhật mật khẩu thành công');
+
+                            // reset all password input
+                            document.querySelector('#old-password').value = '';
+                            document.querySelector('#new-password').value = '';
+                            document.querySelector('#confirm-password').value = '';
+
+                            // close modal
+                            $('#modalChangePassword').modal('hide');
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        toastr.error(err.response.data.message);
+                    });
+            });
+        })
+    </script>
+</th:block>
+</body>
+
+</html>

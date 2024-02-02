@@ -2,15 +2,13 @@ package com.example.movieapp.rest;
 
 import com.example.movieapp.model.request.LoginRequest;
 import com.example.movieapp.model.request.RegisterRequest;
+import com.example.movieapp.model.request.ResetPasswordRequest;
 import com.example.movieapp.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -32,6 +30,18 @@ public class AuthResource {
         log.info("Register request: {}", request);
 
         authService.register(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String email) {
+        authService.resetPassword(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> confirmResetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.changePassword(request);
         return ResponseEntity.ok().build();
     }
 }

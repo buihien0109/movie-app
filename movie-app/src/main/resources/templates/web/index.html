@@ -4,7 +4,8 @@
 <head>
     <title>Trang chủ</title>
     <th:block id="css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
               integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g=="
               crossorigin="anonymous" referrerpolicy="no-referrer"/>
         <link rel="stylesheet"
@@ -22,9 +23,15 @@
                 <div class="movie-item" th:each="film : ${phimHotList}">
                     <a th:href="@{/phim/{id}/{slug} (id=${film.id}, slug=${film.slug})}"
                        class="movie-media">
-                        <div class="movie-poster rounded overflow-hidden">
+                        <div class="movie-poster rounded overflow-hidden position-relative">
                             <img class="w-100 h-100"
                                  th:src="${film.poster}" th:alt="${film.title}">
+                            <span th:if="${film.type.toString() == 'PHIM_BO'}"
+                                  class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">Phim bộ</span>
+                            <span th:if="${film.type.toString() == 'PHIM_LE'}"
+                                  class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">Phim lẻ</span>
+                            <span th:if="${film.type.toString() == 'PHIM_CHIEU_RAP'}"
+                                  class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">Phim chiếu rạp</span>
                         </div>
                         <p class="mt-2" th:text="${film.title}">Cô Đi Mà Lấy Chồng Tôi</p>
                     </a>
@@ -110,16 +117,24 @@
             </div>
             <div class="row">
                 <div class="col-6" th:each="blog : ${blogList}">
-                    <div class="blog-item bg-body-tertiary p-3 rounded mb-4">
-                        <a th:href="@{/tin-tuc/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}">
-                            <h5 th:text="${blog.title}">Top 15 Phim Cổ Trang Trung Quốc Hay Không Thể Bỏ Lỡ Năm 2023</h5>
-                            <p class="fst-italic" th:text="${#dates.format(blog.publishedAt, 'dd/MM/YYYY')}">August 20,
-                                2023</p>
-                            <p class="mb-0 truncate" th:text="${blog.description}">Năm 2023 phim hàn quốc đã có nhiều nội dung được
-                                đổi mới và thu hút lượt xem
-                                nhiều hơn,
-                                vậy
-                                đâu là 10 bộ phim hàn quốc hot nhất năm 2023, Cùng Motchill điểm qua ...</p>
+                    <div class="blog-item bg-body-tertiary rounded mb-4 overflow-hidden">
+                        <a th:href="@{/tin-tuc/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}" class="d-flex">
+                            <div class="blog-thumbnail">
+                                <img th:src="${blog.thumbnail}" th:alt="${blog.title}">
+                            </div>
+                            <div class="blog-info p-3">
+                                <h5 th:text="${blog.title}" class="truncate-1-heading">Top 15 Phim Cổ Trang Trung Quốc Hay Không Thể Bỏ Lỡ Năm
+                                    2023</h5>
+                                <p class="fst-italic" th:text="${#dates.format(blog.publishedAt, 'dd/MM/YYYY')}">August
+                                    20,
+                                    2023</p>
+                                <p class="mb-0 truncate" th:text="${blog.description}">Năm 2023 phim hàn quốc đã có
+                                    nhiều nội dung được
+                                    đổi mới và thu hút lượt xem
+                                    nhiều hơn,
+                                    vậy
+                                    đâu là 10 bộ phim hàn quốc hot nhất năm 2023, Cùng Motchill điểm qua ...</p>
+                            </div>
                         </a>
                     </div>
                 </div>

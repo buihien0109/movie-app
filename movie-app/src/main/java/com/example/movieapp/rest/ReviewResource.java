@@ -21,7 +21,7 @@ public class ReviewResource {
     }
 
     @PutMapping("/api/reviews/{id}")
-    public ResponseEntity<?> updateReview(@RequestBody UpsertReviewRequest request, @PathVariable Integer id) {
+    public ResponseEntity<?> updateReview(@Valid @RequestBody UpsertReviewRequest request, @PathVariable Integer id) {
         return ResponseEntity.ok(reviewService.updateReview(request, id));
     }
 

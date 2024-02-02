@@ -1,6 +1,7 @@
 package com.example.movieapp.utils.crawl;
 
 import com.example.movieapp.entity.*;
+import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.enums.FilmType;
 import com.example.movieapp.repository.*;
 import com.github.javafaker.Faker;
@@ -31,6 +32,7 @@ public class FilmCrawler {
 
     public void crawlFilm(String url) {
         try {
+            log.info("Crawling film from: {}", url);
             Random random = new Random();
             Document doc = Jsoup.connect(url).get();
 
@@ -39,34 +41,30 @@ public class FilmCrawler {
             String description = doc.selectFirst(".jsx-9e4ccf1f4860abb8.mt-1.text-sm.leading-relaxed.text-white.text-opacity-70").text();
             String poster = doc.selectFirst("meta[property=og:image]").attr("content");
 
-            log.info("Title: {}", title);
-            log.info("Slug: {}", slug);
-            log.info("Description: {}", description);
-            log.info("Poster: {}", poster);
-
             // Random year from 2021 to 2023
             Integer releaseYear = random.nextInt(3) + 2021;
-            log.info("Release year: {}", releaseYear);
 
             // Random view from 1000 to 9000
             Integer view = random.nextInt(8000) + 1000;
-            log.info("View: {}", view);
 
             // Random rating from 5 to 10
             Double rating = random.nextInt(5) + 5.0;
-            log.info("Rating: {}", rating);
 
             // Random type
             FilmType type = FilmType.values()[random.nextInt(FilmType.values().length)];
-            log.info("Type: {}", type);
 
             // Random status
             Boolean status = true;
 
+            // Random access type
+            FilmAccessType accessType = FilmAccessType.PAID;
+
+            // Random price
+            Integer price = randomPrice();
+
             // Lấy danh sách thể loại
             Element genreElements = doc.select(".jsx-9e4ccf1f4860abb8.mt-1.font-bold.text-white.text-opacity-90").get(1);
             Set<Genre> genreList = parseGenre(genreElements);
-            log.info("Genre: {}", genreList);
 
             // Lấy danh sách đạo diễn
             Elements people = doc.select(".jsx-1515330669.actor-col");
@@ -76,7 +74,6 @@ public class FilmCrawler {
                 Element directorElement = people.get(0);
                 Director director = parseDirector(directorElement);
                 directorList.add(director);
-                log.info("Director: {}", director);
             }
 
 
@@ -85,8 +82,6 @@ public class FilmCrawler {
             if (people != null && people.size() > 1) {
                 List<Element> actorElements = people.subList(1, people.size());
                 actorList = parseActor(actorElements);
-                log.info("Actor List");
-                actorList.forEach(actor -> log.info("Actor: {}", actor));
             }
 
             // Lưu vào database
@@ -99,6 +94,8 @@ public class FilmCrawler {
                     .view(view)
                     .rating(rating)
                     .type(type)
+                    .accessType(accessType)
+                    .price(price)
                     .status(status)
                     .genres(genreList)
                     .directors(new HashSet<>(directorList))
@@ -183,6 +180,14 @@ public class FilmCrawler {
         return genreList;
     }
 
+    public int randomPrice() {
+        Random random = new Random();
+        int price = random.nextInt(100000 - 10000 + 1) + 10000;
+        price = price / 1000;
+        price = price * 1000;
+        return price;
+    }
+
     public void crawlAllFilm() {
         List<String> urls = new ArrayList<>(List.of(
 //                "https://momo.vn/cinema/lat-mat-6-tam-ve-dinh-menh-961",
@@ -247,61 +252,157 @@ public class FilmCrawler {
 //                "https://momo.vn/cinema/ta-nang-phan-dung-416",
 //                "https://momo.vn/cinema/lost-in-mekong-delta-804",
 //                "https://momo.vn/cinema/conan-the-detective-the-bride-of-halloween-699",
-                "https://momo.vn/cinema/semantic-error-825",
-                "https://momo.vn/cinema/morbius-624",
-                "https://momo.vn/cinema/lat-mat-48h-88",
-                "https://momo.vn/cinema/biet-doi-rat-on-955",
-                "https://momo.vn/cinema/dont-look-at-the-demon-847",
-                "https://momo.vn/cinema/m3gan-842",
-                "https://momo.vn/cinema/top-gun-maverick-676",
-                "https://momo.vn/cinema/men-gai-mien-tay-657",
-                "https://momo.vn/cinema/kisaragi-station-820",
-                "https://momo.vn/cinema/the-super-mario-bros-movie-884",
-                "https://momo.vn/cinema/dungeons-dragons-honor-among-thieves-980",
-                "https://momo.vn/cinema/hoon-payon-1003",
-                "https://momo.vn/cinema/the-witch-part2-the-other-one-701",
-                "https://momo.vn/cinema/pee-nak-3-660",
-                "https://momo.vn/cinema/eternals-573",
-                "https://momo.vn/cinema/godzilla-vs-kong-87",
-                "https://momo.vn/cinema/everything-everywhere-all-at-once-772",
-                "https://momo.vn/cinema/the-black-phone-672",
-                "https://momo.vn/cinema/turning-red-634",
-                "https://momo.vn/cinema/ivanna-813",
-                "https://momo.vn/cinema/senior-playboy-junior-papa-776",
-                "https://momo.vn/cinema/hanh-phuc-mau-876",
-                "https://momo.vn/cinema/65-946",
-                "https://momo.vn/cinema/sing-2-602",
-                "https://momo.vn/cinema/the-lake-826",
-                "https://momo.vn/cinema/encanto-609",
-                "https://momo.vn/cinema/avatar-812",
-                "https://momo.vn/cinema/13-exorcismos-950",
-                "https://momo.vn/cinema/nhung-dua-tre-trong-suong-960",
-                "https://momo.vn/cinema/f9-75",
-                "https://momo.vn/cinema/tro-tan-ruc-ro-870",
-                "https://momo.vn/cinema/jailangkung-sandekala-872",
-                "https://momo.vn/cinema/death-on-the-nile-600",
-                "https://momo.vn/cinema/where-the-crawdads-sing-698",
-                "https://momo.vn/cinema/that-time-i-got-reincarnated-as-a-slime-scarlet-bond-943",
-                "https://momo.vn/cinema/inhuman-kiss-986",
-                "https://momo.vn/cinema/titanic-919",
-                "https://momo.vn/cinema/paws-of-fury-the-legend-of-hank-802",
-                "https://momo.vn/cinema/the-bad-guys-643",
-                "https://momo.vn/cinema/pulau-964",
-                "https://momo.vn/cinema/bearman-978",
-                "https://momo.vn/cinema/prey-for-the-devil-794",
-                "https://momo.vn/cinema/suga-road-to-dday-1009",
-                "https://momo.vn/cinema/communion-girl-959",
-                "https://momo.vn/cinema/vo-dien-sat-nhan-810",
-                "https://momo.vn/cinema/ambulance-645",
-                "https://momo.vn/cinema/decibel-871",
-                "https://momo.vn/cinema/belle-ryu-to-sobakasu-no-hime-630",
-                "https://momo.vn/cinema/the-boogeyman-1005",
-                "https://momo.vn/cinema/my-beautiful-man-eternal-998",
-                "https://momo.vn/cinema/wrath-of-man-640",
-                "https://momo.vn/cinema/nope-635",
-                "https://momo.vn/cinema/trang-ti-phieu-luu-ky-567",
-                "https://momo.vn/cinema/sonic-the-hedgehog-2-653",
-                "https://momo.vn/cinema/the-ex-629"
+//                "https://momo.vn/cinema/semantic-error-825",
+//                "https://momo.vn/cinema/morbius-624",
+//                "https://momo.vn/cinema/lat-mat-48h-88",
+//                "https://momo.vn/cinema/biet-doi-rat-on-955",
+//                "https://momo.vn/cinema/dont-look-at-the-demon-847",
+//                "https://momo.vn/cinema/m3gan-842",
+//                "https://momo.vn/cinema/top-gun-maverick-676",
+//                "https://momo.vn/cinema/men-gai-mien-tay-657",
+//                "https://momo.vn/cinema/kisaragi-station-820",
+//                "https://momo.vn/cinema/the-super-mario-bros-movie-884",
+//                "https://momo.vn/cinema/dungeons-dragons-honor-among-thieves-980",
+//                "https://momo.vn/cinema/hoon-payon-1003",
+//                "https://momo.vn/cinema/the-witch-part2-the-other-one-701",
+//                "https://momo.vn/cinema/pee-nak-3-660",
+//                "https://momo.vn/cinema/eternals-573",
+//                "https://momo.vn/cinema/godzilla-vs-kong-87",
+//                "https://momo.vn/cinema/everything-everywhere-all-at-once-772",
+//                "https://momo.vn/cinema/the-black-phone-672",
+//                "https://momo.vn/cinema/turning-red-634",
+//                "https://momo.vn/cinema/ivanna-813",
+//                "https://momo.vn/cinema/senior-playboy-junior-papa-776",
+//                "https://momo.vn/cinema/hanh-phuc-mau-876",
+//                "https://momo.vn/cinema/65-946",
+//                "https://momo.vn/cinema/sing-2-602",
+//                "https://momo.vn/cinema/the-lake-826",
+//                "https://momo.vn/cinema/encanto-609",
+//                "https://momo.vn/cinema/avatar-812",
+//                "https://momo.vn/cinema/13-exorcismos-950",
+//                "https://momo.vn/cinema/nhung-dua-tre-trong-suong-960",
+//                "https://momo.vn/cinema/f9-75",
+//                "https://momo.vn/cinema/tro-tan-ruc-ro-870",
+//                "https://momo.vn/cinema/jailangkung-sandekala-872",
+//                "https://momo.vn/cinema/death-on-the-nile-600",
+//                "https://momo.vn/cinema/where-the-crawdads-sing-698",
+//                "https://momo.vn/cinema/that-time-i-got-reincarnated-as-a-slime-scarlet-bond-943",
+//                "https://momo.vn/cinema/inhuman-kiss-986",
+//                "https://momo.vn/cinema/titanic-919",
+//                "https://momo.vn/cinema/paws-of-fury-the-legend-of-hank-802",
+//                "https://momo.vn/cinema/the-bad-guys-643",
+//                "https://momo.vn/cinema/pulau-964",
+//                "https://momo.vn/cinema/bearman-978",
+//                "https://momo.vn/cinema/prey-for-the-devil-794",
+//                "https://momo.vn/cinema/suga-road-to-dday-1009",
+//                "https://momo.vn/cinema/communion-girl-959",
+//                "https://momo.vn/cinema/vo-dien-sat-nhan-810",
+//                "https://momo.vn/cinema/ambulance-645",
+//                "https://momo.vn/cinema/decibel-871",
+//                "https://momo.vn/cinema/belle-ryu-to-sobakasu-no-hime-630",
+//                "https://momo.vn/cinema/the-boogeyman-1005",
+//                "https://momo.vn/cinema/my-beautiful-man-eternal-998",
+//                "https://momo.vn/cinema/wrath-of-man-640",
+//                "https://momo.vn/cinema/nope-635",
+//                "https://momo.vn/cinema/trang-ti-phieu-luu-ky-567",
+//                "https://momo.vn/cinema/sonic-the-hedgehog-2-653",
+//                "https://momo.vn/cinema/the-ex-629"
+//                "https://momo.vn/cinema/broker-702",
+//                "https://momo.vn/cinema/the-lost-city-619",
+//                "https://momo.vn/cinema/shangchi-and-the-legend-of-the-ten-rings-577",
+//                "https://momo.vn/cinema/578-phat-dan-cua-ke-dien-72",
+//                "https://momo.vn/cinema/lyle-lyle-crocodile-850",
+//                "https://momo.vn/cinema/the-invitation-800",
+//                "https://momo.vn/cinema/sao-the-movie-progressive-scherzo-of-deep-night-929",
+//                "https://momo.vn/cinema/kamen-rider-geats-revice-movie-battle-royale-945",
+//                "https://momo.vn/cinema/bed-rest-927",
+//                "https://momo.vn/cinema/faces-of-anne-860",
+//                "https://momo.vn/cinema/cracked-655",
+//                "https://momo.vn/cinema/babylon-885",
+//                "https://momo.vn/cinema/operation-fortune-ruse-de-guerre-910",
+//                "https://momo.vn/cinema/to-the-solitary-me-that-loved-you-930",
+//                "https://momo.vn/cinema/khanzab-999",
+//                "https://momo.vn/cinema/cat-in-the-museum-987",
+//                "https://momo.vn/cinema/pengabdi-setan-2-communion-823",
+//                "https://momo.vn/cinema/quintessential-quintuplets-movie-840",
+//                "https://momo.vn/cinema/the-policemans-lineage-627",
+//                "https://momo.vn/cinema/tom-jerry-515",
+//                "https://momo.vn/cinema/house-of-gucci-621",
+//                "https://momo.vn/cinema/no-hard-feelings-983",
+//                "https://momo.vn/cinema/my-beautiful-man-979",
+//                "https://momo.vn/cinema/lightyear-681",
+//                "https://momo.vn/cinema/knock-at-the-cabin-833",
+//                "https://momo.vn/cinema/the-amazing-maurice-915",
+//                "https://momo.vn/cinema/creed-iii-866",
+//                "https://momo.vn/cinema/mal-de-ojo-852",
+//                "https://momo.vn/cinema/the-woman-king-789",
+//                "https://momo.vn/cinema/stand-by-me-2-590",
+//                "https://momo.vn/cinema/mortal-kombat-85",
+//                "https://momo.vn/cinema/the-point-man-937",
+//                "https://momo.vn/cinema/winner-2022-the-circle-958",
+//                "https://momo.vn/cinema/guimoon-the-lightless-door-607",
+//                "https://momo.vn/cinema/plane-922",
+//                "https://momo.vn/cinema/mummies-909",
+//                "https://momo.vn/cinema/renfield-907",
+//                "https://momo.vn/cinema/oh-my-girl-893",
+//                "https://momo.vn/cinema/chickenhare-and-the-hamster-of-darkness-671",
+//                "https://momo.vn/cinema/sword-art-online-the-movie-progressive-aria-of-a-starless-night-628",
+//                "https://momo.vn/cinema/tid-noi-more-than-true-love-990",
+//                "https://momo.vn/cinema/come-play-with-me-656",
+//                "https://momo.vn/cinema/decision-to-leave-700",
+//                "https://momo.vn/cinema/dc-league-of-superpets-787",
+//                "https://momo.vn/cinema/confession-889",
+//                "https://momo.vn/cinema/haunted-tales-678",
+//                "https://momo.vn/cinema/resident-evil-welcome-to-raccoon-city-596",
+//                "https://momo.vn/cinema/the-medium-574",
+//                "https://momo.vn/cinema/fast-feel-love-670",
+//                "https://momo.vn/cinema/the-matrix-resurrections-584",
+//                "https://momo.vn/cinema/sky-tour-339",
+//                "https://momo.vn/cinema/vanity-fair-617",
+//                "https://momo.vn/cinema/honest-candidate-2-853",
+//                "https://momo.vn/cinema/haunted-universities-2nd-semester-788",
+//                "https://momo.vn/cinema/argonuts-948",
+//                "https://momo.vn/cinema/to-every-you-ive-loved-before-931",
+//                "https://momo.vn/cinema/my-heart-puppy-951",
+//                "https://momo.vn/cinema/virus-cuong-loan-846",
+//                "https://momo.vn/cinema/beast-807",
+//                "https://momo.vn/cinema/dune-571",
+//                "https://momo.vn/cinema/gintama-the-very-final-618",
+//                "https://momo.vn/cinema/my-hero-academia-world-heroes-mission-604",
+//                "https://momo.vn/cinema/happy-new-year-595",
+//                "https://momo.vn/cinema/trinh-cong-son-697",
+//                "https://momo.vn/cinema/midnight-661",
+//                "https://momo.vn/cinema/fall-806",
+//                "https://momo.vn/cinema/hunt-864",
+//                "https://momo.vn/cinema/its-in-the-woods-926",
+//                "https://momo.vn/cinema/the-ghost-within-974",
+//                "https://momo.vn/cinema/rasuk-888",
+//                "https://momo.vn/cinema/hansan-rising-dragon-814",
+//                "https://momo.vn/cinema/jeepers-creepers-reborn-830",
+//                "https://momo.vn/cinema/gaia-644",
+//                "https://momo.vn/cinema/firestarter-677",
+//                "https://momo.vn/cinema/nguoi-tinh-623",
+//                "https://momo.vn/cinema/the-one-962",
+//                "https://momo.vn/cinema/the-fabelmans-928",
+//                "https://momo.vn/cinema/the-lord-of-the-rings-the-fellowship-of-the-ring-832",
+//                "https://momo.vn/cinema/happy-ending-839",
+//                "https://momo.vn/cinema/the-boss-baby-family-business-482",
+//                "https://momo.vn/cinema/escape-from-mogadishu-786",
+//                "https://momo.vn/cinema/scamsgiving-947",
+//                "https://momo.vn/cinema/how-to-save-the-immortal-956",
+//                "https://momo.vn/cinema/dont-worry-darling-821",
+//                "https://momo.vn/cinema/detective-conan-the-scarlet-bullet-83",
+//                "https://momo.vn/cinema/nguoi-lang-nghe-loi-thi-tham-625",
+//                "https://momo.vn/cinema/vung-dat-cam-lang-2-397",
+//                "https://momo.vn/cinema/the-anchor-683",
+//                "https://momo.vn/cinema/harry-potter-and-the-philosophers-stone-687",
+//                "https://momo.vn/cinema/nix-835",
+//                "https://momo.vn/cinema/evangelion-30-10-thrice-upon-a-time-thrice-upon-a-time-828",
+//                "https://momo.vn/cinema/amsterdam-784",
+//                "https://momo.vn/cinema/the-other-child-861",
+//                "https://momo.vn/cinema/the-creeping-1000",
+//                "https://momo.vn/cinema/hypnotic-995"
+
         ));
 
         for (String url : urls) {

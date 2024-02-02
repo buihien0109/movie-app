@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Tất cả quốc gia</title>
+</head>
+
+<body>
+<!-- BODY -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh sách quốc gia
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <button class="btn btn-primary" id="btn-open-modal">
+                        <i class="fas fa-plus"></i> Tạo quốc gia
+                    </button>
+                    <a href="/admin/countries" type="button" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên quốc gia</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-center mt-3" id="pagination">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal country -->
+            <div class="modal fade" id="modal-country" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                 aria-labelledby="modal-country-title" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title fs-5" id="modal-country-title">Tạo quốc gia</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="form-country">
+                                <div class="form-group mb-0">
+                                    <input type="text" class="form-control" id="input-name" placeholder="Enter name"
+                                           name="name">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-primary" id="btn-handle-country">Xác nhận</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        let countries = [[${countryList}]];
+        console.log(countries);
+
+        let idCountryUpdate = null;
+
+        // validate form
+        $('#form-country').validate({
+            rules: {
+                name: {
+                    required: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "Tên quốc gia không được để trống"
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        // Render country
+        const tableContent = document.querySelector("table tbody")
+        const renderCountries = (countryList, pagination) => {
+            tableContent.innerHTML = "";
+            let html = "";
+            countryList.forEach((country, index) => {
+                html += `
+                    <tr>
+                        <td>${pagination.pageSize * (pagination.pageNumber - 1) + (index + 1)}</td>
+                        <td>${country.name}</td>
+                        <td>
+                            <button class="btn btn-success btn-sm" onclick="openModalUpdate(${country.id})">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteCountry(${country.id})">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `
+            })
+            tableContent.innerHTML = html;
+        }
+
+        // render pagination using pagination.js
+        const renderPagination = (countryList) => {
+            $('#pagination').pagination({
+                dataSource: countryList,
+                pageSize: 5,
+                className: 'paginationjs-theme-blue paginationjs-big',
+                callback: function (data, pagination) {
+                    renderCountries(data, pagination);
+                },
+                hideOnlyOnePage: true
+            })
+        }
+
+        // Open modal create
+        const inputNameEl = document.getElementById("input-name");
+        const btnOpenModal = document.getElementById("btn-open-modal");
+        btnOpenModal.addEventListener("click", () => {
+            $('#modal-country').modal('show');
+
+            // set title modal
+            const modalTitle = document.getElementById("modal-country-title")
+            modalTitle.innerText = "Tạo quốc gia"
+        })
+
+        $('#modal-country').on('hidden.bs.modal', function (event) {
+            inputNameEl.value = "";
+            idCountryUpdate = null;
+        })
+
+        // Create country using axios and vanilla js
+        const createcountry = () => {
+            if (!$('#form-country').valid()) {
+                return;
+            }
+
+            const name = inputNameEl.value;
+            if (!name || name.trim() === "") {
+                toastr.error("Tên quốc gia không được để trống")
+                return
+            }
+
+            axios.post("/api/admin/countries", {name})
+                .then(res => {
+                    countries.unshift(res.data)
+                    renderPagination(countries)
+                    inputNameEl.value = "";
+
+                    $('#modal-country').modal('hide');
+                    toastr.success("Tạo thành công")
+                })
+                .catch(e => {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                })
+        }
+
+        // Update country using axios and vanilla js
+        const updateCountry = () => {
+            if (!$('#form-country').valid()) {
+                return;
+            }
+
+            const name = inputNameEl.value;
+            if (!name || name.trim() === "") {
+                toastr.error("Tên quốc gia không được để trống")
+                return
+            }
+
+            axios.put(`/api/admin/countries/${idCountryUpdate}`, {name})
+                .then(res => {
+                    const country = countries.find(country => country.id === idCountryUpdate)
+                    country.name = res.data.name;
+
+                    renderPagination(countries)
+                    inputNameEl.value = "";
+
+                    $('#modal-country').modal('hide');
+                    toastr.success("Cập nhật thành công");
+                    idCountryUpdate = null;
+                })
+                .catch(e => {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                })
+        }
+
+        // Handle open modal update
+        const openModalUpdate = id => {
+            const country = countries.find(country => country.id === id)
+            inputNameEl.value = country.name
+            idCountryUpdate = country.id;
+            $('#modal-country').modal('show');
+
+            // set title modal
+            const modalTitle = document.getElementById("modal-country-title")
+            modalTitle.innerText = "Cập nhật quốc gia"
+        }
+
+        // Handle country
+        const btnHandlecountry = document.getElementById("btn-handle-country")
+        btnHandlecountry.addEventListener("click", () => {
+            if (idCountryUpdate) {
+                updateCountry()
+            } else {
+                createcountry()
+            }
+        })
+
+        // Xóa
+        const deleteCountry = (id) => {
+            const isDelete = confirm("Bạn có chắc chắn muốn xóa quốc gia này không?")
+            if (isDelete) {
+                axios.delete(`/api/admin/countries/${id}`)
+                    .then(() => {
+                        countries = countries.filter(country => country.id !== id)
+                        renderPagination(countries)
+                        toastr.success("Xóa thành công")
+                    })
+                    .catch(e => {
+                        toastr.error(e.response.data.message);
+                        console.log(e);
+                    })
+            }
+        }
+
+        renderPagination(countries);
+    </script>
+</th:block>
+</body>
+
+</html>

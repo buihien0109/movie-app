@@ -23,13 +23,35 @@ ul {
     list-style-type: none;
 }
 
+.form-control:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/*header*/
 .logo {
-    width: 200px;
+    width: 160px;
 }
 
 #main-menu .navbar-nav a.active {
     color: #ff6901 !important;
 }
+
+/*mega menu*/
+.mega-menu .dropdown-menu a {
+    transition: all 0.2s ease-in-out;
+}
+
+.mega-menu .dropdown-menu a:hover {
+    color: #ff6901 !important;
+    background: #eeeeee;
+}
+
+.user-action .dropdown-menu .dropdown-item:active {
+    background: transparent;
+}
+
+/*end header*/
 
 .movie-item {
     position: relative;
@@ -46,6 +68,17 @@ ul {
 
 .movie-item img:hover {
     transform: scale(1.1);
+}
+
+.blog-item .blog-thumbnail {
+    flex: 0 0 200px;
+    overflow: hidden;
+}
+
+.blog-item .blog-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 #movie-poster {
@@ -78,9 +111,6 @@ ul {
 }
 
 /*Movie item*/
-#screen {
-    background-color: #181616;
-}
 
 #film-poster {
     flex: 0 0 200px;
@@ -200,24 +230,24 @@ ul {
     list-style-type: disc !important;
 }
 
-.blog-detail h2{
-    overflow-wrap: break-word;
-    font-size: 1.75rem;
-    line-height: 2rem;
-    margin-top: 2rem
-}
-
-.blog-detail h3{
+.blog-detail h2 {
     overflow-wrap: break-word;
     font-size: 1.5rem;
     line-height: 2rem;
     margin-top: 2rem
 }
 
-.blog-detail img{
+.blog-detail h3 {
+    overflow-wrap: break-word;
+    font-size: 1.3rem;
+    line-height: 2rem;
+    margin-top: 2rem
+}
+
+.blog-detail img {
     display: block;
     margin: auto;
-    width: 50%;
+    width: 100%;
 }
 
 /*owl-carousel*/
@@ -300,6 +330,17 @@ ul {
     max-height: 3em; /* 1.2em (line-height) * 2 (số dòng) */
 }
 
+.truncate-1-heading {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    text-overflow: ellipsis;
+    line-height: 1.2em; /* Điều chỉnh dựa trên kích thước font và yêu cầu layout */
+    max-height: 1.5em; /* 1.2em (line-height) * 2 (số dòng) */
+}
+
 .movie-item .btn-remove-wishlist {
     position: absolute;
     top: 0;
@@ -319,4 +360,174 @@ ul {
     transition: all 0.3s ease-in-out;
 }
 
+/*Store*/
 
+/*Store Item*/
+.text-semi {
+    font-size: 15px !important;
+}
+
+.text-small {
+    font-size: 14px !important;
+}
+
+.text-tiny {
+    font-size: 13px !important;
+}
+
+.text-gray-800 {
+    color: rgb(38, 38, 38) !important;
+}
+
+.text-gray-600 {
+    color: rgb(64, 64, 64) !important;
+}
+
+.text-gray-500 {
+    color: rgb(115, 115, 115) !important;
+}
+
+.text-yellow-300 {
+    color: rgb(251, 191, 36) !important;
+}
+
+/* movie-detail */
+#movie-detail {
+    position: relative;
+}
+
+#movie-detail .bg-movie-detail {
+    background-position: right -200px top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+#movie-detail .bg-movie-detail:after {
+    content: "";
+    z-index: 2;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 1) 150px, rgba(0, 0, 0, .6) 100%);
+    background-image: -moz-linear-gradient(left, rgba(0, 0, 0, 1) 150px, rgba(0, 0, 0, .6) 100%);
+    background-image: -o-linear-gradient(left, rgba(0, 0, 0, 1) 150px, rgba(0, 0, 0, .6) 100%);
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 1) 150px, rgba(0, 0, 0, .6) 100%);
+}
+
+#movie-detail .container {
+    position: relative;
+    z-index: 1;
+}
+
+#movie-detail .movie-thumbnail {
+    height: 400px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+#movie-detail .movie-thumbnail .play-icon, .movie-poster .play-icon {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3.5rem;
+    color: #fff;
+    transition: all 0.3s ease-in-out;
+}
+
+#movie-detail .movie-thumbnail .play-icon:hover, .movie-poster .play-icon:hover {
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
+#movie-detail .movie-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#movie-detail .movie-info ul {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    margin-top: 0.25rem;
+}
+
+#movie-detail .movie-info .btn-action {
+    width: 30px;
+    height: 30px;
+    border: 2px solid;
+}
+
+#movie-detail .movie-info .btn-see-trailer {
+    border-color: rgb(216, 45, 139);
+}
+
+#movie-detail .movie-info .btn-see-review {
+    border-color: rgb(252, 211, 77);
+}
+
+.movie-showing-now-suggest .movie-thumbnail {
+    flex: 0 0 auto !important;
+}
+
+.movie-showing-now-suggest img {
+    width: 64px;
+    height: 96px;
+    object-fit: cover;
+}
+
+.blog-suggest .blog-thumbnail {
+    flex: 0 0 auto !important;
+}
+
+.blog-suggest .blog-thumbnail img {
+    aspect-ratio: 16/9;
+    width: 150px;
+    object-fit: cover;
+}
+
+/*TOC container blog*/
+#toc-container a {
+    transition: all 0.3s ease-in-out;
+}
+
+#toc-container a.active {
+    color: #ff6901 !important;
+    background: #eeeeee;
+}
+
+/*Payment Method*/
+.payment-container .payment-item {
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 10px;
+}
+
+.payment-container .payment-item input {
+    margin-right: 10px;
+}
+
+.payment-container .payment-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-left: 10px;
+}
+
+.payment-container .payment-item label {
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}

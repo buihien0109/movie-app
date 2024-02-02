@@ -2,7 +2,7 @@ package com.example.movieapp.service;
 
 import com.example.movieapp.entity.Video;
 import com.example.movieapp.exception.BadRequestException;
-import com.example.movieapp.exception.ResouceNotFoundException;
+import com.example.movieapp.exception.ResourceNotFoundException;
 import com.example.movieapp.model.helper.VideoInfo;
 import com.example.movieapp.repository.VideoRepository;
 import com.example.movieapp.utils.FileUtils;
@@ -218,7 +218,7 @@ public class VideoService {
     public void deleteVideo(Integer id) {
         // Xóa video trong database
         Video video = videoRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Video không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("Video không tồn tại"));
         videoRepository.deleteById(id);
 
         // Xóa video trong thư mục lưu trữ

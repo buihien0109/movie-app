@@ -4,7 +4,7 @@ import com.example.movieapp.entity.Film;
 import com.example.movieapp.entity.Review;
 import com.example.movieapp.entity.User;
 import com.example.movieapp.exception.BadRequestException;
-import com.example.movieapp.exception.ResouceNotFoundException;
+import com.example.movieapp.exception.ResourceNotFoundException;
 import com.example.movieapp.model.request.UpsertReviewRequest;
 import com.example.movieapp.repository.FilmRepository;
 import com.example.movieapp.repository.ReviewRepository;
@@ -32,7 +32,7 @@ public class ReviewService {
 
         // find film and check film exist
         Film film = filmRepository.findById(request.getFilmId())
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phim có id = " + request.getFilmId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim có id = " + request.getFilmId()));
 
         Review review = Review.builder()
                 .user(user)
@@ -49,10 +49,10 @@ public class ReviewService {
 
         // find film and check film exist
         Film film = filmRepository.findById(request.getFilmId())
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phim có id = " + request.getFilmId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim có id = " + request.getFilmId()));
 
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy review có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy review có id = " + id));
 
         // check user is owner of review
         if (!review.getUser().getId().equals(user.getId())) {
@@ -71,7 +71,7 @@ public class ReviewService {
         User user = SecurityUtils.getCurrentUserLogin();
 
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy review có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy review có id = " + id));
 
         // check user is owner of review
         if (!review.getUser().getId().equals(user.getId())) {
@@ -83,7 +83,7 @@ public class ReviewService {
 
     public void adminDeleteReview(Integer id) {
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy review có id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy review có id = " + id));
         reviewRepository.delete(review);
     }
 }

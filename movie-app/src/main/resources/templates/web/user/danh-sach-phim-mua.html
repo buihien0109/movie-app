@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #js})}">
+
+<head>
+    <title>Danh sách phim mua</title>
+</head>
+
+<body>
+
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a class="text-primary" href="/static">Trang chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Danh sách phim mua
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+    <section class="pb-4">
+        <div class="container">
+            <h3 class="mb-3">Danh sách phim mua</h3>
+            <div class="row">
+                <div class="col-2" th:each="film : ${filmList}">
+                    <div class="movie-item mb-4">
+                        <a th:href="@{/cua-hang/phim/{id}/{slug} (id=${film.id}, slug=${film.slug})}"
+                           class="movie-media">
+                            <div class="movie-poster rounded overflow-hidden position-relative">
+                                <img class="w-100 h-100"
+                                     th:src="${film.poster}" th:alt="${film.title}">
+                                <span th:if="${film.type.toString() == 'PHIM_BO'}"
+                                      class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">Phim bộ</span>
+                            </div>
+                            <p class="mt-2 mb-1" th:text="${film.title}">Cô Đi Mà Lấy Chồng Tôi</p>
+                            <div class="d-flex align-items-center text-muted" style="font-size: 14px">
+                                <span>
+                                    <span class="fw-medium" th:text="${film.rating}"></span>
+                                    <span style="color: #EDBB0E"><i class="fa fa-star"></i></span>
+                                </span>
+                                <span class="ms-2 fw-medium" th:text="|${#numbers.formatInteger(film.price,3,'COMMA')}đ|">100000</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+
+<th:block id="js">
+
+</th:block>
+</body>
+
+</html>

@@ -2,7 +2,7 @@ package com.example.movieapp.service;
 
 import com.example.movieapp.entity.Blog;
 import com.example.movieapp.entity.User;
-import com.example.movieapp.exception.ResouceNotFoundException;
+import com.example.movieapp.exception.ResourceNotFoundException;
 import com.example.movieapp.model.request.UpsertBlogRequest;
 import com.example.movieapp.repository.BlogRepository;
 import com.example.movieapp.security.SecurityUtils;
@@ -30,6 +30,12 @@ public class BlogService {
     private final BlogRepository blogRepository;
     private final FileService fileService;
     private final Slugify slugify;
+
+    // Lấy danh sách bài viết mới nhất theo số lượng và ngày publish nhưng không có chứa bài viết đang xem
+    public Page<Blog> getNewestBlogs(int page, int size, Integer blogId) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedAt"));
+        return blogRepository.findByIdNotAndStatus(blogId, true, pageable);
+    }
 
     // admin get all blogs
     @Transactional
@@ -90,7 +96,7 @@ public class BlogService {
 
     public Blog getBlogById(Integer id) {
         return blogRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy bài viết với id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bài viết với id = " + id));
     }
 
     public Blog saveBlog(UpsertBlogRequest request) {
@@ -113,7 +119,7 @@ public class BlogService {
     public Blog updateBlog(Integer id, UpsertBlogRequest request) {
         // find blog by id
         Blog blog = blogRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy bài viết với id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bài viết với id = " + id));
 
         // update blog
         blog.setTitle(request.getTitle());
@@ -127,7 +133,7 @@ public class BlogService {
 
     public void deleteBlog(Integer id) {
         Blog blog = blogRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy bài viết với id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bài viết với id = " + id));
 
         // Kiểm tra xem blog có thumbnail không. Nếu có thì xóa file thumbnail
         if (blog.getThumbnail() != null) {
@@ -139,7 +145,7 @@ public class BlogService {
 
     public String updateThumbnail(Integer id, MultipartFile file) {
         Blog blog = blogRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy bài viết với id = " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bài viết với id = " + id));
 
         // Kiểm tra xem blog có thumbnail không. Nếu có thì xóa file thumbnail sau đó lưu file mới
         if (blog.getThumbnail() != null) {

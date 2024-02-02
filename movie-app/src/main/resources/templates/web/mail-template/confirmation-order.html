@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap");
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: "Roboto", sans-serif;
+                background-color: #dae1e7;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 800px;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.12),
+                    0 2px 4px 0 rgba(0, 0, 0, 0.08);
+                background-color: #fff;
+                margin: 30px auto 0;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .header {
+                background-color: #f3f6fa;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100px;
+            }
+
+            .header h2 span {
+                color: #7fad39;
+                text-transform: uppercase;
+            }
+
+            .content {
+                padding: 30px;
+            }
+
+            .content ul {
+                padding-left: 20px;
+                margin-bottom: 16px;
+            }
+
+            .content ul li {
+                margin-bottom: 8px;
+                list-style-type: square;
+            }
+
+            .content h3 {
+                text-align: center;
+                margin-bottom: 30px;
+                text-transform: uppercase;
+            }
+
+            .content p {
+                margin-bottom: 16px;
+                line-height: 24px;
+            }
+
+            .content .link {
+                display: block;
+                margin-bottom: 16px;
+            }
+
+            .content table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 16px;
+            }
+
+            .content table th, .content table td {
+                text-align: left;
+                padding: 8px;
+                border: 1px solid #ddd;
+            }
+
+            .btn-action {
+                display: inline-block;
+                font-size: 14px;
+                padding: 10px 28px 10px;
+                color: #ffffff;
+                background: #7fad39;
+                text-decoration: none;
+                margin-bottom: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h2><span>Ogani</span> Shop</h2>
+            </div>
+            <div class="content">
+                <h3>Xác nhận đơn hàng</h3>
+                <p>Chào <b>Bùi Hiên</b></p>
+                <p>
+                    Chúng tôi đã nhận được đơn hàng của bạn và rất vui mừng
+                    thông báo rằng đơn hàng đã được ghi nhận thành công.
+                </p>
+                <p><b>Thông tin về Đơn hàng:</b></p>
+                <ul>
+                    <li>Mã Đơn Hàng: #7381992</li>
+                    <li>Người nhận: Bùi Hiên</li>
+                    <li>Email: hien@gmail.com</li>
+                    <li>SĐT: 0344005816</li>
+                    <li>Ngày Đặt Hàng: 08/10/2023</li>
+                    <li>Tổng giá trị Đơn hàng: 460,000</li>
+                </ul>
+
+                <p><b>Danh sách sản phẩm:</b></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Synergistic Wooden Bench 11</td>
+                            <td>20,000</td>
+                            <td>3</td>
+                            <td>60,000</td>
+                        </tr>
+                        <tr>
+                            <td>Heavy Duty Concrete Keyboard</td>
+                            <td>50,000</td>
+                            <td>8</td>
+                            <td>400,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p><b>Địa chỉ giao hàng:</b> Số nhà 5, 132A/28 Đại Linh, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội</p>
+                
+                <p><b>Phương thức thanh toán:</b> Thanh toán khi nhận hàng</p>
+
+                <p>
+                    Nếu bạn muốn theo dõi trạng thái đơn hàng của mình, bạn có
+                    thể sử dụng liên kết sau:
+                </p>
+
+                <a href="" class="link"> [Liên kết Theo dõi Đơn hàng]</a>
+
+                <p>
+                    Chúng tôi sẽ thông báo cho bạn khi đơn hàng của bạn đã được
+                    gửi đi và cung cấp thông tin vận chuyển.
+                </p>
+
+                <p>
+                    Nếu bạn có bất kỳ câu hỏi hoặc cần hỗ trợ, vui lòng liên hệ
+                    với chúng tôi qua email <a href="mailto:admin@gmail.com">admin@gmail.com</a> hoặc số điện thoại <a href="tel:0966222888">0966222888</a>.
+                </p>
+
+                <p>
+                    Cảm ơn bạn đã mua sắm với chúng tôi và chúng tôi mong rằng
+                    bạn sẽ có một trải nghiệm mua sắm thú vị!
+                </p>
+            </div>
+        </div>
+    </body>
+</html>

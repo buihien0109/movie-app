@@ -1,8 +1,8 @@
 package com.example.movieapp;
 
+import com.example.movieapp.constant.Constant;
 import com.example.movieapp.entity.*;
-import com.example.movieapp.model.enums.FilmType;
-import com.example.movieapp.model.enums.UserRole;
+import com.example.movieapp.model.enums.*;
 import com.example.movieapp.repository.*;
 import com.github.javafaker.Faker;
 import com.github.slugify.Slugify;
@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootTest
 class MovieAppApplicationTests {
@@ -51,6 +51,12 @@ class MovieAppApplicationTests {
     @Autowired
     private EpisodeRepository episodeRepository;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private CountryRepository countryRepository;
+
     @Test
     void save_genres() {
         List<String> genres = Arrays.asList("Hành động", "Kinh dị", "Tình cảm", "Hài hước", "Viễn tưởng", "Phiêu lưu", "Tâm lý", "Hoạt hình", "Chiến tranh", "Thần thoại");
@@ -60,6 +66,17 @@ class MovieAppApplicationTests {
                     .slug(slugify.slugify(s))
                     .build();
             genreRepository.save(genre);
+        }
+    }
+
+    @Test
+    void save_countries() {
+        for (String s : Constant.countries) {
+            Country country = Country.builder()
+                    .name(s)
+                    .slug(slugify.slugify(s))
+                    .build();
+            countryRepository.save(country);
         }
     }
 
@@ -101,7 +118,7 @@ class MovieAppApplicationTests {
         List<Actor> actors = actorRepository.findAll();
         List<Genre> genres = genreRepository.findAll();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             // create list director from 1 to 4
             Set<Director> directorSet = new LinkedHashSet<>();
             for (int j = 0; j < random.nextInt(4) + 1; j++) {
@@ -130,7 +147,9 @@ class MovieAppApplicationTests {
                     .view(faker.number().numberBetween(1000, 100000))
                     .rating(faker.number().randomDouble(1, 1, 10))
                     .type(FilmType.values()[faker.number().numberBetween(0, FilmType.values().length)])
-                    .status(random.nextInt(2) == 0)
+                    .status(true)
+                    .accessType(FilmAccessType.PAID)
+                    .price(randomPrice())
                     .directors(directorSet)
                     .actors(actorSet)
                     .genres(genreSet)
@@ -159,7 +178,8 @@ class MovieAppApplicationTests {
     void save_reviews() {
         Faker faker = new Faker();
         Random random = new Random();
-        List<Film> films = filmRepository.findAll();
+//        List<Film> films = filmRepository.findAll();
+        List<Film> films = filmRepository.findByIdBetween(119, 168);
         List<User> users = userRepository.findAll();
 
         for (Film film : films) {
@@ -179,7 +199,7 @@ class MovieAppApplicationTests {
     void save_videos() {
         List<Video> videos = videoRepository.findAll(PageRequest.of(0, 20, Sort.by("id"))).getContent();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 150; i++) {
             // Lấy lần lượt video trong ds videos
             Video video = videos.get(i % videos.size());
             Video newVideo = Video.builder()
@@ -195,12 +215,12 @@ class MovieAppApplicationTests {
     @Test
     void save_episode() {
         Random random = new Random();
-        List<Film> films = filmRepository.findAll();
+        List<Film> films = filmRepository.findByIdBetween(251, 264);
         List<Video> videos = videoRepository.findAll();
-        int count = 0;
+        int count = 727;
 
         for (Film film : films) {
-            if(film.getType().equals(FilmType.PHIM_BO)) {
+            if (film.getType().equals(FilmType.PHIM_BO)) {
                 for (int j = 0; j < random.nextInt(10) + 5; j++) {
                     // Get video by count
                     Video video = videos.get(count);
@@ -256,18 +276,68 @@ class MovieAppApplicationTests {
         }
     }
 
-    // get character first each of word from string, and to uppercase
-    private String getCharacter(String str) {
-        String[] words = str.split(" ");
-        StringBuilder result = new StringBuilder();
-        for (String word : words) {
-            result.append(word.charAt(0));
+    @Test
+    void save_order() {
+        Random rd = new Random();
+
+        Date start = new Calendar.Builder().setDate(2023, 11, 1).build().getTime();
+        Date end = new Date();
+
+        List<User> userList = userRepository.findByRole(UserRole.USER);
+        List<Film> filmList = filmRepository.findByAccessTypeAndStatus(FilmAccessType.PAID, true);
+
+        // Mỗi user mua 5 đến 10 phim không trùng nhau
+        for (User user : userList) {
+            List<Film> filmListRandom = new ArrayList<>();
+            for (int i = 0; i < rd.nextInt(6) + 5; i++) {
+                Film film = filmList.get(rd.nextInt(filmList.size()));
+                if (!filmListRandom.contains(film)) {
+                    filmListRandom.add(film);
+                }
+            }
+
+            for (Film film : filmListRandom) {
+                Date date = randomDateBetweenTwoDates(start, end);
+                Order order = Order.builder()
+                        .user(user)
+                        .film(film)
+                        .amount(film.getPrice())
+                        .status(OrderStatus.SUCCESS)
+                        .paymentMethod(OrderPaymentMethod.MOMO)
+                        .createdAt(date)
+                        .updatedAt(date)
+                        .build();
+
+                orderRepository.save(order);
+            }
         }
-        return result.toString().toUpperCase();
+    }
+
+    // get character first each of word from string, and to uppercase
+    private String getFirstCharacter(String str) {
+        return str.substring(0, 1).toUpperCase();
     }
 
     // generate link author avatar follow struct : https://placehold.co/200x200?text=[...]
     private String generateLinkImage(String name) {
-        return "https://placehold.co/200x200?text=" + getCharacter(name);
+        return "https://placehold.co/200x200?text=" + getFirstCharacter(name);
+    }
+
+    public int randomPrice() {
+        Random random = new Random();
+        int price = random.nextInt(100000 - 10000 + 1) + 10000;
+        price = price / 1000;
+        price = price * 1000;
+        return price;
+    }
+
+    // write method to random date between 2 date
+    private Date randomDateBetweenTwoDates(Date startInclusive, Date endExclusive) {
+        long startMillis = startInclusive.getTime();
+        long endMillis = endExclusive.getTime();
+        long randomMillisSinceEpoch = ThreadLocalRandom
+                .current()
+                .nextLong(startMillis, endMillis);
+        return new Date(randomMillisSinceEpoch);
     }
 }

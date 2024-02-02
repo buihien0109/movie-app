@@ -43,11 +43,16 @@ public class Film {
     FilmAccessType accessType; // Loại truy cập: Miễn phí, Trả phí
 
     Integer price; // Giá tiền
-
     Boolean status; // Nháp: false, Công khai: true
+    String trailerUrl; // Link trailer
+
     Date createdAt;
     Date updatedAt;
     Date publishedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "country_id")
+    Country country;
 
     @ManyToMany
     @JoinTable(name = "film_genre",

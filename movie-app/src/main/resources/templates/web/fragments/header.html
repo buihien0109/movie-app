@@ -6,9 +6,6 @@
 </head>
 <body>
 <header class="bg-dark header">
-    <div class="bg-body-tertiary p-2">
-        <p class="mb-0 text-center">Dự án mẫu khóa học Java tại Techmaster</p>
-    </div>
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="/">
@@ -20,29 +17,82 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-between align-items-center" id="main-menu">
-                <div class="navbar-nav">
-                    <a class="nav-link text-white" href="/">Trang chủ</a>
-                    <a class="nav-link text-white" href="/phim-bo">Phim bộ</a>
-                    <a class="nav-link text-white" href="/phim-chieu-rap">Phim chiếu rạp</a>
-                    <a class="nav-link text-white" href="/phim-le">Phim lẻ</a>
-                    <a class="nav-link text-white" href="/mua-phim">Mua phim</a>
-                </div>
-                <div>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/phim-bo">Phim bộ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/phim-chieu-rap">Phim chiếu rạp</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/phim-le">Phim lẻ</a>
+                    </li>
+                    <li class="nav-item dropdown mega-menu">
+                        <a class="nav-link text-white dropdown-toggle" href="#" id="megaMenuCountry" role="button" data-bs-toggle="dropdown" aria-expanded="false">Quốc gia</a>
+                        <div class="dropdown-menu p-0 border-0 shadow rounded-1 bg-body-tertiary" aria-labelledby="megaMenuCountry">
+                            <div style="width: 700px" class="p-3">
+                                <div class="row">
+                                    <div class="col-3" th:each="country : ${countries}">
+                                        <a class="d-block text-semi text-gray-600 p-2" th:href="@{/quoc-gia/{slug} (slug=${country.slug})}" th:text="${country.name}"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown mega-menu">
+                        <a class="nav-link text-white dropdown-toggle" href="#" id="megaMenuGenre" role="button" data-bs-toggle="dropdown" aria-expanded="false">Thể loại</a>
+                        <div class="dropdown-menu p-0 border-0 shadow rounded-1 bg-body-tertiary" aria-labelledby="megaMenuGenre">
+                            <div style="width: 700px" class="p-3">
+                                <div class="row">
+                                    <div class="col-3" th:each="genre : ${genres}">
+                                        <a class="d-block text-semi text-gray-600 p-2" th:href="@{/the-loai/{slug} (slug=${genre.slug})}" th:text="${genre.name}"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/cua-hang">Mua phim</a>
+                    </li>
+                </ul>
+                <div class="user-action">
                     <div class="d-flex align-items-center" th:if="${isLogined}">
-                        <a class="text-white fs-5" href="/lich-su-xem-phim" data-bs-toggle="tooltip" data-bs-title="Lịch sử xem phim">
-                            <span><i class="fa-solid fa-clock-rotate-left"></i></span>
-                        </a>
-                        <a class="text-white ms-3 fs-5" href="/phim-yeu-thich" data-bs-toggle="tooltip" data-bs-title="Phim yêu thích">
-                            <span><i class="fa-solid fa-bookmark"></i></span>
-                        </a>
                         <div class="dropdown ms-3">
                             <p class="text-white mb-0 dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                 <th:block th:text="${userLogined_name}"></th:block>
                             </p>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" href="#">Action</a></li>
-                                <li><a class="dropdown-item" href="#">Another action</a></li>
-                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="logout()">Đăng xuất</a></li>
+                                <li><a class="dropdown-item text-gray-600 py-2" href="/admin/dashboard" th:if="${userLogined_role == 'ROLE_ADMIN'}">
+                                    <span style="width: 20px" class="d-inline-block"><i class="fa-solid fa-user-tie"></i></span>
+                                    <span class="text-small">Trang quản trị</span>
+                                </a></li>
+                                <li><a class="dropdown-item text-gray-600 py-2" href="/thong-tin-ca-nhan">
+                                    <span style="width: 20px" class="d-inline-block"><i class="fa-regular fa-address-card"></i></span>
+                                    <span class="text-small">Thông tin cá nhân</span>
+                                </a></li>
+                                <li><a class="dropdown-item text-gray-600 py-2" href="/lich-su-xem-phim">
+                                    <span style="width: 20px" class="d-inline-block"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                                    <span class="text-small">Lịch sử xem phim</span>
+                                </a></li>
+                                <li><a class="dropdown-item text-gray-600 py-2" href="/phim-yeu-thich">
+                                    <span style="width: 20px" class="d-inline-block"><i class="fa-solid fa-heart"></i></span>
+                                    <span class="text-small">Phim yêu thích</span>
+                                </a></li>
+                                <li><a class="dropdown-item text-gray-600 py-2" href="/lich-su-giao-dich">
+                                    <span style="width: 20px" class="d-inline-block"><i class="fa-solid fa-cart-shopping"></i></span>
+                                    <span class="text-small">Lịch sử giao dịch</span>
+                                </a></li>
+                                <li><a class="dropdown-item text-gray-600 py-2" href="/danh-sach-phim-mua">
+                                    <span style="width: 20px" class="d-inline-block"><i class="fa-solid fa-sack-dollar"></i></span>
+                                    <span class="text-small">Phim đã mua</span>
+                                </a></li>
+                                <li><a class="dropdown-item text-gray-600 py-2" href="javascript:void(0)" onclick="logout()">
+                                    <span style="width: 20px" class="d-inline-block"><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
+                                    <span class="text-small">Đăng xuất</span>
+                                </a></li>
                             </ul>
                         </div>
                     </div>

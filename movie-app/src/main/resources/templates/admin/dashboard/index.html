@@ -34,7 +34,156 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            ...
+                            <div class="row">
+                                <div class="col-lg-3 col-6">
+                                    <div class="small-box bg-warning">
+                                        <div class="inner">
+                                            <h3 th:text="${countOrder}">44</h3>
+                                            <p>Đơn hàng mới</p>
+                                        </div>
+                                        <a href="/admin/orders" class="small-box-footer">Xem thêm <i
+                                                class="fas fa-arrow-circle-right"></i></a>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3 col-6">
+                                    <div class="small-box bg-danger">
+                                        <div class="inner">
+                                            <h3 th:text="${countFilm}">65</h3>
+                                            <p>Phim mới</p>
+                                        </div>
+                                        <a href="/admin/films" class="small-box-footer">Xem thêm <i
+                                                class="fas fa-arrow-circle-right"></i></a>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3 col-6">
+                                    <div class="small-box bg-info">
+                                        <div class="inner">
+                                            <h3><th:block th:text="${countUser.get('count')}"></th:block>/<th:block th:text="${countUser.get('total')}"></th:block></h3>
+                                            <p>User mới/Tổng số user</p>
+                                        </div>
+                                        <a href="/admin/users" class="small-box-footer">Xem thêm <i
+                                                class="fas fa-arrow-circle-right"></i></a>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3 col-6">
+                                    <div class="small-box bg-success">
+                                        <div class="inner">
+                                            <h3><th:block th:text="${countBlog.get('count')}"></th:block>/<th:block th:text="${countBlog.get('total')}"></th:block></h3>
+                                            <p>Bài viết mới/Tổng số bài</p>
+                                        </div>
+                                        <a href="/admin/blogs" class="small-box-footer">Xem thêm <i
+                                                class="fas fa-arrow-circle-right"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <canvas id="topViewFilm"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <canvas id="revenue"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header border-transparent">
+                                            <h3 class="card-title">Đơn hàng mới nhất</h3>
+                                        </div>
+
+                                        <div class="card-body p-0">
+                                            <div class="table-responsive">
+                                                <table class="table m-0">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Order ID</th>
+                                                        <th>Phim</th>
+                                                        <th>Trạng thái</th>
+                                                        <th>Giá tiền</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr th:each="order : ${latestOrders}">
+                                                        <td>
+                                                            <a th:href="@{/admin/orders/{id}/detail (id=${order.id})}" th:text="${order.id}">OR9842</a>
+                                                        </td>
+                                                        <td>
+                                                            <a th:href="@{/admin/films/{id}/detail (id=${order.film.id})}" class="text-primary">
+                                                                <span th:text="${order.film.title}">Phim</span>
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <th:block th:switch="${order.status.getValue()}">
+                                                                <span class="badge badge-warning" th:case="'Chờ xử lý'">Chờ xử lý</span>
+                                                                <span class="badge badge-success" th:case="'Thành công'">Thành công</span>
+                                                                <span class="badge badge-secondary" th:case="'Đã hủy'">Đã hủy</span>
+                                                                <span class="badge badge-primary" th:case="*">Không xác định</span> <!-- Trường hợp mặc định -->
+                                                            </th:block>
+                                                        </td>
+                                                        <td th:text="|${#numbers.formatInteger(order.amount,3,'COMMA')}đ|"></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-footer clearfix">
+                                            <a href="/admin/orders" class="btn btn-sm btn-secondary float-right">Xem tất
+                                                cả</a>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header border-transparent">
+                                            <h3 class="card-title">User mới nhất</h3>
+                                        </div>
+
+                                        <div class="card-body p-0">
+                                            <div class="table-responsive">
+                                                <table class="table m-0">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Họ tên</th>
+                                                        <th>Email</th>
+                                                        <th>Số điện thoại</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr th:each="user : ${latestUsers}">
+                                                        <td>
+                                                            <a th:href="@{/admin/users/{id}/detail (id=${user.id})}" th:text="${user.name}">OR9842</a>
+                                                        </td>
+                                                        <td th:text="${user.name}"></td>
+                                                        <td th:text="${user.phone}"></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-footer clearfix">
+                                            <a href="/admin/orders" class="btn btn-sm btn-secondary float-right">Xem tất
+                                                cả</a>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -44,7 +193,56 @@
 </div>
 
 <th:block id="js">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        const topViewFilms = [[${topViewFilms}]];
+        const revenue = [[${revenue}]];
+        console.log({topViewFilms, revenue})
 
+        const ctxTopView = document.getElementById('topViewFilm').getContext('2d');
+        const topViewFilmBarChart = new Chart(ctxTopView, {
+            type: 'bar',
+            data: {
+                labels: topViewFilms.map(film => film.title),
+                datasets: [{
+                    label: 'Lượt xem',
+                    data: topViewFilms.map(film => film.view),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const ctxRevenue = document.getElementById('revenue').getContext('2d');
+        const revenueLineChart = new Chart(ctxRevenue, {
+            type: 'line',
+            data: {
+                labels: revenue.map(item => `Tháng ${item.month}/${item.year}`),
+                datasets: [{
+                    label: 'Doanh thu',
+                    data: revenue.map(item => item.revenue),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 </th:block>
 </body>
 

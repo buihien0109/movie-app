@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title th:text="|Chi tiết đơn hàng ${order.id}|">AdminLTE 3 | Dashboard</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+
+        <style>
+            .select2-container .select2-selection--single {
+                height: 38px;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 38px;
+            }
+        </style>
+    </th:block>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/orders">Danh sách đơn hàng</a>
+                        </li>
+                        <li class="breadcrumb-item active" th:text="|Đơn hàng ${order.id}|">
+                            Đơn hàng 1
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/orders" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Cập nhật
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="info-div">
+                                        <label>Thông tin người đặt</label>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i
+                                                                class="fas fa-user"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" readonly=""
+                                                           th:value="${order.user.name}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-phone-alt"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" readonly=""
+                                                           th:value="${order.user.phone}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-6">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i
+                                                                class="fas fa-envelope"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" readonly=""
+                                                           th:value="${order.user.email}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i
+                                                                class="far fa-calendar-alt"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" readonly=""
+                                                           th:value="${#dates.format(order.createdAt, 'dd/MM/yyyy hh:mm')}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-div mt-4">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <label class="mb-0">Chi tiết đơn hàng</label>
+
+                                            <button type="button" class="btn mx-1 my-0" data-toggle="modal"
+                                                    data-target="#modal-chose-film">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered" id="table-film">
+                                                <thead>
+                                                <tr>
+                                                    <th>Phim</th>
+                                                    <th>Loại phim</th>
+                                                    <th>Giá tiền</th>
+                                                    <th>Thành tiền</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <a th:href="@{/admin/films/{id}/detail (id=${order.film.id})}"
+                                                           th:text="${order.film.title}">Avengers: Endgame</a>
+                                                    </td>
+                                                    <td th:text="${order.film.type.getType()}"></td>
+                                                    <td th:text="|${#numbers.formatInteger(order.amount,3,'COMMA')}đ|"></td>
+                                                    <td th:text="|${#numbers.formatInteger(order.amount,3,'COMMA')}đ|"></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div style="background-color: #eeeeee; padding: 10px">
+                                        <label>Trạng thái đơn hàng</label>
+                                        <select name="status" class="form-control mb-3" id="status">
+                                            <option value="PENDING"
+                                                    th:selected="${order.status.toString() == 'PENDING'}">Chờ xử lý
+                                            </option>
+                                            <option value="SUCCESS"
+                                                    th:selected="${order.status.toString() == 'SUCCESS'}">Thành công
+                                            </option>
+                                            <option value="CANCEL" th:selected="${order.status.toString() == 'CANCEL'}">
+                                                Đã hủy
+                                            </option>
+                                        </select>
+                                        <textarea name="note" id="note" rows="5" placeholder="Ghi chú"
+                                                  class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modal-chose-film">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Chi tiết đơn hàng</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Bộ phim</label>
+                        <div class="select2-purple">
+                            <select class="select2 form-control" id="film-select" style="width: 100%">
+                                <option th:each="film : ${films}" th:value="${film.id}"
+                                        th:text="${film.title}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <span>Giá tiền</span>
+                            <span class="text-price badge badge-primary" id="film-price"
+                                  style="font-size: 1.5rem">0</span>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span>Thành tiền</span>
+                            <span class="text-price badge badge-success" id="total-price"
+                                  style="font-size: 1.5rem">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer end">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="btn-chose-film">Lưu thay đổi</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.js}"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+
+    <script th:inline="javascript">
+        const order = [[${order}]];
+        const films = [[${films}]];
+        let filmSelected = order.film;
+
+        films.forEach(f => {
+            console.log(f.accessType)
+        })
+
+        $(".select2").select2();
+
+        // Xử lý khi chọn phim trong modal và tính giá tiền
+        const filmSelectEl = document.getElementById('film-select');
+        const filmPriceEl = document.getElementById('film-price');
+        const totalPriceEl = document.getElementById('total-price');
+
+        $('#film-select').on('select2:select', function (e) {
+            const filmId = e.params.data.id;
+            const film = films.find(f => f.id === Number(filmId));
+
+            filmPriceEl.innerText = `${formatCurrency(film.price)}đ`;
+            totalPriceEl.innerText = `${formatCurrency(film.price)}đ`;
+        });
+
+        // Xử lý khi click nút chọn phim
+        const btnChoseFilmEl = document.getElementById('btn-chose-film');
+        btnChoseFilmEl.addEventListener('click', function () {
+            const filmId = $("#film-select").val();
+            filmSelected = films.find(f => f.id === Number(filmId));
+            renderFilmSelected(filmSelected);
+
+            // Clear giá trị của modal
+            filmSelectEl.value = "";
+            filmPriceEl.innerText = "0";
+            totalPriceEl.innerText = "0";
+
+            $('#modal-chose-film').modal('hide');
+        })
+
+        // Render phim đã chọn
+        const renderFilmSelected = (film) => {
+            const tableFilmEl = document.getElementById('table-film');
+            const tbodyEl = tableFilmEl.querySelector('tbody');
+            tbodyEl.innerHTML = `
+                <tr>
+                    <td>
+                        <a href="/admin/films/${film.id}/detail">${film.title}</a>
+                    </td>
+                    <td>${convertType(film.type)}</td>
+                    <td>${formatCurrency(film.price)}đ</td>
+                    <td>${formatCurrency(film.price)}đ</td>
+                </tr>
+            `;
+        }
+
+        // Convert film type
+        const convertType = (type) => {
+            if (type === 'PHIM_LE') {
+                return 'Phim lẻ';
+            } else if (type === 'PHIM_BO') {
+                return 'Phim bộ';
+            } else if (type === 'PHIM_CHIEU_RAP') {
+                return 'Phim chiếu rạp';
+            }
+        }
+
+        // Update order using axios
+        const btnUpdateEl = document.getElementById('btn-update');
+        btnUpdateEl.addEventListener('click', function () {
+            const status = document.getElementById('status').value;
+            const note = document.getElementById('note').value;
+
+            const data = {
+                status: status,
+                note: note,
+                filmId: filmSelected.id,
+                amount: filmSelected.price
+            }
+
+            axios.put(`/api/admin/orders/${order.id}`, data)
+                .then(res => {
+                    if (res.status === 200) {
+                        toastr.success('Cập nhật đơn hàng thành công');
+                    } else {
+                        toastr.error('Cập nhật đơn hàng thất bại');
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    toastr.error(err.response.data.message);
+                })
+        })
+    </script>
+</th:block>
+
+</body>
+
+</html>

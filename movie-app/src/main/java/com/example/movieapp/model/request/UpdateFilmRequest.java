@@ -1,5 +1,6 @@
 package com.example.movieapp.model.request;
 
+import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.enums.FilmType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -32,4 +33,9 @@ public class UpdateFilmRequest {
     Set<Integer> genreIds;
     Set<Integer> directorIds;
     Set<Integer> actorIds;
+
+    @NotNull(message = "Loại truy cập không được để trống")
+    FilmAccessType accessType;
+
+    Integer price;
 }

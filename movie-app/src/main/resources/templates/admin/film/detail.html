@@ -159,6 +159,23 @@
                                                 </div>
 
                                                 <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox"
+                                                               id="accessType" th:checked="${film.accessType.getValue()}  == 'Trả phí'">
+                                                        <label for="accessType" class="custom-control-label">Phim trả
+                                                            phí</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group" id="form-group-price">
+                                                    <th:block th:if="${film.accessType.getValue()}  == 'Trả phí'">
+                                                        <label>Giá phim</label>
+                                                        <input type="text" class="form-control" id="price" name="price"
+                                                               th:value="${film.price}"/>
+                                                    </th:block>
+                                                </div>
+
+                                                <div class="form-group">
                                                     <div class="image-preview-container mb-3">
                                                         <img th:src="${film.poster}" alt="" id="image-preview" />
                                                     </div>
@@ -313,6 +330,21 @@
 
         $(".select2").select2();
 
+        const accessType = document.getElementById("accessType");
+        const formGroupPrice = document.getElementById("form-group-price");
+
+        // Hiển thị form nhập giá nếu là phim trả phí
+        accessType.addEventListener("change", () => {
+            if (accessType.checked) {
+                formGroupPrice.innerHTML = `
+                    <label>Giá</label>
+                    <input type="text" class="form-control" id="price" name="price" value="${film.price ?? ""}"/>
+                `
+            } else {
+                formGroupPrice.innerHTML = ""
+            }
+        })
+
         $('#form-update-film').validate({
             rules: {
                 title: {
@@ -325,6 +357,9 @@
                     required: true
                 },
                 status: {
+                    required: true
+                },
+                price: {
                     required: true
                 }
             },
@@ -340,6 +375,9 @@
                 },
                 status: {
                     required: "Trạng thái không được để trống"
+                },
+                price: {
+                    required: "Giá không được để trống"
                 }
             },
             errorElement: 'span',
@@ -378,7 +416,9 @@
                 releaseYear: Number(filmReleaseYear.value),
                 directorIds: filmDirectors.val().map(e => Number(e)),
                 actorIds: filmActors.val().map(e => Number(e)),
-                genreIds: filmGenres.val().map(e => Number(e))
+                genreIds: filmGenres.val().map(e => Number(e)),
+                accessType: accessType.checked ? "PAID" : "FREE",
+                price: accessType.checked ? Number(document.getElementById("price").value) : null
             }
 
             console.log(data)

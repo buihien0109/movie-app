@@ -10,7 +10,6 @@
               integrity="sha512-K1k7jSn9RDKEcn/ugqVVvWYu0bcS3q1w6m/5pQSnrj0bCfIqF6Wk49lkmckSb4wglvTP9V17LtS0q0XxYccXbg=="
               crossorigin="anonymous" referrerpolicy="no-referrer"/>
     </th:block>
-
 </head>
 
 <body>
@@ -19,8 +18,8 @@
     <section class="py-4">
         <div class="container">
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a class="text-primary" href="/">Trang chủ</a></li>
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a class="text-primary" href="/static">Trang chủ</a></li>
                     <li class="breadcrumb-item">
                         <a th:switch="${film.type.type}">
                             <a class="text-primary" th:case="'Phim lẻ'" href="/phim-le">Phim lẻ</a>
@@ -29,12 +28,30 @@
                             <a class="text-primary" th:case="*" href="#">Không xác định</a> <!-- Trường hợp mặc định -->
                         </a>
                     </li>
-                    <li class="breadcrumb-item active" aria-current="page" th:text="${film.title}">Cô Đi Mà Lấy Chồng
-                        Tôi
-                    </li>
+                    <li class="breadcrumb-item"><a class="text-primary"
+                                                   th:href="@{/phim/{id}/{slug} (id=${film.id}, slug=${film.slug})}"
+                                                   th:text="${film.title}">Nhà Bà Nữ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Xem phim</li>
                 </ol>
             </nav>
-            <div class="row mt-4">
+        </div>
+    </section>
+
+    <div id="screen" class="py-4 bg-body-tertiary">
+        <div class="container">
+            <div class="w-100 mx-auto">
+                <video controls width="100%">
+                    <source th:src="${currentEpisode != null && currentEpisode.video != null && currentEpisode.video.url != null ? currentEpisode.video.url : ''}"
+                            type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <section class="py-4">
+        <div class="container">
+            <div class="row">
                 <div class="col-3">
                     <img id="movie-poster" class="rounded w-100"
                          th:src="${film.poster}" alt="">
@@ -95,33 +112,27 @@
                             </div>
                         </div>
                     </div>
-                    <th:block th:if="${episodeList.size() > 0}" th:with="episode = ${episodeList.get(0)}">
-                        <div class="d-flex align-items-center">
-                            <a class="d-inline-block btn btn-danger px-5 py-2 mt-3 rounded me-2"
-                               th:href="@{/xem-phim/{id}/{slug} (id=${film.id}, slug=${film.slug}, tap=${film.type.type == 'Phim bộ' ? episode.displayOrder : 'full'})}">
-                                <span><i class="fa-solid fa-play"></i></span>
-                                Xem phim</a>
-                            <div id="btn-wishlist-container">
-                                <button th:if="${isLogined && isFavorite}" class="d-inline-block btn bg-dark px-5 py-2 mt-3 rounded text-white" th:onclick="|removeFromWishList(${film.id})|">
-                                    <span><i class="fa-solid fa-trash-can"></i></span> Loại khỏi yêu thích
-                                </button>
-                                <button th:if="${isLogined && not isFavorite}" class="d-inline-block btn bg-dark px-5 py-2 mt-3 rounded text-white" th:onclick="|addToWishList(${film.id})|">
-                                    <span><i class="fa-solid fa-heart"></i></span> Thêm vào yêu thích
-                                </button>
-                            </div>
-                        </div>
-                    </th:block>
+                    <div id="btn-wishlist-container" th:if="${episodeList.size() > 0}" th:with="episode = ${episodeList.get(0)}">
+                        <button th:if="${isLogined && isFavorite}" class="d-inline-block btn bg-dark px-5 py-2 mt-3 rounded text-white" th:onclick="|removeFromWishList(${film.id})|">
+                            <span><i class="fa-solid fa-trash-can"></i></span> Loại khỏi yêu thích
+                        </button>
+                        <button th:if="${isLogined && not isFavorite}" class="d-inline-block btn bg-dark px-5 py-2 mt-3 rounded text-white" th:onclick="|addToWishList(${film.id})|">
+                            <span><i class="fa-solid fa-heart"></i></span> Thêm vào yêu thích
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div class="mt-4" th:if="${film.type.type == 'Phim bộ'}">
                 <h3 class="mb-3">Tập phim</h3>
                 <a class="btn btn-dark me-2"
+                   th:classappend="${tap == #strings.toString(episode.displayOrder) ? 'disabled' : ''}"
                    th:href="@{/xem-phim/{id}/{slug} (id=${film.id}, slug=${film.slug}, tap=${episode.displayOrder})}"
                    th:each="episode : ${episodeList}" th:text="${episode.title}">Tập 1</a>
             </div>
         </div>
     </section>
+
 
     <section class="py-4 bg-body-tertiary">
         <div class="container">
@@ -238,18 +249,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.js"
             integrity="sha512-GzbaI5EsNzdEUq6/2XLYpr1y9CUZRIVsUeWTAFgULtQa5jZ3Nug8i0nZKM6jp9NffBCZhymPPQFcF0DK+JkRpw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script th:inline="javascript">
         const film = [[${film}]];
         const reviews = [[${reviewList}]];
-        const relateFilmList = [[${relateFilmList}]];
-        const episodeList = [[${episodeList}]];
+        const currentEpisode = [[${currentEpisode}]];
         const currentUser = [[${currentUser}]];
-        const isFavorite = [[${isFavorite}]];
-
-        console.log({film, reviews, relateFilmList, episodeList, currentUser})
+        const watchHistory = [[${watchHistory}]];
+        const video = document.querySelector('#screen video');
     </script>
     <script src="/js/film-detail/film-detail.js"></script>
+    <script src="/js/film-detail/film-view.js"></script>
     <script src="/js/film-detail/film-review.js" th:if="${isLogined}"></script>
+    <script src="/js/film-detail/film-view-history.js" th:if="${isLogined}"></script>
+    <script src="/js/film-detail/film-view-history-anonymous.js" th:if="not ${isLogined}"></script>
 </th:block>
 </body>
 

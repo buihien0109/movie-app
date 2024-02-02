@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: #main-content}, ~{:: #js})}">
+
+<head>
+    <title>Lịch sử giao dịch</title>
+    <th:block id="css">
+        <style>
+            th, td {
+                padding: 0.75rem 0.75rem !important;
+            }
+        </style>
+    </th:block>
+</head>
+
+<body>
+
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a class="text-primary" href="/static">Trang chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Lịch sử giao dịch
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+    <section class="pb-4">
+        <div class="container">
+            <h3 class="mb-3">Lịch sử giao dịch</h3>
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Ngày giao dịch</th>
+                            <th>Phim</th>
+                            <th>Số tiền</th>
+                            <th>Hình thức thanh toán</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="order : ${orderList}">
+                            <td th:text="${#dates.format(order.createdAt, 'dd/MM/yyyy')}">Ngày giao dịch</td>
+                            <td>
+                                <a th:href="@{/cua-hang/phim/{id}/{slug} (id=${order.film.id}, slug=${order.film.slug})}" class="text-primary">
+                                    <span th:text="${order.film.title}">Phim</span>
+                                </a>
+                            </td>
+                            <td th:text="|${#numbers.formatInteger(order.amount,3,'COMMA')}đ|">Số tiền</td>
+                            <td>
+                                <th:block th:switch="${order.paymentMethod.getValue()}">
+                                    <span class="badge text-bg-primary" th:case="'Momo'">MoMo</span>
+                                    <span class="badge text-bg-primary" th:case="'ZaloPay'">ZaloPay</span>
+                                    <span class="badge text-bg-primary" th:case="'Chuyển khoản ngân hàng'">Chuyển khoản ngân hàng</span>
+                                    <span class="badge text-bg-primary" th:case="*">Không xác định</span> <!-- Trường hợp mặc định -->
+                                </th:block>
+                            </td>
+                            <td>
+                                <th:block th:switch="${order.status.getValue()}">
+                                    <span class="badge text-bg-warning" th:case="'Chờ xử lý'">Chờ xử lý</span>
+                                    <span class="badge text-bg-success" th:case="'Thành công'">Thành công</span>
+                                    <span class="badge text-bg-secondary" th:case="'Đã hủy'">Đã hủy</span>
+                                    <span class="badge text-bg-primary" th:case="*">Không xác định</span> <!-- Trường hợp mặc định -->
+                                </th:block>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+
+<th:block id="js">
+
+</th:block>
+</body>
+
+</html>

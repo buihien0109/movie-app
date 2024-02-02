@@ -12,4 +12,6 @@ public interface GenreRepository extends JpaRepository<Genre, Integer> {
     Set<Genre> findByIdIn(Set<Integer> genreIds);
 
     boolean existsByName(String genre);
+
+    Optional<Genre> findBySlug(String slug);
 }
