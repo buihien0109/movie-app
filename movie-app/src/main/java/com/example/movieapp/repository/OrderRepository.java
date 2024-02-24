@@ -26,7 +26,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query(value = "SELECT new com.example.movieapp.model.dto.RevenueDto(MONTH(o.createdAt), YEAR(o.createdAt), SUM(o.amount)) FROM Order o WHERE o.status = 'SUCCESS' GROUP BY MONTH(o.createdAt), YEAR(o.createdAt) ORDER BY YEAR(o.createdAt) ASC, MONTH(o.createdAt) ASC")
     List<RevenueDto> findRevenueByMonth();
 
-    Optional<Order> findByUser_IdAndFilm_IdAndFilm_AccessType(Integer userId, Integer filmId, FilmAccessType filmAccessType);
+    List<Order> findByUser_IdAndFilm_IdAndFilm_AccessType(Integer userId, Integer filmId, FilmAccessType filmAccessType);
 
     boolean existsByUser_IdAndFilm_IdAndStatus(Integer userId, Integer filmId, OrderStatus orderStatus);
 }

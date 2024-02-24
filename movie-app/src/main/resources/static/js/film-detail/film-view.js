@@ -1,5 +1,5 @@
 // Tính lượt xem phim ----------------------------------------------------------------------------------
-const duration = currentEpisode.video.duration;
+const duration = currentEpisode.duration;
 let startTime = 0;
 let endTime = 0;
 let requestSent = false;  // Biến để kiểm tra xem request đã được gửi chưa

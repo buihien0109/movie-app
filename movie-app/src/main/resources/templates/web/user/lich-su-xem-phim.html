@@ -38,6 +38,8 @@
                                         <div class="progress-bar bg-danger" role="progressbar"
                                              th:style="'width: ' + ${watchHistory.duration * 100 / episode.duration} + '%'"></div>
                                     </div>
+                                    <span th:if="${film.type.toString() == 'PHIM_BO'}" th:style="${film.accessType.toString() == 'PAID'} ? 'left: 45px' : 'left: 0'"
+                                          class="position-absolute badge text-bg-warning top-0 rounded-1">Phim bộ</span>
                                     <span th:if="${film.accessType.toString() == 'PAID'}"
                                           class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">PRO</span>
                                 </div>
@@ -62,6 +64,8 @@
                                         <div class="progress-bar bg-danger" role="progressbar"
                                              th:style="'width: ' + ${watchHistory.duration * 100 / episode.duration} + '%'"></div>
                                     </div>
+                                    <span th:if="${film.type.toString() == 'PHIM_BO'}" th:style="${film.accessType.toString() == 'PAID'} ? 'left: 45px' : 'left: 0'"
+                                          class="position-absolute badge text-bg-warning top-0 rounded-1">Phim bộ</span>
                                 </div>
                                 <p class="mt-2 mb-1 d-flex align-items-center">
                                     <th:block th:text="${film.title}"></th:block>

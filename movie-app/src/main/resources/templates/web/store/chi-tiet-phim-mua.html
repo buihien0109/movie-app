@@ -476,7 +476,7 @@
     </script>
     <script src="/js/film-detail/film-detail.js"></script>
     <script src="/js/film-detail/film-review.js" th:if="${isLogined}"></script>
-    <script src="/js/film-detail/film-purchase.js" th:if="${isLogined}"></script>
+    <script src="/js/film-detail/film-purchase.js" th:if="${isLogined && !isBuyed}"></script>
 </th:block>
 </body>
 </html>

@@ -237,3 +237,11 @@ img {
     height: 100%;
     object-fit: cover;
 }
+
+.select2-container .select2-selection--single {
+    height: 38px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px;
+}

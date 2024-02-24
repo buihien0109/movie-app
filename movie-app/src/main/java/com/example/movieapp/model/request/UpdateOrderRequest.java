@@ -1,5 +1,6 @@
 package com.example.movieapp.model.request;
 
+import com.example.movieapp.model.enums.OrderPaymentMethod;
 import com.example.movieapp.model.enums.OrderStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +23,9 @@ public class UpdateOrderRequest {
 
     @NotNull(message = "Trạng thái không được để trống")
     OrderStatus status;
+
+    @NotNull(message = "Hình thức thanh toán không được để trống")
+    OrderPaymentMethod paymentMethod;
 
     String note;
 }

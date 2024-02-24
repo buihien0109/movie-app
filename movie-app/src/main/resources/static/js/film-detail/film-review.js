@@ -133,6 +133,12 @@ const createReview = () => {
         return;
     }
 
+    // Nếu chưa đánh giá star thì cảnh báo
+    if (currentRating === 0) {
+        toastr.warning("Vui lòng đánh giá sao trước khi gửi đánh giá");
+        return;
+    }
+
     const review = {
         filmId: film.id,
         rating: currentRating,
@@ -197,6 +203,12 @@ const deleteReview = id => {
 --------------------- */
 const updateReview = id => {
     if (!$("#form-review").valid()) {
+        return;
+    }
+
+    // Nếu chưa đánh giá star thì cảnh báo
+    if (currentRating === 0) {
+        toastr.warning("Vui lòng đánh giá sao trước khi gửi đánh giá");
         return;
     }
 

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Tạo đơn hàng</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+    </th:block>
+
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/orders">Đơn hàng</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Tạo đơn hàng
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/orders" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-create">
+                        Lưu
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form id="form-create-order">
+                                        <div class="form-group">
+                                            <label>Thông tin người nhận</label>
+                                            <div class="select2-purple">
+                                                <select class="select2 form-control" id="user-select"
+                                                        style="width: 100%" name="user">
+                                                    <option th:each="user : ${users}" th:value="${user.id}"
+                                                            th:text="${user.name}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Hình thức thanh toán</label>
+                                            <select class="form-control" id="user-payment-method" name="paymentMethod">
+                                                <option th:each="paymentMethod : ${paymentMethods}"
+                                                        th:value="${paymentMethod}"
+                                                        th:text="${paymentMethod.getValue()}"
+                                                        th:selected="${paymentMethod.toString() == 'BANK_TRANSFER'}"></option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Bộ phim</label>
+                                            <div class="select2-purple">
+                                                <select class="select2 form-control" id="film-select"
+                                                        style="width: 100%" name="film">
+                                                    <option th:each="film : ${films}" th:value="${film.id}"
+                                                            th:text="${film.title}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                                    <span>Giá tiền</span>
+                                                    <span class="text-price badge badge-primary" id="film-price"
+                                                          style="font-size: 1.5rem">0</span>
+                                                </div>
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <span>Thành tiền</span>
+                                                    <span class="text-price badge badge-success" id="total-price"
+                                                          style="font-size: 1.5rem">0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+    <script th:inline="javascript">
+        const films = [[${films}]];
+
+        $(".select2").select2();
+
+        // Xử lý khi chọn phim trong modal và tính giá tiền
+        const filmPriceEl = document.getElementById('film-price');
+        const totalPriceEl = document.getElementById('total-price');
+
+        $('#film-select').on('select2:select', function (e) {
+            const filmId = e.params.data.id;
+            const film = films.find(f => f.id === Number(filmId));
+
+            filmPriceEl.innerText = `${formatCurrency(film.price)}đ`;
+            totalPriceEl.innerText = `${formatCurrency(film.price)}đ`;
+        });
+
+        $('#form-create-order').validate({
+            rules: {
+                user: {
+                    required: true
+                },
+                paymentMethod: {
+                    required: true
+                },
+                film: {
+                    required: true
+                }
+            },
+            messages: {
+                user: {
+                    required: "Người nhận không được để trống"
+                },
+                paymentMethod: {
+                    required: "Hình thức thanh toán không được để trống"
+                },
+                film: {
+                    required: "Phim không được để trống"
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        // Create order sử dụng axios
+        const btnCreate = document.getElementById('btn-create');
+        btnCreate.addEventListener('click', function () {
+            if (!$('#form-create-order').valid()) return false;
+
+            const data = {
+                userId: $('#user-select').val(),
+                paymentMethod: $('#user-payment-method').val(),
+                filmId: $('#film-select').val()
+            };
+
+            axios.post('/api/admin/orders', data)
+                .then(function (response) {
+                    toastr.success('Tạo đơn hàng thành công');
+
+                    setTimeout(() => {
+                        window.location.href = `/admin/orders/${response.data.id}/detail`;
+                    })
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    toastr.error(error.response.data.message);
+                });
+        });
+    </script>
+</th:block>
+
+</body>
+
+</html>

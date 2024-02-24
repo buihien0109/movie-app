@@ -18,9 +18,13 @@ services:
       - mysql
     restart: always
     ports:
-      - "8080:8080"
+      - "8888:8888"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/db-movie?createDatabaseIfNotExist=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=123
+      - SPRING_APP_ORIGIN=http://103.237.147.34
+      - SPRING_APP_PORT=8888
+      - SPRING_MAIL_USERNAME=thuhangvnua@gmail.com
+      - SPRING_MAIL_PASSWORD=pavm rwzs bzjg kkrr

@@ -6,19 +6,8 @@
     <title th:text="|Chi tiết đơn hàng ${order.id}|">AdminLTE 3 | Dashboard</title>
 
     <th:block id="css">
-        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
-
-        <style>
-            .select2-container .select2-selection--single {
-                height: 38px;
-            }
-
-            .select2-container--default .select2-selection--single .select2-selection__arrow {
-                height: 38px;
-            }
-        </style>
     </th:block>
 </head>
 
@@ -148,20 +137,36 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div style="background-color: #eeeeee; padding: 10px">
-                                        <label>Trạng thái đơn hàng</label>
-                                        <select name="status" class="form-control mb-3" id="status">
-                                            <option value="PENDING"
-                                                    th:selected="${order.status.toString() == 'PENDING'}">Chờ xử lý
-                                            </option>
-                                            <option value="SUCCESS"
-                                                    th:selected="${order.status.toString() == 'SUCCESS'}">Thành công
-                                            </option>
-                                            <option value="CANCEL" th:selected="${order.status.toString() == 'CANCEL'}">
-                                                Đã hủy
-                                            </option>
-                                        </select>
-                                        <textarea name="note" id="note" rows="5" placeholder="Ghi chú"
-                                                  class="form-control"></textarea>
+                                        <div class="form-group">
+                                            <label>Hình thức thanh toán</label>
+                                            <select class="form-control" id="user-payment-method" name="paymentMethod">
+                                                <option th:each="paymentMethod : ${paymentMethods}"
+                                                        th:value="${paymentMethod}"
+                                                        th:text="${paymentMethod.getValue()}"
+                                                        th:selected="${paymentMethod == order.paymentMethod}"></option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Trạng thái đơn hàng</label>
+                                            <select name="status" class="form-control mb-3" id="status">
+                                                <option value="PENDING"
+                                                        th:selected="${order.status.toString() == 'PENDING'}">Chờ xử lý
+                                                </option>
+                                                <option value="SUCCESS"
+                                                        th:selected="${order.status.toString() == 'SUCCESS'}">Thành công
+                                                </option>
+                                                <option value="CANCEL"
+                                                        th:selected="${order.status.toString() == 'CANCEL'}">
+                                                    Đã hủy
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <textarea name="note" id="note" rows="5" placeholder="Ghi chú"
+                                                      class="form-control" th:text="${order.note}"></textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -216,17 +221,12 @@
 </div>
 
 <th:block id="js">
-    <script th:src="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.js}"></script>
     <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
 
     <script th:inline="javascript">
         const order = [[${order}]];
         const films = [[${films}]];
         let filmSelected = order.film;
-
-        films.forEach(f => {
-            console.log(f.accessType)
-        })
 
         $(".select2").select2();
 
@@ -290,12 +290,14 @@
         btnUpdateEl.addEventListener('click', function () {
             const status = document.getElementById('status').value;
             const note = document.getElementById('note').value;
+            const paymentMethod = document.getElementById('user-payment-method').value;
 
             const data = {
                 status: status,
                 note: note,
                 filmId: filmSelected.id,
-                amount: filmSelected.price
+                amount: filmSelected.price,
+                paymentMethod: paymentMethod
             }
 
             axios.put(`/api/admin/orders/${order.id}`, data)

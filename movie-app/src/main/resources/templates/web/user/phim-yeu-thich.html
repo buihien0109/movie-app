@@ -23,6 +23,8 @@
                             <div class="movie-poster rounded overflow-hidden position-relative">
                                 <img class="w-100 h-100"
                                      th:src="${film.poster}" th:alt="${film.title}">
+                                <span th:if="${film.type.toString() == 'PHIM_BO'}" th:style="${film.accessType.toString() == 'PAID'} ? 'left: 45px' : 'left: 0'"
+                                      class="position-absolute badge text-bg-warning top-0 rounded-1">Phim bộ</span>
                                 <span th:if="${film.accessType.toString() == 'PAID'}"
                                       class="position-absolute badge text-bg-danger top-0 start-0 rounded-1">PRO</span>
                             </div>

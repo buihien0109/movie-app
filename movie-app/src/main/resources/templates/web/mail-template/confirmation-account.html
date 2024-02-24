@@ -87,7 +87,7 @@
                     lòng nhấp vào liên kết dưới đây:
                 </p>
 
-                <a class="btn-action" th:href="@{http://localhost:8080/xac-thuc-tai-khoan (token=${token})}">Link Xác Thực</a>
+                <a class="btn-action" th:href="@{{orgin}:{port}/xac-thuc-tai-khoan (orgin=${origin}, port=${port}, token=${token})}">Link Xác Thực</a>
 
                 <p>
                     Liên kết này sẽ hết hạn sau 24 giờ. Nếu bạn không thực hiện

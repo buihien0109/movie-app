@@ -39,7 +39,7 @@
     <div class="container">
       <div class="w-100 mx-auto">
         <video controls width="100%">
-          <source th:src="${currentEpisode != null && currentEpisode.video != null && currentEpisode.video.url != null ? currentEpisode.video.url : ''}"
+          <source th:src="${currentEpisode != null && currentEpisode.videoUrl != null ? currentEpisode.videoUrl : ''}"
                   type="video/mp4">
           Your browser does not support the video tag.
         </video>

@@ -34,7 +34,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers("/css/**", "/js/**", "/image/**", "/admin-assets/**", "/image_uploads/**").permitAll();
-            auth.requestMatchers("/", "/phim-bo", "/phim-chieu-rap", "/phim-le", "/tin-tuc", "/tin-tuc/**", "/phim/**", "/xem-phim/**", "/cua-hang", "/cua-hang/**", "/dang-nhap", "/dang-ky", "/quen-mat-khau", "/xac-thuc-tai-khoan", "/dat-lai-mat-khau").permitAll();
+            auth.requestMatchers("/", "/phim-bo", "/phim-chieu-rap", "/phim-le", "/tin-tuc", "/tin-tuc/**", "/phim/**", "/xem-phim/**", "/cua-hang", "/cua-hang/**", "/dang-nhap", "/dang-ky", "/quen-mat-khau", "/xac-thuc-tai-khoan", "/dat-lai-mat-khau", "/quoc-gia/**", "/the-loai/**").permitAll();
             auth.requestMatchers("/api/auth/**", "/api/view-film-logs").permitAll();
             auth.requestMatchers(HttpMethod.GET, "/api/videos/**").permitAll();
             auth.requestMatchers(HttpMethod.POST, "/api/videos").hasRole("ADMIN");

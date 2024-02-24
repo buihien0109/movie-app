@@ -30,7 +30,7 @@ function setVideoTimeFromHistory() {
     if (watchHistory) {
         const {duration} = watchHistory;
         if (!isNaN(duration) && isFinite(duration)) {
-            if (duration < currentEpisode.video.duration) {
+            if (duration < currentEpisode.duration) {
                 video.currentTime = duration;
             } else {
                 video.currentTime = 0;

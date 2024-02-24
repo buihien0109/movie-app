@@ -71,6 +71,7 @@ ul {
 }
 
 .blog-item .blog-thumbnail {
+    height: 152px;
     flex: 0 0 200px;
     overflow: hidden;
 }

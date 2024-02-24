@@ -1,5 +1,6 @@
 package com.example.movieapp.rest;
 
+import com.example.movieapp.model.request.AdminCreateOrderRequest;
 import com.example.movieapp.model.request.CreateOrderRequest;
 import com.example.movieapp.model.request.UpdateOrderRequest;
 import com.example.movieapp.service.OrderService;
@@ -25,13 +26,21 @@ public class OrderResource {
         return ResponseEntity.ok(orderService.getAllOrders(start, length, draw, sortColumn, sortOrder));
     }
 
-    @PostMapping("/orders")
-    public ResponseEntity<?> createOrderByCustomer(@Valid @RequestBody CreateOrderRequest request) {
-        return ResponseEntity.ok(orderService.createOrderByCustomer(request));
+    // Admin tạo order
+    @PostMapping("/admin/orders")
+    public ResponseEntity<?> createOrderByAdmin(@Valid @RequestBody AdminCreateOrderRequest request) {
+        return ResponseEntity.ok(orderService.createOrderByAdmin(request));
     }
 
+    // Admin update order
     @PutMapping("/admin/orders/{id}")
     public ResponseEntity<?> updateOrderByAdmin(@PathVariable Integer id, @Valid @RequestBody UpdateOrderRequest request) {
         return ResponseEntity.ok(orderService.updateOrderByAdmin(id, request));
+    }
+
+    // Customer tạo order
+    @PostMapping("/orders")
+    public ResponseEntity<?> createOrderByCustomer(@Valid @RequestBody CreateOrderRequest request) {
+        return ResponseEntity.ok(orderService.createOrderByCustomer(request));
     }
 }

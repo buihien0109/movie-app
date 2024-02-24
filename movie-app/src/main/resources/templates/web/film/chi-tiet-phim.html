@@ -288,12 +288,7 @@
     <script th:inline="javascript">
         const film = [[${film}]];
         const reviews = [[${reviewList}]];
-        const relateFilmList = [[${relateFilmList}]];
-        const episodeList = [[${episodeList}]];
         const currentUser = [[${currentUser}]];
-        const isFavorite = [[${isFavorite}]];
-
-        console.log({film, reviews, relateFilmList, episodeList, currentUser})
 
         // Handle show trailer
         const modalTrailer = new bootstrap.Modal(document.getElementById('modalTrailer'));

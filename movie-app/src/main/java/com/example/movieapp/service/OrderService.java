@@ -8,10 +8,12 @@ import com.example.movieapp.exception.ResourceNotFoundException;
 import com.example.movieapp.model.dto.OrderDto;
 import com.example.movieapp.model.enums.FilmAccessType;
 import com.example.movieapp.model.enums.OrderStatus;
+import com.example.movieapp.model.request.AdminCreateOrderRequest;
 import com.example.movieapp.model.request.CreateOrderRequest;
 import com.example.movieapp.model.request.UpdateOrderRequest;
 import com.example.movieapp.repository.FilmRepository;
 import com.example.movieapp.repository.OrderRepository;
+import com.example.movieapp.repository.UserRepository;
 import com.example.movieapp.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,6 +34,7 @@ import java.util.Optional;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final FilmRepository filmRepository;
+    private final UserRepository userRepository;
     private final MailService mailService;
 
     public List<OrderDto> getOrdersOfCurrentUser() {
@@ -122,13 +124,15 @@ public class OrderService {
         Film film = filmRepository.findByIdAndAccessType(request.getFilmId(), FilmAccessType.PAID)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim"));
 
-        // Kiểm tra xem người dùng đã mua phim này chưa và order đó có khác với order hiện tại hay không
-        Optional<Order> optionalOrder = orderRepository
-                .findByUser_IdAndFilm_IdAndFilm_AccessType(order.getUser().getId(), film.getId(), FilmAccessType.PAID);
-        if (optionalOrder.isPresent()
-                && !optionalOrder.get().getId().equals(order.getId())
-                && optionalOrder.get().getStatus().equals(OrderStatus.SUCCESS)) {
-            throw new BadRequestException("Người dùng đã mua phim này rồi");
+        if (request.getStatus() == OrderStatus.SUCCESS && order.getStatus() != OrderStatus.SUCCESS) {
+            // Lấy danh sách order của user và phim
+            List<Order> orderList = orderRepository
+                    .findByUser_IdAndFilm_IdAndFilm_AccessType(order.getUser().getId(), film.getId(), FilmAccessType.PAID);
+
+            // Nếu danh sách order có size > 0 và trong danh sách order đó có order khác id của order hiện tại và status = SUCCESS -> throw exception
+            if (!orderList.isEmpty() && orderList.stream().anyMatch(o -> !o.getId().equals(id) && o.getStatus().equals(OrderStatus.SUCCESS))) {
+                throw new BadRequestException("Người dùng đã mua phim này rồi");
+            }
         }
 
         // Câp nhật dữ liệu
@@ -136,6 +140,7 @@ public class OrderService {
         order.setAmount(request.getAmount());
         order.setStatus(request.getStatus());
         order.setNote(request.getNote());
+        order.setPaymentMethod(request.getPaymentMethod());
 
         // Lưu vào database
         return orderRepository.save(order);
@@ -148,5 +153,34 @@ public class OrderService {
             return false;
         }
         return orderRepository.existsByUser_IdAndFilm_IdAndStatus(user.getId(), filmId, OrderStatus.SUCCESS);
+    }
+
+    public Order createOrderByAdmin(AdminCreateOrderRequest request) {
+        log.info("request: {}", request);
+
+        // Kiểm tra user có tồn tại hay không
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user"));
+
+        // Kiểm tra xem phim có tồn tại hay không
+        Film film = filmRepository.findByIdAndAccessType(request.getFilmId(), FilmAccessType.PAID)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phim"));
+
+        // Kiểm tra xem người dùng đã mua phim này chưa
+        if (orderRepository.existsByUser_IdAndFilm_IdAndStatus(user.getId(), film.getId(), OrderStatus.SUCCESS)) {
+            throw new BadRequestException("Người dùng đã mua phim này rồi");
+        }
+
+        // Tạo mới order
+        Order order = Order.builder()
+                .user(user)
+                .film(film)
+                .amount(film.getPrice())
+                .status(OrderStatus.PENDING)
+                .paymentMethod(request.getPaymentMethod())
+                .build();
+
+        // Lưu vào database
+        return orderRepository.save(order);
     }
 }
